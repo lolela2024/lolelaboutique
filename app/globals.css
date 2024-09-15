@@ -2,32 +2,223 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background: 330 0% 100%;
+    --foreground: 330 0% 10%;
+    --card: 330 0% 100%;
+    --card-foreground: 330 0% 15%;
+    --popover: 330 0% 100%;
+    --popover-foreground: 330 95% 10%;
+    --primary: 330 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 330 10% 90%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 292 10% 95%;
+    --muted-foreground: 330 0% 40%;
+    --accent: 292 10% 90%;
+    --accent-foreground: 330 0% 15%;
+    --destructive: 0 50% 50%;
+    --destructive-foreground: 330 0% 100%;
+    --border: 330 20% 82%;
+    --input: 330 20% 50%;
+    --ring: 330 100% 50%;
+    --radius: 0.75rem;
+  }
+  .dark {
+    --background: 330 10% 10%;
+    --foreground: 330 0% 100%;
+    --card: 330 0% 10%;
+    --card-foreground: 330 0% 100%;
+    --popover: 330 10% 5%;
+    --popover-foreground: 330 0% 100%;
+    --primary: 330 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 330 10% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 292 10% 25%;
+    --muted-foreground: 330 0% 65%;
+    --accent: 292 10% 25%;
+    --accent-foreground: 330 0% 95%;
+    --destructive: 0 50% 50%;
+    --destructive-foreground: 330 0% 100%;
+    --border: 330 20% 50%;
+    --input: 330 20% 50%;
+    --ring: 330 100% 50%;
+    --radius: 0.75rem;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
+
+select {
+  @apply border border-gray-200 py-2 px-4 rounded-lg text-gray-600;
+}
+
+/* applied to container */
+.trixtu-btn {
+  background-color: none;
+}
+
+/* applied to button */
+.trixtu-btn > *[data-ut-element="button"] {
+  @apply text-sm bg-gray-100 border text-gray-800 shadow-md focus:border-none;
+}
+
+/* applied to button when uploading */
+.trixtu-btn > *[data-ut-element="button"][data-state="readying"] {
+  background-color: rgba(239, 68, 205, 0.5);
+  color: rgb(0 0 0 / 0.5);
+  cursor: not-allowed;
+}
+
+/* applied to the button when uploading */
+.trixtu-btn > *[data-ut-element="button"][data-state="uploading"] {
+  background-color: rgba(239, 68, 205, 0.5);
+  color: rgb(0 0 0 / 0.5);
+  cursor: not-allowed;
+}
+
+/* applied to the upload indicator when uploading */
+.trixtu-btn > *[data-ut-element="button"][data-state="uploading"]::after {
+  background-color: hsl(var(--primary));
+}
+
+/* Heading styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.1;
+  text-wrap: pretty;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  font-size: 1.5em;
+}
+
+h3 {
+  font-size: 1.17em;
+}
+
+h4,
+h5,
+h6 {
+  font-size: 0.83em;
+  font-weight: 600;
+}
+
+blockquote {
+  border-left: 3px solid var(--gray-3);
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+}
+
+/* List styles */
+ul,
+ol .bullet-list {
+  padding: 0 1rem;
+  margin: 1.25rem 1rem 1.25rem 0.4rem;
+}
+.bullet-list ul li p,
+ul li p {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+  list-style: circle;
+}
+
+.bullet-list li {
+  list-style: disc;
+}
+.bullet-list ol {
+  list-style: decimal;
+}
+
+ol {
+  list-style: decimal;
+}
+
+ul,
+ol {
+  padding: 0 1rem;
+  margin: 1.25rem 1rem 1.25rem 0.4rem;
+}
+
+/* Table-specific styling */
+table {
+  border-collapse: collapse;
+  margin: 0;
+  overflow: hidden;
+  table-layout: fixed;
+  width: 100%;
+}
+
+table td,
+th {
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  min-width: 1em;
+  padding: 6px 8px;
+  position: relative;
+  vertical-align: top;
+}
+
+table td,
+th > * {
+  margin-bottom: 0;
+}
+th {
+  background-color: #e2e2e2;
+  font-weight: bold;
+  text-align: left;
+}
+
+table .selectedCell:after {
+  background: #fff;
+  color: black;
+  content: "";
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+table .column-resize-handle {
+  background-color: var(--purple);
+  bottom: -2px;
+  pointer-events: none;
+  position: absolute;
+  right: -2px;
+  top: 0;
+  width: 4px;
+}
+
+.tableWrapper {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+&.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}
+.show-address{
+  display: inline;
+}
+
