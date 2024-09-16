@@ -82,7 +82,7 @@ export default function ShippingForm({fields, user}:{fields:any, user:CheckoutFo
             type="text"
             key={fields.firstName.key}
             name={fields.firstName.name}
-            defaultValue={user?.firstName}
+            defaultValue={user?.firstName || ''}
             className={
               fields.firstName.errors
                 ? "w-full border-red-500 border-2"
@@ -97,7 +97,7 @@ export default function ShippingForm({fields, user}:{fields:any, user:CheckoutFo
             type="text"
             key={fields.lastName.key}
             name={fields.lastName.name}
-            defaultValue={user?.lastName}
+            defaultValue={user?.lastName || ''}
             className={
               fields.lastName.errors
                 ? "w-full border-red-500 border-2"

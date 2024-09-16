@@ -11,27 +11,7 @@ interface iAppProps {
 
 async function getData({ category }: iAppProps) {
   switch (category) {
-    case "men": {
-      const data = await prisma.product.findMany({
-        where: {
-          category: "men",
-        },
-        select: {
-          price: true,
-          name: true,
-          smallDescription: true,
-          id: true,
-          images: true,
-        },
-        take: 3,
-      });
-
-      return {
-        data: data,
-        title: "Icons",
-        link: "/products/icon",
-      };
-    }
+   
     case "newest": {
       const data = await prisma.product.findMany({
         select: {
@@ -53,48 +33,8 @@ async function getData({ category }: iAppProps) {
         link: "/products/all",
       };
     }
-    case "women": {
-      const data = await prisma.product.findMany({
-        where: {
-          category: "women",
-        },
-        select: {
-          id: true,
-          name: true,
-          price: true,
-          smallDescription: true,
-          images: true,
-        },
-        take: 3,
-      });
-
-      return {
-        title: "Templates",
-        data: data,
-        link: "/products/template",
-      };
-    }
-    case "kids": {
-      const data = await prisma.product.findMany({
-        where: {
-          category: "kids",
-        },
-        select: {
-          id: true,
-          name: true,
-          price: true,
-          smallDescription: true,
-          images: true,
-        },
-        take: 3,
-      });
-
-      return {
-        title: "Ui Kits",
-        data: data,
-        link: "/products/uikit",
-      };
-    }
+   
+   
     default: {
       return notFound();
     }
@@ -135,7 +75,7 @@ async function LoadRows({ category }: iAppProps) {
             id={product.id}
             name={product.name}
             price={product.price}
-            smallDescription={product.smallDescription}
+            smallDescription=""
           />
         ))}
       </div>

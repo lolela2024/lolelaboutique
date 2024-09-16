@@ -22,16 +22,14 @@ export async function informatiiUpdate(prevState: unknown,formData:FormData) {
     return submission.reply()
   }
 
-  let hashedPassword = undefined;
+  // let hashedPassword = undefined;
 
-  if(submission.value.newPassword){
-    const password = await bcrypt.hash(submission.value.newPassword, 10) 
+  // if(submission.value.newPassword){
+  //   const password = await bcrypt.hash(submission.value.newPassword, 10) 
     
-    return hashedPassword = password;
-  }
+  //   return hashedPassword = password;
+  // }
 
-  console.log(hashedPassword)
-  
 
   await prisma.user.update({
     where:{id:user.id},

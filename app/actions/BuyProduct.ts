@@ -14,7 +14,6 @@ export async function BuyProduct(formData: FormData) {
       smallDescription: true,
       price: true,
       images: true,
-      productFile: true,
       User: {
        
       },

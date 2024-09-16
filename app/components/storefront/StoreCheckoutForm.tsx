@@ -2,7 +2,6 @@
 
 import { createCeckout } from "@/app/actions/createCeckout";
 import { formatCurrency } from "@/app/lib/formatters";
-import { Cart } from "@/app/lib/interfaces";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -28,15 +27,12 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ChceckoutButton } from "../SubmitButtons";
-import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
-import { User } from "@prisma/client";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { PlusIcon } from "lucide-react";
 import ShippingForm from "./ShippingForm";
 import AccordionAddress from "./AccordionAddress";
 import { CheckoutFormProps } from "@/app/types/types";

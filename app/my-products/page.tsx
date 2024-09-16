@@ -41,7 +41,7 @@ export default async function MyProductsRoute() {
             images={item.images}
             name={item.name}
             price={item.price}
-            smallDescription={item.smallDescription}
+            smallDescription={item.smallDescription || ''}
           />
         ))}
       </div>

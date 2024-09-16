@@ -42,9 +42,9 @@ export async function RecentSales() {
         {data.map((item) => (
           <div className="flex items-center gap-4" key={item.id}>
             <Avatar className="hidden sm:flex h-9 w-9">
-              <AvatarImage src={item.User?.profileImage} alt="Avatar Image" />
+              <AvatarImage src={item.User?.profileImage ? item.User?.profileImage : ''} alt="Avatar Image" />
               <AvatarFallback>
-                {item.User?.firstName.slice(0, 3) || item.Customer?.firstName.slice(0, 3)}
+                {item.User?.firstName ? item.User?.firstName.slice(0, 3) : item.Customer?.firstName.slice(0, 3)}
               </AvatarFallback>
             </Avatar>
             <div className="grid gap-1">

@@ -1,6 +1,5 @@
 "use client";
 
-import { SellProduct, type State } from "@/app/actions";
 import {
   CardContent,
   CardDescription,
@@ -27,22 +26,10 @@ import { toast } from "sonner";
 import { imageRemove } from "@/app/actions/imageRemove";
 
 export function SellForm() {
-  const initalState: State = { message: "", status: undefined };
-  const [state, formAction] = useFormState(SellProduct, initalState);
   const [json, setJson] = useState<null | JSONContent>(null);
   const [images, setImages] = useState<null | string[]>(null);
   const [productFile, SetProductFile] = useState<null | string>(null);
   const [imageIsDeleting, setImageIsDeleting] = useState(false);
-
-  console.log(images)
-
-  useEffect(() => {
-    if (state.status === "success") {
-      toast.success(state.message);
-    } else if (state.status === "error") {
-      toast.error(state.message);
-    }
-  }, [state]);
 
   const handleImageDelete = async (image: string) => {
     setImageIsDeleting(true);
@@ -68,10 +55,10 @@ export function SellForm() {
 
     setImageIsDeleting(false);
   };
- 
+
   return (
-    <form action={formAction}>
-      <CardHeader>
+    <form>
+      {/* <CardHeader>
         <CardTitle>Sell your product with ease</CardTitle>
         <CardDescription>
           Please describe your product here in detail so that it can be sold
@@ -202,7 +189,7 @@ export function SellForm() {
       </CardContent>
       <CardFooter className="mt-5">
         <Submitbutton title="Create your Product" />
-      </CardFooter>
+      </CardFooter> */}
     </form>
   );
 }

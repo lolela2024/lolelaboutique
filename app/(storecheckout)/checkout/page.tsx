@@ -11,14 +11,15 @@ import StoreCheckoutForm from "@/app/components/storefront/StoreCheckoutForm";
 import { cookies } from "next/headers";
 import { User } from "@prisma/client";
 import prisma from "@/app/lib/db";
+import { auth } from "@/auth";
 
 
 export default async function CeckoutPage() {
   noStore();
-  const {getUser} = getKindeServerSession();
-  const user = await getUser();
+  const session = await auth()
+  const user = session?.user
 
-  let userBazaDeDate = undefined
+  let userBazaDeDate = null;
 
   if (user?.email) { 
     const userData = await prisma.user.findFirst({
@@ -75,6 +76,9 @@ export default async function CeckoutPage() {
   if (paymentIntent.client_secret === null) {
     throw Error("Stripe failed to create payment intent");
   }
+
+  
+  console.log(userBazaDeDate)
 
   return (
 
