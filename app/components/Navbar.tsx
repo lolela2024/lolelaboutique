@@ -3,7 +3,6 @@ import React from 'react'
 import { NavbarLinks } from './NavbarLinks'
 import { Button } from '@/components/ui/button'
 import { MobileMenu } from './MobileMenu'
-import {  LoginLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/server'
 import { UserNav } from './UserNav'
 import { auth } from '@/auth'
 
@@ -34,10 +33,10 @@ export async function Navbar() {
         ) : (
           <div className="flex items-center gap-x-2">
             <Button asChild>
-              <LoginLink>Login</LoginLink>
+              Login
             </Button>
             <Button variant="secondary" asChild>
-              <RegisterLink>Register</RegisterLink>
+             Register
             </Button>
           </div>
         )}

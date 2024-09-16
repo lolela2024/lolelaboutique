@@ -11,9 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
 import Image from "next/image";
 import getSession from "@/lib/getSession";
 import { UserRole } from "@prisma/client";
@@ -80,7 +78,7 @@ export default async function DashboardLayout({
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <LogoutLink>Logout</LogoutLink>
+                Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

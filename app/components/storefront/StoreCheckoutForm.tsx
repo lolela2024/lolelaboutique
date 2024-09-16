@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import { LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import Image from "next/image";
 import React, { Fragment, useState } from "react";
 import { useFormState } from "react-dom";
@@ -36,6 +35,7 @@ import {
 import ShippingForm from "./ShippingForm";
 import AccordionAddress from "./AccordionAddress";
 import { CheckoutFormProps } from "@/app/types/types";
+import LogoutButton from "@/app/(storefront)/account/_components/LogoutButton";
 
 
 const județeRomânia = [
@@ -246,9 +246,9 @@ function Form({
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <LogoutLink className="text-primary hover:underline">
+                    
                       Deconectează-te
-                    </LogoutLink>
+                   
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionAddress fields={fields} user={user} />
@@ -265,7 +265,7 @@ function Form({
                     asChild
                     className="text-gray-700 p-1 group-hover:text-gray-900 underline"
                   >
-                    <LoginLink>Autentifica-te</LoginLink>
+                    Autentifica-te
                   </Button>
                 </div>
               </div>

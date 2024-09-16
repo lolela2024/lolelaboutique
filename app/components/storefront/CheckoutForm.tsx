@@ -3,7 +3,6 @@
 import React, { FormEvent, useState } from "react";
 import {
   Elements,
-  LinkAuthenticationElement,
   PaymentElement,
   useElements,
   useStripe,
@@ -12,7 +11,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import { formatCurrency } from "@/app/lib/formatters";
 import {
-  Card,
   CardContent,
   CardDescription,
   CardFooter,
@@ -20,15 +18,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { error } from "console";
 import { Cart } from "@/app/lib/interfaces";
-import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { useFormState } from "react-dom";
-import { parseWithZod } from "@conform-to/zod";
-import { useForm } from "@conform-to/react";
-import { dateLivrare } from "@/app/lib/zodSchemas";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+
 
 type CheckoutFormProps = {
   products: Cart;
@@ -225,7 +216,7 @@ function Form({
                   asChild
                   className="text-gray-700 p-1 group-hover:text-gray-900 underline"
                 >
-                  <LoginLink>Autentifica-te</LoginLink>
+                 Autentifica-te
                 </Button>
               </div>
             )}

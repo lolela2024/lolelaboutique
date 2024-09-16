@@ -1,7 +1,6 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import React, { useState } from "react";
 
 export default function Email() {
@@ -19,14 +18,7 @@ export default function Email() {
         value={email}
         onChange={handleEmailChange}
       />
-      <LoginLink
-        authUrlParams={{
-          connection_id:
-            process.env.NEXT_PUBLIC_KINDE_CONNECTION_EMAIL_PASSWORDLESS || "",
-          login_hint: email,
-        }}
-    
-      ><button type="button">NEXT</button></LoginLink>
+      <button type="button">NEXT</button>
     </div>
   );
 }

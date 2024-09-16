@@ -14,8 +14,6 @@
     "@conform-to/react": "^1.1.5",
     "@conform-to/zod": "^1.1.5",
     "@hookform/resolvers": "^3.9.0",
-    "@kinde-oss/kinde-auth-nextjs": "^2.3.8",
-    "@kinde-oss/kinde-typescript-sdk": "^2.9.1",
     "@neondatabase/serverless": "^0.9.5",
     "@prisma/adapter-neon": "^5.19.1",
     "@prisma/adapter-pg": "^5.19.1",

@@ -1,7 +1,6 @@
 import { ChevronRight, LogOut } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
 
 const links = [
   {
@@ -27,7 +26,7 @@ export default function LinkSidebar() {
           
         </li>
       ))}
-      <li className="text-primary py-1"><LogoutLink className="flex items-center" ><LogOut className="w-4 h-4 mr-2"/>Deconectare</LogoutLink></li>
+      <li className="text-primary py-1"><LogOut className="w-4 h-4 mr-2"/>Deconectare</li>
     </ul>
   );
 }
