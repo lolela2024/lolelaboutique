@@ -1,13 +1,6 @@
-import Link from "next/link";
 
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { AlignJustify, ShoppingBagIcon } from "lucide-react";
-import { UserDropdown } from "./UserDropdown";
-import { Button } from "@/components/ui/button";
-import {
-  LoginLink,
-  RegisterLink,
-} from "@kinde-oss/kinde-auth-nextjs/components";
+
+import { AlignJustify } from "lucide-react";
 import { NavbarLinks } from "./NavbarLinks";
 import { redis } from "@/app/lib/redis";
 import { Cart } from "@/app/lib/interfaces";
@@ -17,11 +10,11 @@ import HeaderIcons from "./HeaderIcons";
 import Search from "./Search";
 import Topbar from "./Topbar";
 import { cookies } from "next/headers";
-import { auth } from "@/auth";
 import getSession from "@/lib/getSession";
+import { auth } from "@/auth";
 
 export async function Navbar() {
-  const session = await getSession()
+  const session = await auth()
   const user = session?.user;
 
   const cookieStore = cookies();

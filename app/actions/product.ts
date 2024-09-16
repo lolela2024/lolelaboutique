@@ -1,17 +1,16 @@
 "use server"
-
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { redirect } from "next/navigation";
 import { parseWithZod } from '@conform-to/zod';
 import { productSchema } from '../lib/zodSchemas';
 import prisma from "../lib/db";
 import { utapi } from "../server/uploadthing";
+import { auth } from "@/auth";
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
 export async function createProduct(prevState: unknown, formData:FormData) {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const session = await auth()
+  const user = session?.user
 
   if(!user || user.email !== adminEmail) {
     redirect("/");
@@ -66,8 +65,8 @@ export async function createProduct(prevState: unknown, formData:FormData) {
 }
 
 export async function editProduct(prevState: any, formData: FormData) {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const session = await auth()
+  const user = session?.user
 
 
 
@@ -122,8 +121,8 @@ export async function editProduct(prevState: any, formData: FormData) {
 }
 
 export async function deleteProduct(formData: FormData) {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const session = await auth()
+  const user = session?.user
 
   if (!user || user.email !== adminEmail) {
     return redirect("/");

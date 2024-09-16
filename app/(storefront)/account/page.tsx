@@ -1,10 +1,10 @@
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
+import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import React from 'react'
 
 export default async function AccountPage() {
-  const {getUser} = getKindeServerSession();
-  const user = await getUser();
+  const session = await auth()
+  const user = session?.user;
  
   if(!user){
     redirect("/")

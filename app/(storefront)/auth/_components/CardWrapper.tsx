@@ -5,9 +5,7 @@ import React from "react";
 import { Social } from "./Social";
 import { BackButton } from "./BackButton";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-
-interface CardWrapperProps {
+ interface CardWrapperProps {
   children: React.ReactNode;
   headerLabel: string;
   backButtonLabel: string;

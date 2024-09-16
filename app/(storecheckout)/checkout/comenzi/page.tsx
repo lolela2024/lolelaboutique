@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import React from "react";
 import { unstable_noStore as noStore } from "next/cache";
 import { Form } from "../_components/Form";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { auth } from "@/auth";
 
 async function getData(verify: string) {
   const data = await prisma.order.findFirst({
@@ -32,8 +32,8 @@ export default async function CheckoutComenzi({
   searchParams: { verify: string };
 }) {
   noStore();
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const session = await auth();
+  const user = session?.user;
 
   let userBazaDeDate = undefined;
 
@@ -64,8 +64,6 @@ export default async function CheckoutComenzi({
   }
 
   const data = await getData(searchParams.verify);
-
-  console.log(userBazaDeDate);
 
   const formattedTime = data.createdAt.toLocaleDateString("ro-RO");
   return (

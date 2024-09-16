@@ -4,7 +4,6 @@ import prisma from "@/app/lib/db"
 import { informatiiSchema } from "@/app/lib/zodSchemas"
 import { auth } from "@/auth"
 import { parseWithZod } from "@conform-to/zod"
-import bcrypt from 'bcryptjs';
 
 export async function informatiiUpdate(prevState: unknown,formData:FormData) {
   const session = await auth()

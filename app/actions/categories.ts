@@ -1,17 +1,17 @@
 "use server"
 
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 import { categorySchema } from "../lib/zodSchemas";
 import { parseWithZod } from "@conform-to/zod";
 import prisma from "../lib/db";
 import { utapi } from "../server/uploadthing";
+import { auth } from "@/auth";
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
 export async function createCategory(prevState: unknown, formData:FormData){
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const session = await auth()
+  const user = session?.user;
 
   if(!user || user.email !== adminEmail) {
     redirect("/");
@@ -47,8 +47,8 @@ export async function createCategory(prevState: unknown, formData:FormData){
 }  
 
 export async function deleteCategory(formData: FormData) {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const session = await auth()
+  const user = session?.user;
 
   if (!user || user.email !== adminEmail) {
     return redirect("/");
@@ -82,10 +82,8 @@ export async function deleteCategory(formData: FormData) {
 }
 
 export async function editCategory(prevState: any, formData: FormData) {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
-
-
+  const session = await auth()
+  const user = session?.user;
 
   if (!user || user.email !== adminEmail) {
     return redirect("/");

@@ -8,11 +8,11 @@ import { Cart } from "../lib/interfaces"
 import { redis } from "../lib/redis"
 import { redirect } from "next/navigation"
 import { v4 as uuidv4 } from 'uuid';
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { stripe } from "../lib/stripe"
 import Stripe from "stripe";
 import { createAddress, createBillingAddress, createCustomerAddress, createCustomerBillingAddress, updateAddress, updateBillingAddress, updateCustomerAddress, updateCustomerBillingAddress } from "../lib/checkout"
 import { Fulfilled, OrderStatus } from "@prisma/client"
+import { auth } from "@/auth"
 // sau altă metodă de a obține user-ul logat
 async function getNextOrderNumber(): Promise<number> {
   const lastOrder = await prisma.order.findFirst({
@@ -43,8 +43,8 @@ export async function createCeckout(prevState: unknown, formData: FormData) {
     totalPrice += item.price * item.quantity;
   });
 
-  const {getUser} = getKindeServerSession()
-  const user = await getUser()
+  const session = await auth()
+  const user = session?.user
 
   
   if (user?.email) {

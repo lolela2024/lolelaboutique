@@ -1,15 +1,10 @@
 import { stripe } from "@/app/lib/stripe";
 import React from "react";
 import { unstable_noStore as noStore } from "next/cache";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { redirect } from "next/navigation";
 import { Cart } from "@/app/lib/interfaces";
 import { redis } from "@/app/lib/redis";
-import CheckoutForm from "@/app/components/storefront/CheckoutForm";
-import Stripe from "stripe";
 import StoreCheckoutForm from "@/app/components/storefront/StoreCheckoutForm";
 import { cookies } from "next/headers";
-import { User } from "@prisma/client";
 import prisma from "@/app/lib/db";
 import { auth } from "@/auth";
 
@@ -76,9 +71,6 @@ export default async function CeckoutPage() {
   if (paymentIntent.client_secret === null) {
     throw Error("Stripe failed to create payment intent");
   }
-
-  
-  console.log(userBazaDeDate)
 
   return (
 

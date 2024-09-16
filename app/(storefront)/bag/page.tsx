@@ -7,13 +7,11 @@ import {
 import { Cart } from "@/app/lib/interfaces";
 import { redis } from "@/app/lib/redis";
 import { Button } from "@/components/ui/button";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { ShoppingBag, Trash2 } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 
-import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import {
   addQuantityItem,
@@ -21,7 +19,6 @@ import {
   removeQuantityItem,
 } from "@/app/actions/bag";
 import { formatCurrency } from "../../lib/formatters";
-import Wrapper from "@/app/components/storefront/Wrapper";
 import {
   Card,
   CardContent,
@@ -46,8 +43,6 @@ export default async function BagRoute() {
   const total = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   const cartLength = cart?.items.length
-
-  console.log(cart)
 
   if (!cart || !cartLength) {
     return (

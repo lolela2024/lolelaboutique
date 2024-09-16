@@ -1,4 +1,5 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+
+import { auth } from "@/auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
  
@@ -8,8 +9,8 @@ export const ourFileRouter = {
   imageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 5 } })
 
     .middleware(async ({ req }) => {
-      const {getUser} = getKindeServerSession();
-      const user = await getUser();
+      const session = await auth()
+      const user = session?.user
 
       // If you throw, the user will not be able to upload
       if (!user || user.email !==  process.env.ADMIN_EMAIL) throw new UploadThingError("Unauthorized");
@@ -30,8 +31,8 @@ export const ourFileRouter = {
     oneImageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
 
     .middleware(async ({ req }) => {
-      const {getUser} = getKindeServerSession();
-      const user = await getUser();
+      const session = await auth()
+      const user = session?.user
 
       if (!user || user.email !== process.env.ADMIN_EMAIL) throw new UploadThingError("Unauthorized");
       return { userId: user.id };
@@ -50,9 +51,8 @@ export const ourFileRouter = {
     productFileUpload: f({ "application/zip": { maxFileCount: 1} })
     // Set permissions and file types for this FileRoute
     .middleware(async ({ req }) => {
-      const {getUser} = getKindeServerSession();
-      const user = await getUser();
-
+      const session = await auth()
+      const user = session?.user
  
       // If you throw, the user will not be able to upload
       if (!user) throw new UploadThingError("Unauthorized");

@@ -1,13 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import React from "react";
 import InformatiiForm from "../_components/InformatiiForm";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import prisma from "@/app/lib/db";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { FaUser } from "react-icons/fa";
-import Link from "next/link";
-import LogoutButton from "../_components/LogoutButton";
 import FooterAccount from "../_components/FooterAccount";
 
 async function getData(email: string) {

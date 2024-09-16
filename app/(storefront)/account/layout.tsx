@@ -1,6 +1,5 @@
 import React from "react";
 import SidebarAccount from "./_components/SidebarAccount";
-import FooterAccount from "./_components/FooterAccount";
 
 export default function AccountLayout({
   children,

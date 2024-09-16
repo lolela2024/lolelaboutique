@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FaGithub, FaGoogle } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 import { login } from "../../../actions/auth";
 
 const LoginGoogle = () => {

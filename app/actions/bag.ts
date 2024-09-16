@@ -1,8 +1,6 @@
 "use server"
 
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { redis } from "../lib/redis"
-import { redirect } from "next/navigation";
 import { Cart } from "../lib/interfaces";
 import prisma from "../lib/db";
 import { revalidatePath } from "next/cache";
