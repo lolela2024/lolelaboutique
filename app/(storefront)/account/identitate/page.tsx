@@ -18,11 +18,11 @@ export default async function IdentitatePage() {
   const session = await auth();
   const user = session?.user;
 
-  const data = await getData(user?.email as string);
-
-  if (!user) {
+  if (!user || !user.email) {
     redirect("/");
   }
+  
+  const data = await getData(user?.email);
 
   return (
     <div className="space-y-6">

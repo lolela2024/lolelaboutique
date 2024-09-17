@@ -25,15 +25,16 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
+  
   return (
     <SessionProvider session={session}>
-    <html lang="ro">
-      <body className={robotoSerif.className}>
-        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-        <Providers>{children}</Providers>
-        <Toaster richColors theme="light" closeButton />
-      </body>
-    </html>
+      <html lang="ro">
+        <body className={robotoSerif.className}>
+          <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+          <Providers>{children}</Providers>
+          <Toaster richColors theme="light" closeButton />
+        </body>
+      </html>
     </SessionProvider>
   );
 }

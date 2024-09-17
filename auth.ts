@@ -9,7 +9,6 @@ import { getAccountByUserId } from './data/account';
 import { UserRole } from "@prisma/client"
  
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  trustHost:true,
   adapter:PrismaAdapter(prisma) as Adapter,
   session: { 
     strategy: "jwt",
@@ -89,6 +88,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return token;
     },
+    
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub
