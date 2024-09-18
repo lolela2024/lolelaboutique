@@ -1,17 +1,12 @@
 "use client";
 
 import { ProductCard } from "@/app/components/storefront/ProductCard";
-import prisma from "@/app/lib/db";
-import { notFound } from "next/navigation";
-import { unstable_noStore as noStore } from "next/cache";
 import CategoriesHeroHolder from "@/app/components/storefront/CategoriesHeroHolder";
 
 import axios from "axios";
 import { QueriesResults, useQuery } from "@tanstack/react-query";
 
-import { useCallback, useState } from "react";
-import debounce from "lodash.debounce";
-import { Skeleton } from "@/components/ui/skeleton";
+import {  useState } from "react";
 import { LoadingProductCard } from "@/app/components/ProductCard";
 
 import PietrePretioaseSort from "@/app/components/storefront/sort/PietrePretioaseSort";

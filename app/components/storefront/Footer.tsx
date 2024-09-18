@@ -11,7 +11,7 @@ export function Footer() {
 
 
   return (
-    <footer className="bg-[url('/pink-background.png')] bg-cover bg-center  mt-8 border-t-4 border-primary">
+    <footer className="bg-[#ffeefa] bg-cover bg-center  mt-8 border-t-4 border-primary">
       <Wrapper>
         <div className="grid grid-cols-3 gap-4">
           <Card className="bg-white bg-opacity-40">

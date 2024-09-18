@@ -106,7 +106,6 @@ model PasswordResetToken {
   @@unique([email, token])
 }
 
-
 model TwoFactorToken {
   id      String   @id @default(cuid())
   email   String
@@ -289,4 +288,20 @@ model BillingAddress {
   customerId String?
 
   billingOrders Order[]
+}
+
+model HomePage {
+  id          String     @id @default(uuid())
+  bannerTop   BannerTop? @relation(fields: [bannerTopId], references: [id])
+  bannerTopId Int?
+
+  @@unique([id])
+}
+
+model BannerTop {
+  id Int @id @default(autoincrement())
+  image String
+  description Json?
+
+  homePage HomePage[]
 }

@@ -28,7 +28,6 @@ export default async function DashboardLayout({
     redirect("/");
   }
 
-  console.log(session)
   if (user.role !== UserRole.ADMIN){
     return <p>not authorized</p>
   }

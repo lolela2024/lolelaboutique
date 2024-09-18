@@ -1,5 +1,6 @@
 "use client";
 
+import CustomImage from "@/components/CustomImage";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -32,12 +33,12 @@ export function ImageSlider({ images }: iAppProps) {
   return (
     <div className="grid gap-6 md:gap-3 items-start">
       <div className="relative overflow-hidden rounded-lg">
-        <Image
+        <CustomImage
           width={600}
           height={600}
           src={images[mainImageIndex]}
           alt="Product image"
-          className="object-cover w-[600px] h-[600px]"
+          sizes="(min-width: 1360px) 560px, (min-width: 1040px) calc(40vw + 24px), (min-width: 780px) calc(50vw - 36px), (min-width: 680px) 600px, 92.22vw"
         />
 
         <div className="absolute inset-0 flex items-center justify-between px-4">

@@ -10,6 +10,7 @@ import { useState } from "react";
 import Rating from "./rating/Rating";
 import { useRouter } from "next/navigation";
 import { formatCurrency } from '../../lib/formatters';
+import CustomImage from "@/components/CustomImage";
 
 interface iAppProps {
   item: any;
@@ -33,21 +34,24 @@ export function ProductCard({ item }: iAppProps) {
         onClick={() => push(`/product/${item.id}`)}
       >
         <CardHeader className=" p-0 rounded-none">
-          <div className="relative h-[270px] rounded-t-lg overflow-hidden">
-            <Image
+          <div className="relative rounded-t-lg">
+            <CustomImage
               src={item.images[0]}
               alt="Product Image"
-              fill
-              className={`object-cover bg-gray-50 w-full h-full absolute transition-opacity duration-700 ease-in-out ${
+              
+              sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
+              className={`absolute transition-opacity duration-700 ease-in-out ${
                 visible && item.images[1] ? "opacity-0" : "opacity-100"
               }`}
             />
             {item.images[1] && (
-              <Image
+              <CustomImage
                 src={item.images[1]}
                 alt="Product Image"
-                fill
-                className={`object-cover bg-gray-50 w-full h-full absolute transition-opacity duration-700 ease-in-out ${
+                width={640}
+                height={640}
+                sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
+                className={` transition-opacity duration-700 ease-in-out ${
                   visible ? "opacity-100" : "opacity-0"
                 }`}
               />

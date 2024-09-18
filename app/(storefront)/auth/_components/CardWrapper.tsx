@@ -23,7 +23,7 @@ export const CardWrapper = ({
   buttonLabel,
 }: CardWrapperProps) => {
   return (
-    <div className="bg-[url('/pink-background.png')] bg-cover bg-center rounded-lg">
+    <div className="bg-[#ffeefa] bg-cover bg-center rounded-lg">
     <Card className="w-[500px] shadow-lg bg-white bg-opacity-40">
       <CardHeader className="font-normal">
         {/* <Header label={headerLabel} /> */}
