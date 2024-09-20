@@ -225,3 +225,7 @@ table .column-resize-handle {
 .hero-text p {
   padding: 16px;
 }
+
+p {
+  padding: 6px;
+}

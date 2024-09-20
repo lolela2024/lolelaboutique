@@ -1,11 +1,4 @@
 import prisma from "@/app/lib/db";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import Image from "next/image";
 
 async function getData() {
@@ -17,8 +10,6 @@ async function getData() {
 export async function Hero() {
   const data = await getData();
   const banner = data[0];
-
-  console.log(banner);
 
   if (banner.on === true) {
     return (
@@ -33,8 +24,8 @@ export async function Hero() {
             style={{ objectPosition: "66% 78%" }}
           />
           <div className="z-[1] w-full absolute top-[calc(50%-85px)]">
-            <div className="caption-content text-center mx-auto w-[90%] md:w-[80%] lg:w-[50%] wp-block-group has-background eplus-wrapper bg-black bg-opacity-20 p-6 rounded-lg" >
-              <div className="text-white hero-text" dangerouslySetInnerHTML={{__html:JSON.parse(JSON.stringify(banner.description))}}/>
+            <div className="caption-content text-center mx-auto w-[90%] md:w-[80%] lg:w-[50%] bg-[#da8fc2] bg-opacity-70 p-6 rounded-lg" >
+              <div className="text-white text-shadow-lg drop-shadow-2xl hero-text" dangerouslySetInnerHTML={{__html:JSON.parse(JSON.stringify(banner.description))}}/>
             </div>
           </div>
         </div>

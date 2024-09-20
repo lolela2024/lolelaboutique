@@ -19,6 +19,9 @@ const config = {
   		}
   	},
   	extend: {
+			textShadow: {
+        'lg': '4px 4px 6px rgba(0, 0, 0, 0.6)',
+      },
   		colors: {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',

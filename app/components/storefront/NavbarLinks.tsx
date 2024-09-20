@@ -42,9 +42,9 @@ export function NavbarLinks() {
           key={item.id}
           className={cn(
             location === item.href
-              ? "border-b-2 border-[#ff095c]"
-              : "hover:text-black hover:bg-opacity-75",
-            "group p-4 uppercase text-sm font-semibold text-[#3e3e3e]"
+              ? "border-b-2 border-primary bg-primary text-white rounded-lg my-2"
+              : "hover:text-primary hover:bg-opacity-75",
+            "px-2 py-1 group uppercase text-sm font-semibold"
           )}
         >
           {item.name}
