@@ -221,3 +221,7 @@ table .column-resize-handle {
 .show-address {
   display: inline;
 }
+
+.hero-text p {
+  padding: 16px;
+}

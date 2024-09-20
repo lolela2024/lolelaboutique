@@ -8,7 +8,8 @@ import { error } from 'console';
 
 interface buttonProps {
   title: string;
-  error?: any,
+  image?:string;
+  error?: any;
   variant?:
     | "default"
     | "destructive"
@@ -22,6 +23,7 @@ interface buttonProps {
 
 export function Submitbutton({
   title,
+  image,
   variant,
   error
 }: buttonProps) {
@@ -35,7 +37,7 @@ export function Submitbutton({
           Please Wait
         </Button>
       ) : (
-        <Button disabled={error} variant={variant} type="submit">
+        <Button disabled={error || image === ""} variant={variant} type="submit">
           {title}
         </Button>
       )}

@@ -165,3 +165,10 @@ export const NewPasswordSchema = z.object({
     message:"Minimum 6 characters required"
   }),
 })
+
+export const Banner = z.object({
+  id:z.number().optional(),
+  image:z.string().optional(),
+  description: jsonSchema,
+  on:z.boolean().optional()
+})

@@ -68,8 +68,6 @@ export async function editProduct(prevState: any, formData: FormData) {
   const session = await auth()
   const user = session?.user
 
-
-
   if (!user || user.email !== adminEmail) {
     return redirect("/");
   }
