@@ -22,7 +22,8 @@ export const categorySchema = z.object({
   image:z.string().optional(),
   slug:z.string(),
   description:z.string().optional(),  
-  parentCategoryId:z.number().optional()
+  parentCategoryId:z.number().optional(),
+  isFeatured: z.boolean().optional(),
 })
 
 export const userSettingsSchema = z.object({

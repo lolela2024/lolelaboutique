@@ -181,6 +181,7 @@ model ProductCategory {
   image            String?
   description      String?           @db.Text
   tier             Int               @default(1)
+  isFeatured       Boolean           @default(false)
   parentCategoryId Int?
   parentCategory   ProductCategory?  @relation("ProductCategoryToProductCategory", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   subcategories    ProductCategory[] @relation("ProductCategoryToProductCategory")

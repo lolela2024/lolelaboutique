@@ -39,7 +39,8 @@ export async function createCategory(prevState: unknown, formData:FormData){
       slug:submission.value.slug,
       image:submission.value.image || undefined,
       description:submission.value.description || undefined,
-      parentCategoryId:submission.value.parentCategoryId || undefined
+      parentCategoryId:submission.value.parentCategoryId || undefined,
+      isFeatured:submission.value.isFeatured
     }
   })
 
