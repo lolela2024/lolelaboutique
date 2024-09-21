@@ -11,24 +11,19 @@ export const navbarLinks = [
     href: "/",
   },
   {
-    id: 1,
-    name: "All Products",
-    href: "/products/all",
-  },
-  {
     id: 2,
     name: "Cercei",
     href: "/products/cercei",
   },
   {
     id: 3,
-    name: "Women",
-    href: "/products/women",
+    name: "Brățări",
+    href: "/products/bratari",
   },
   {
     id: 4,
-    name: "Kids",
-    href: "/products/kids",
+    name: "Coliere",
+    href: "/products/coliere",
   },
 ];
 

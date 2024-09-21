@@ -13,70 +13,73 @@ import PietrePretioaseSort from "@/app/components/storefront/sort/PietrePretioas
 import PriceFilter from "@/app/components/storefront/sort/PriceFilter";
 import CategoryFilter from "@/app/components/storefront/sort/CategoryFilter";
 import SortFilter from "@/app/components/storefront/sort/SortFilter";
+import { unstable_noStore as  noStore} from "next/cache";
+import prisma from "@/app/lib/db";
+import { notFound } from "next/navigation";
 
-// async function getData(productCategory: string) {
-//   const data = await prisma.product.findMany({
-//     select: {
-//       name: true,
-//       images: true,
-//       price: true,
-//       id: true,
-//       description: true,
-//     },
-//     where: {
-//       status: "published",
-//       productCategory: {
-//         slug: productCategory,
-//       },
-//     },
-//   });
-//   switch (productCategory) {
-//     case "all": {
-//       const data = await prisma.product.findMany({
-//         select: {
-//           name: true,
-//           images: true,
-//           price: true,
-//           id: true,
-//           description: true,
-//         },
-//         where: {
-//           status: "published",
-//         },
-//       });
+async function getData(productCategory: string) {
+  const data = await prisma.product.findMany({
+    select: {
+      name: true,
+      images: true,
+      price: true,
+      id: true,
+      description: true,
+    },
+    where: {
+      status: "published",
+      productCategory: {
+        slug: productCategory,
+      },
+    },
+  });
+  switch (productCategory) {
+    case "all": {
+      const data = await prisma.product.findMany({
+        select: {
+          name: true,
+          images: true,
+          price: true,
+          id: true,
+          description: true,
+        },
+        where: {
+          status: "published",
+        },
+      });
 
-//       return {
-//         title: "All Products",
-//         data: data,
-//       };
-//     }
-//     case "cercei": {
-//       const data = await prisma.product.findMany({
-//         where: {
-//           status: "published",
-//           productCategory: {
-//             slug: "cercei",
-//           },
-//         },
-//         select: {
-//           name: true,
-//           images: true,
-//           price: true,
-//           id: true,
-//           description: true,
-//         },
-//       });
+      return {
+        title: "All Products",
+        data: data,
+      };
+    }
+    case "cercei": {
+      const data = await prisma.product.findMany({
+        where: {
+          status: "published",
+          productCategory: {
+            slug: "cercei",
+          },
+        },
+        select: {
+          name: true,
+          images: true,
+          price: true,
+          id: true,
+          description: true,
+        },
+      });
 
-//       return {
-//         title: "",
-//         data: data,
-//       };
-//     }
-//     default: {
-//       return notFound();
-//     }
-//   }
-// }
+      return {
+        title: "",
+        data: data,
+      };
+    }
+    default: {
+      return notFound();
+    }
+  }
+}
 
 export type Product = {
   id: string;
@@ -91,7 +94,7 @@ export default function CategoriesPage({
 }: {
   params: { name: string };
 }) {
-  // noStore();
+  noStore();
   // const { data, title } = await getData(params.name);
 
   let title = "";
@@ -106,6 +109,17 @@ export default function CategoriesPage({
       title = "Cercei";
       break;
     }
+
+    case "coliere": {
+      title = "Coliere";
+      break;
+    }
+
+    case "bratari": {
+      title = "Brățări";
+      break;
+    }
+
     default: {
       title = "All";
     }
@@ -148,6 +162,10 @@ export default function CategoriesPage({
     },
   });
 
+  if(filter.category){
+    title = filter.category
+  }
+
   return (
     <section>
       <CategoriesHeroHolder />
@@ -176,7 +194,7 @@ export default function CategoriesPage({
 
         <div className="col-span-12 md:col-span-10 ml-4">
           <div className="flex items-baseline justify-between">
-            <h1 className="font-semibold text-3xl my-5">{title}</h1>
+            <h1 className="font-semibold text-3xl my-5 capitalize">{title}</h1>
             <SortFilter
               filter={filter}
               setFilter={setFilter}
