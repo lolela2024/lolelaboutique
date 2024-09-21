@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Roboto_Serif } from "next/font/google";
+import { Montserrat, Montserrat_Subrayada, Roboto_Serif } from "next/font/google";
 import "./globals.css";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
@@ -13,6 +13,11 @@ const robotoSerif = Roboto_Serif({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
 });
+
+const montseratSerif = Montserrat({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
+})
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -29,7 +34,7 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="ro">
-        <body className={robotoSerif.className}>
+        <body className={montseratSerif.className}>
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
           <Providers>{children}</Providers>
           <Toaster richColors theme="light" closeButton />
