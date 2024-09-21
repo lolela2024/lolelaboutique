@@ -37,9 +37,9 @@ export function NavbarLinks() {
           key={item.id}
           className={cn(
             location === item.href
-              ? "border-b-2 border-primary bg-primary text-white rounded-lg my-2"
+              ? "border-b-2 border-primary bg-primary text-white rounded-lg "
               : "hover:text-primary hover:bg-opacity-75",
-            "px-2 py-1 group uppercase text-sm font-semibold"
+            "px-2 py-1 my-2 group uppercase text-sm font-semibold"
           )}
         >
           {item.name}

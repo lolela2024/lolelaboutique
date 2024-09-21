@@ -20,7 +20,7 @@ function getOrSetCartId(): string {
   return cartId;
 }
 
-export async function addItem(productId:string) {
+export async function addItem(productId:string, quantity:number) {
   // const {getUser} = getKindeServerSession();
   // const user = await getUser();
   const cartId = getOrSetCartId()
@@ -64,7 +64,7 @@ export async function addItem(productId:string) {
           id:selectedProduct.id,
           imageString:selectedProduct.images[0],
           name:selectedProduct.name,
-          quantity:1
+          quantity:quantity
         }
       ]
     }
@@ -74,7 +74,7 @@ export async function addItem(productId:string) {
     myCart.items = cart.items.map( (item)=> {
       if(item.id === productId) {
         itemFound = true
-        item.quantity += 1
+        item.quantity += quantity
       }
 
       return item;
@@ -89,7 +89,7 @@ export async function addItem(productId:string) {
         originalPrice: selectedProduct.originalPrice || 0,
         discountAmount:selectedProduct.discountAmount || 0,
         discountPercentage:selectedProduct.discountPercentage || 0,
-        quantity: 1
+        quantity: quantity
       })
     }
 

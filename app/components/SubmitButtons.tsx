@@ -70,11 +70,11 @@ export function ShoppingBagButton() {
   return (
     <>
       {pending ? (
-        <Button disabled size="lg" className="w-full mt-5">
+        <Button disabled size="lg" className="w-full mt-5 bg-buttonColor">
           <Loader2 className="mr-4 h-5 w-5 animate-spin" /> Please Wait
         </Button>
       ) : (
-        <Button size="lg" className="w-full mt-5" type="submit">
+        <Button size="lg"  className="w-full mt-5 bg-buttonColor hover:bg-buttonColor/90" type="submit">
           <ShoppingBag className="mr-4 h-5 w-5" /> Add to Cart
         </Button>
       )}
