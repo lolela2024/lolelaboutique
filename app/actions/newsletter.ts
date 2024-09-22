@@ -3,15 +3,11 @@
 import { parseWithZod } from "@conform-to/zod"
 import { newsletterSchema } from "../lib/zodSchemas"
 import prisma from "../lib/db"
-import { FormSuccess } from '../components/FormSuccess';
-
 
 export async function newsletterEmail(prevState: unknown, formData:FormData) {
   // Construct an object using `Object.fromEntries`
   const payload = Object.fromEntries(formData);
   const result = newsletterSchema.safeParse(payload);
-
-  
 
   const submission = parseWithZod(formData, {
     schema: newsletterSchema
@@ -41,7 +37,6 @@ export async function newsletterEmail(prevState: unknown, formData:FormData) {
     })
 
     return submission.reply({
-      
       formErrors: [" este deja înregistrat."],
     });
 

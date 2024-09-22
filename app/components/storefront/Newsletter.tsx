@@ -1,15 +1,12 @@
 import { newsletterEmail } from "@/app/actions/newsletter";
-import { newsletterSchema } from "@/app/lib/zodSchemas";
 import { Input } from "@/components/ui/input";
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import React from "react";
 import { useFormState } from "react-dom";
 import { NewsletterButton } from "../SubmitButtons";
-import { FormError } from "../FormError";
 import { z } from "zod";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription} from "@/components/ui/alert";
 import { AiFillWarning } from "react-icons/ai";
 
 export const schema = z.object({
@@ -33,7 +30,6 @@ export default function Newsletter() {
     },
   });
 
-  console.log(form.errors);
 
   return (
     <form id={form.id} onSubmit={form.onSubmit} action={action}>
