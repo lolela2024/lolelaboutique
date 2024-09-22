@@ -14,7 +14,7 @@ export function Footer() {
   const [button, setButton] = useState("");
 
   return (
-    <footer className="bg-[#ffeefa] bg-cover bg-center  mt-8 text-gray-700">
+    <footer className="bg-[#ffeefa] bg-cover border-t-4 border-primary bg-center  mt-8 text-gray-700">
       <Wrapper>
         <div className="grid md:grid-cols-3 gap-4 py-4">
           <div className="col-span-1">
@@ -50,7 +50,7 @@ export function Footer() {
             </div>
           </div>
           <div className="col-span-2">
-            <div className="block-newsletter mb-4">
+            <div className="block-newsletter mt-2 mb-8">
               <Newsletter />
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 text-sm">

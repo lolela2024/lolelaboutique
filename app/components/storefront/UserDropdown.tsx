@@ -12,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { FaCalendarDays, FaCircleUser, FaLocationDot } from "react-icons/fa6";
+import { CiLogout } from "react-icons/ci";
 
 interface iAppProps {
   email: string;
@@ -31,23 +33,28 @@ export function UserDropdown({ email, name, userImage }: iAppProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="flex flex-col space-y-1">
-          <p className="text-sm font-medium leading-none">{name}</p>
-          <p className="text-xs leading-none text-muted-foreground">{email}</p>
-        </DropdownMenuLabel>
-
         <DropdownMenuItem asChild>
-          <Link href={"/account/identitate"}>Informatii</Link>
+          <Link className="flex items-center justify-between" href={"/account/identitate"}>Informatii <FaCircleUser /></Link>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
+        <DropdownMenuItem asChild>
+          <Link className="flex items-center justify-between" href={"/account/identitate"}>Adrese <FaLocationDot /></Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem asChild>
+          <Link className="flex items-center justify-between" href={"/account/identitate"}>Comenzi <FaCalendarDays /></Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <Button
           onClick={() => signOut({ callbackUrl: "/" })}
           size={"sm"}
-          variant={"ghost"}
+          variant={"link"}
+          className="w-full text-red-500 no-underline hover:no-underline items-center gap-2 hover:text-red-400"
         >
-          Log out
+          Deconectare <CiLogout />
         </Button>
       </DropdownMenuContent>
     </DropdownMenu>

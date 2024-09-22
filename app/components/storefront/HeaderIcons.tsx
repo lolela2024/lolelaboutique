@@ -35,7 +35,7 @@ export default function HeaderIcons({ total, user }: iAppProps) {
       )}
       <Link href="/bag" className="relative group p-2 flex items-center mr-2">
         <ShoppingBagIcon className="stroke-1 h-7 w-7 text-gray-700 group-hover:text-gray-900" />
-        <Badge className="absolute bottom-1 right-0 p-2 rounded-full w-4 h-4 flex items-center justify-center text-xs font-normal bg-buttonColor hover:bg-buttonColor">
+        <Badge className="absolute text-white bottom-1 right-0 p-2 rounded-full w-4 h-4 flex items-center justify-center text-xs font-normal bg-buttonColor hover:bg-buttonColor">
           {total}
         </Badge>
       </Link>

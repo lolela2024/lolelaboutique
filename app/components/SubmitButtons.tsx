@@ -1,14 +1,23 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Loader, Loader2, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import {
+  ChevronRight,
+  Loader,
+  Loader2,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+} from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
-import { error } from 'console';
+import { error } from "console";
+import { MdEmail } from "react-icons/md";
 
 interface buttonProps {
   title: string;
-  image?:string;
+  image?: string;
   error?: any;
   variant?:
     | "default"
@@ -21,12 +30,7 @@ interface buttonProps {
     | undefined;
 }
 
-export function Submitbutton({
-  title,
-  image,
-  variant,
-  error
-}: buttonProps) {
+export function Submitbutton({ title, image, variant, error }: buttonProps) {
   const { pending } = useFormStatus();
 
   return (
@@ -37,7 +41,11 @@ export function Submitbutton({
           Please Wait
         </Button>
       ) : (
-        <Button disabled={error || image === ""} variant={variant} type="submit">
+        <Button
+          disabled={error || image === ""}
+          variant={variant}
+          type="submit"
+        >
           {title}
         </Button>
       )}
@@ -74,7 +82,11 @@ export function ShoppingBagButton() {
           <Loader2 className="mr-4 h-5 w-5 animate-spin" /> Please Wait
         </Button>
       ) : (
-        <Button size="lg"  className="w-full mt-5 bg-buttonColor hover:bg-buttonColor/90" type="submit">
+        <Button
+          size="lg"
+          className="w-full mt-5 bg-buttonColor hover:bg-buttonColor/90"
+          type="submit"
+        >
           <ShoppingBag className="mr-4 h-5 w-5" /> Add to Cart
         </Button>
       )}
@@ -92,13 +104,16 @@ export function DeleteItem() {
           <Loader className="animate-spin" />
         </button>
       ) : (
-        <button type="submit" className="font-medium text-gray-700 hover:text-primary text-end">
-         <Trash2 className="w-5 h-5" />
+        <button
+          type="submit"
+          className="font-medium text-gray-700 hover:text-primary text-end"
+        >
+          <Trash2 className="w-5 h-5" />
         </button>
       )}
     </>
   );
-} 
+}
 
 export function AddQuantityItem() {
   const { pending } = useFormStatus();
@@ -106,17 +121,23 @@ export function AddQuantityItem() {
   return (
     <>
       {pending ? (
-        <button disabled className="bg-gray-100 border-r border-y px-2 py-[4px] rounded-r-md  font-medium text-gray-700 text-end">
+        <button
+          disabled
+          className="bg-gray-100 border-r border-y px-2 py-[4px] rounded-r-md  font-medium text-gray-700 text-end"
+        >
           <Loader className="animate-spin w-5 h-5" />
         </button>
       ) : (
-        <button type="submit" className="bg-gray-100 border-r border-y px-2 py-[4px] rounded-r-md  font-medium text-gray-700 hover:text-primary text-end">
-         <Plus className="w-5 h-5"/>
+        <button
+          type="submit"
+          className="bg-gray-100 border-r border-y px-2 py-[4px] rounded-r-md  font-medium text-gray-700 hover:text-primary text-end"
+        >
+          <Plus className="w-5 h-5" />
         </button>
       )}
     </>
   );
-} 
+}
 
 export function RemoveQuantityItem() {
   const { pending } = useFormStatus();
@@ -124,17 +145,23 @@ export function RemoveQuantityItem() {
   return (
     <>
       {pending ? (
-        <button disabled className="bg-gray-100 border-l border-y px-2 py-[4px] rounded-l-md  font-medium text-gray-700 text-end">
+        <button
+          disabled
+          className="bg-gray-100 border-l border-y px-2 py-[4px] rounded-l-md  font-medium text-gray-700 text-end"
+        >
           <Loader className="animate-spin w-5 h-5" />
         </button>
       ) : (
-        <button type="submit" className="bg-gray-100 border-l border-y px-2 py-[4px] rounded-l-md  font-medium text-gray-700 hover:text-primary text-end">
-         <Minus className="w-5 h-5"/>
+        <button
+          type="submit"
+          className="bg-gray-100 border-l border-y px-2 py-[4px] rounded-l-md  font-medium text-gray-700 hover:text-primary text-end"
+        >
+          <Minus className="w-5 h-5" />
         </button>
       )}
     </>
   );
-} 
+}
 
 export function ChceckoutButton() {
   const { pending } = useFormStatus();
@@ -154,9 +181,13 @@ export function ChceckoutButton() {
 }
 
 export function ChceckoutButtonRedirect() {
-  const {push} = useRouter()
+  const { push } = useRouter();
   return (
-    <Button  size="default" className=" w-full mt-5" onClick={()=>push("/checkout")}>
+    <Button
+      size="default"
+      className=" w-full mt-5"
+      onClick={() => push("/checkout")}
+    >
       Finalizeaza comanda <ChevronRight className="w-5 h-5" />
     </Button>
   );
@@ -174,5 +205,19 @@ export const AuthButton = () => {
     >
       {pending ? "Loading..." : "Sign in"}
     </button>
+  );
+};
+
+export const NewsletterButton = () => {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      className="px-8 text-base gap-2 py-6 rounded-l-none border border-primary"
+      type="submit"
+      disabled={pending}
+    >
+      <MdEmail />
+      Aboneaza-te
+    </Button>
   );
 };

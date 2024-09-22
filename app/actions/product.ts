@@ -161,7 +161,3 @@ export async function deleteImage(image:string) {
   }
 }
 
-function sanitizeText(text:any) {
-  // Înlocuiește caracterele de escape sau caracterele speciale
-  return text.replace(/\\\"/g, '\"').replace(/\\'/g, "'").replace(/\\n/g, '\n');
-}

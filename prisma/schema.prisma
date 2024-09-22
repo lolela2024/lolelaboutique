@@ -297,3 +297,9 @@ model BannerTop {
   description Json?
   on          Boolean @default(false)
 }
+
+model Newsletter {
+  id Int @id @default(autoincrement())
+
+  email String @unique
+}
