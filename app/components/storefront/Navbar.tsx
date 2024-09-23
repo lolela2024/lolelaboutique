@@ -24,9 +24,11 @@ export async function Navbar() {
 
   const total = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
+  const totalSum = cart?.items.reduce((sum,item) => sum + item.price*item.quantity, 0) || 0;
+
   return (
-    <div className="bg-white ">
-      <header >
+    <div className="bg-white lg:sticky lg:top-0 z-10 lg:shadow-md">
+      <header>
         <Topbar />
         <Wrapper>
           <div className="grid grid-cols-2 lg:grid-cols-12 items-center">
@@ -42,7 +44,7 @@ export async function Navbar() {
               <Search />
             </div>
             <div className="col-span-1 lg:col-span-2">
-              <HeaderIcons total={total} user={user} />
+              <HeaderIcons total={total} totalSum={totalSum} user={user} />
             </div>
           </div>
           <div className="lg:hidden mt-2">

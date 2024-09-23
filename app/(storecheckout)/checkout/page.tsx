@@ -9,12 +9,15 @@ import prisma from "@/app/lib/db";
 import { auth } from "@/auth";
 
 
+
 export default async function CeckoutPage() {
+
   noStore();
   const session = await auth()
   const user = session?.user
 
   let userBazaDeDate = null;
+
 
   if (user?.email) { 
     const userData = await prisma.user.findFirst({

@@ -180,13 +180,13 @@ export function ChceckoutButton() {
   );
 }
 
-export function ChceckoutButtonRedirect() {
+export function ChceckoutButtonRedirect({transport}:{transport:string}) {
   const { push } = useRouter();
   return (
     <Button
       size="default"
       className=" w-full mt-5"
-      onClick={() => push("/checkout")}
+      onClick={() => push(`/checkout?transport=${transport}`)}
     >
       Finalizeaza comanda <ChevronRight className="w-5 h-5" />
     </Button>

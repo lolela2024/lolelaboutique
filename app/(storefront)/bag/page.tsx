@@ -26,11 +26,20 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Alert } from "@/components/ui/alert";
+
+const pretLivrare = {
+  dhl: 24.99
+}
 
 export default async function BagRoute() {
   noStore();
   const cookieStore = cookies();
   const cartId = cookieStore.get("cartId")?.value;
+
+  let gratuit = 700;
+  let transport = "plata";
+  let diferenta = 0;
 
   const cart: Cart | null = await redis.get(`cart-${cartId}`);
 
@@ -42,7 +51,15 @@ export default async function BagRoute() {
 
   const total = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
-  const cartLength = cart?.items.length
+  const cartLength = cart?.items.length;
+
+  if (totalPrice >= gratuit) {
+    transport = "gratuit";
+  }
+
+  if (totalPrice < gratuit) {
+    diferenta = gratuit - totalPrice;
+  }
 
   if (!cart || !cartLength) {
     return (
@@ -155,22 +172,30 @@ export default async function BagRoute() {
               </div>
               <div className="flex items-center justify-between font-light">
                 <p>Livrare</p>
-                <p>{formatCurrency(24.99)}</p>
+                {transport === "plata" ? <p>{formatCurrency(pretLivrare.dhl)}</p> : <p>gratuit</p>}
               </div>
-              <Separator className="my-2"/>
+              <Separator className="my-2" />
               <div className="flex items-center justify-between font-semibold">
                 <p> Total (inclusiv TVA)</p>
-                <p>{formatCurrency(totalPrice + 24.99)}</p>
+                <p>
+                  {transport === "plata"
+                    ? formatCurrency(totalPrice + pretLivrare.dhl)
+                    : formatCurrency(totalPrice)}
+                </p>
               </div>
-             
+              {diferenta !== 0 && (
+                <Alert variant={"success"} className="px-2 py-1 text-sm">
+                  Cumperi de inca <strong>{formatCurrency(diferenta)}</strong>{" "}
+                  si ai transport gratuit
+                </Alert>
+              )}
             </CardContent>
             <CardFooter className="bg-[#f7f7f7] border-t overflow-hidden rounded-b-lg px-16">
-              <ChceckoutButtonRedirect />
+              <ChceckoutButtonRedirect transport={transport}/>
             </CardFooter>
           </Card>
         </div>
       </div>
     </div>
-    
   );
 }

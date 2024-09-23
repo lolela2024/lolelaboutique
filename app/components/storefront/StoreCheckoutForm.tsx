@@ -36,7 +36,7 @@ import ShippingForm from "./ShippingForm";
 import AccordionAddress from "./AccordionAddress";
 import { CheckoutFormProps } from "@/app/types/types";
 import LogoutButton from "@/app/(storefront)/account/_components/LogoutButton";
-
+import { useRouter, useSearchParams } from "next/navigation";
 
 const județeRomânia = [
   { romanian: "Arad", english: "Arad" },
@@ -86,6 +86,9 @@ export default function StoreCheckoutForm({
   products,
   user,
 }: CheckoutFormProps) {
+  const searchParams = useSearchParams();
+  const transport = searchParams.get("transport");
+
   const [shipping, setSipping] = useState<string>("free");
   const totalAmountItems = products.items.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -103,7 +106,12 @@ export default function StoreCheckoutForm({
     <div className="max-w-6xl w-full mx-auto space-y-8">
       <div className="grid lg:grid-cols-2">
         <div className="bg-white">
-          <Form user={user} shipping={shipping} setSipping={setSipping} />
+          <Form
+            user={user}
+            shipping={shipping}
+            setSipping={setSipping}
+            transport={transport}
+          />
         </div>
 
         <div className="bg-[#f5f5f5] h-screen p-8 border-l sticky top-0">
@@ -187,10 +195,12 @@ function Form({
   user,
   shipping,
   setSipping,
+  transport,
 }: {
   user: CheckoutFormProps["user"];
   shipping: any;
   setSipping: any;
+  transport: any;
 }) {
   const [lastResult, action] = useFormState(createCeckout, undefined);
 
@@ -211,6 +221,14 @@ function Form({
   const handleChange = (event: any, setState: Function) => {
     setState(event.target.value);
   };
+
+  if(transport==="gratuit"){
+    setSipping("free")
+  }
+
+  if(transport==="plata"){
+    setSipping("dhl")
+  }
 
   const countyOptions = județeRomânia.map((judet, index) => (
     <SelectItem key={index} value={judet.romanian}>
@@ -245,11 +263,7 @@ function Form({
                       </p>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent>
-                    
-                      Deconectează-te
-                   
-                  </AccordionContent>
+                  <AccordionContent>Deconectează-te</AccordionContent>
                 </AccordionItem>
                 <AccordionAddress fields={fields} user={user} />
               </Accordion>
@@ -301,37 +315,40 @@ function Form({
               <div className="">
                 <RadioGroup
                   className="gap-0"
-                  defaultValue="free"
+                  defaultValue={transport === "gratuit" ? "free" : "dhl"}
                   key={fields.shipping.key}
                   name={fields.shipping.name}
                   onChange={(event) => handleChange(event, setSipping)}
                 >
-                  <Label
-                    className={`flex items-center space-x-2 w-full   text-end px-4 py-4 cursor-pointer ${
-                      shipping === "free"
-                        ? "bg-red-100 border border-red-500 rounded-t-sm"
-                        : "border rounded-t-sm"
-                    }`}
-                  >
-                    <RadioGroupItem value="free" id="free" />
-                    <div className="flex w-full justify-between items-center">
-                      <p>Livrare GRATUITĂ</p>
-                      <p>Free</p>
-                    </div>
-                  </Label>
-                  <Label
-                    className={`flex items-center space-x-2 w-full  text-end px-4 py-4 cursor-pointer ${
-                      shipping === "dhl"
-                        ? "bg-red-100 overflow-hidden rounded-b-sm border border-red-500 "
-                        : "rounded-b-sm border"
-                    }`}
-                  >
-                    <RadioGroupItem value="dhl" id="dhl" />
-                    <div className="flex w-full justify-between items-center">
-                      <p className="text-sm text-start">Taxă de Transport</p>
-                      <p>{formatCurrency(24.99)}</p>
-                    </div>
-                  </Label>
+                  {transport === "gratuit" ? (
+                    <Label
+                      className={`flex items-center space-x-2 w-full   text-end px-4 py-4 cursor-pointer ${
+                        shipping === "free"
+                          ? "bg-red-100 border border-red-500 rounded-t-sm"
+                          : "border rounded-t-sm"
+                      }`}
+                    >
+                      <RadioGroupItem value="free" id="free" />
+                      <div className="flex w-full justify-between items-center">
+                        <p>Livrare GRATUITĂ</p>
+                        <p>Free</p>
+                      </div>
+                    </Label>
+                  ) : (
+                    <Label
+                      className={`flex items-center space-x-2 w-full  text-end px-4 py-4 cursor-pointer ${
+                        shipping === "dhl"
+                          ? "bg-red-100 overflow-hidden rounded-b-sm border border-red-500 "
+                          : "rounded-b-sm border"
+                      }`}
+                    >
+                      <RadioGroupItem value="dhl" id="dhl" />
+                      <div className="flex w-full justify-between items-center">
+                        <p className="text-sm text-start">Taxă de Transport</p>
+                        <p>{formatCurrency(24.99)}</p>
+                      </div>
+                    </Label>
+                  )}
                 </RadioGroup>
               </div>
             </Card>
@@ -638,7 +655,7 @@ function Form({
           </div>
         </CardContent>
         <CardFooter>
-          <ChceckoutButton /> 
+          <ChceckoutButton />
         </CardFooter>
       </Card>
     </form>
