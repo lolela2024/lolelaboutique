@@ -16,7 +16,7 @@ interface iAppProps {
   wishlist: Wishlist | null;
 }
 
-export function ProductCard({ item, wishlist }: iAppProps) {
+export function ProductCard({ item,loading, wishlist }: iAppProps) {
   const [visible, setVisible] = useState(false);
   const { push } = useRouter();
 
