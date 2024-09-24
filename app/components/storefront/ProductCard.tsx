@@ -1,25 +1,34 @@
 "use client";
 
-import { Product } from "@/app/(storefront)/products/[name]/page";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import Rating from "./rating/Rating";
 import { useRouter } from "next/navigation";
-import { formatCurrency } from '../../lib/formatters';
+import { formatCurrency } from "../../lib/formatters";
 import CustomImage from "@/components/CustomImage";
+import AddProductToWishlistForm from "./AddProductToWishlistForm";
+import { Wishlist } from "@/app/lib/interfaces";
 
 interface iAppProps {
   item: any;
   loading: boolean;
+  wishlist: Wishlist | null;
 }
 
-export function ProductCard({ item }: iAppProps) {
+export function ProductCard({ item, wishlist }: iAppProps) {
   const [visible, setVisible] = useState(false);
   const { push } = useRouter();
+
+  let itemFound = false;
+
+  wishlist?.items.map((product) => {
+    if (product.id === item.id) {
+      itemFound = true;
+    }
+
+    return item;
+  });
 
   return (
     <div
@@ -27,49 +36,62 @@ export function ProductCard({ item }: iAppProps) {
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
     >
-      <Card
-        className="relative w-full mx-auto shadow-none border-none cursor-pointer"
-        onMouseEnter={() => setVisible(true)}
-        onMouseLeave={() => setVisible(false)}
-        onClick={() => push(`/product/${item.id}`)}
-      >
-        <CardHeader className=" p-0 rounded-none">
-          <div className="relative rounded-t-lg">
-            <CustomImage
-              src={item.images[0]}
-              alt="Product Image"
-              
-              sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
-              className={`absolute transition-opacity duration-700 ease-in-out ${
-                visible && item.images[1] ? "opacity-0" : "opacity-100"
-              }`}
-            />
-            {item.images[1] && (
-              <CustomImage
-                src={item.images[1]}
-                alt="Product Image"
-                width={640}
-                height={640}
-                sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
-                className={` transition-opacity duration-700 ease-in-out ${
-                  visible ? "opacity-100" : "opacity-0"
-                }`}
-              />
-            )}
-            <div className={`${visible ? "block" : "hidden"}`}>
-              <div className="absolute bottom-[0px]  w-full  bg-buttonColor/90 py-1  text-white capitalize text-center">
-                Vizualizare
+      <Card className="relative w-full mx-auto shadow-none border-none ">
+        <div
+          className="cursor-pointer"
+          onMouseEnter={() => setVisible(true)}
+          onMouseLeave={() => setVisible(false)}
+        >
+          <CardHeader className=" p-0 rounded-none">
+            <div className="relative rounded-t-lg">
+              <div onClick={() => push(`/product/${item.id}`)}>
+                <CustomImage
+                  src={item.images[0]}
+                  alt="Product Image"
+                  sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
+                  className={`absolute transition-opacity duration-700 ease-in-out ${
+                    visible && item.images[1] ? "opacity-0" : "opacity-100"
+                  }`}
+                />
+                {item.images[1] && (
+                  <CustomImage
+                    src={item.images[1]}
+                    alt="Product Image"
+                    width={640}
+                    height={640}
+                    sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
+                    className={` transition-opacity duration-700 ease-in-out ${
+                      visible ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                )}
+              </div>
+              <AddProductToWishlistForm dataId={item.id} itemFound={itemFound}/>
+
+              <div
+                className={`${visible ? "block" : "hidden"}`}
+                onClick={() => push(`/product/${item.id}`)}
+              >
+                <div className="absolute bottom-[0px]  w-full  bg-buttonColor/90 py-1  text-white capitalize text-center">
+                  Vizualizare
+                </div>
               </div>
             </div>
-          </div>
-        </CardHeader>
-
+          </CardHeader>
+        </div>
         <CardContent className="p-0">
-          <h1 className="font-semibold text-sm my-2">{item.name}</h1>
+          <h1
+            className="font-semibold text-sm my-2 cursor-pointer"
+            onClick={() => push(`/product/${item.id}`)}
+          >
+            {item.name}
+          </h1>
           <Rating isEditable={false} rating={5} />
           <div className="flex mt-2 items-center space-x-2">
             {item.originalPrice && (
-              <p className="text-black text-sm line-through font-light opacity-60">{formatCurrency(item.originalPrice)}</p>
+              <p className="text-black text-sm line-through font-light opacity-60">
+                {formatCurrency(item.originalPrice)}
+              </p>
             )}
 
             <p className="text-primary">{item.price} Lei</p>

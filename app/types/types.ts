@@ -7,8 +7,7 @@ export type CheckoutFormProps = {
   user?: {
     email: string;
     phone: string | null;
-    firstName: string | null;
-    lastName: string | null;
+    name: string | null;
     profileImage: string | null;
     address: {
       id: number;

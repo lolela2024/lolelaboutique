@@ -24,8 +24,7 @@ export default async function CeckoutPage() {
       where: { email: user.email },
       select:{
         email:true,
-        firstName:true,
-        lastName:true,
+        name:true,
         profileImage:true,
         address:true,
         billingAddress:true,
@@ -44,7 +43,6 @@ export default async function CeckoutPage() {
     // Dacă utilizatorul nu este autentificat sau nu are un email, aruncă o eroare sau redirecționează
     console.log('User is not authenticated or email is missing.');
   }
-
 
   const cookieStore = cookies();
   const cartId = cookieStore.get('cartId')?.value;

@@ -14,6 +14,8 @@ import { redirect, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { error } from "console";
 import { MdEmail } from "react-icons/md";
+import { FaHeart, FaRegHeart } from "react-icons/fa6";
+import { Wishlist } from "../lib/interfaces";
 
 interface buttonProps {
   title: string;
@@ -221,3 +223,17 @@ export const NewsletterButton = () => {
     </Button>
   );
 };
+
+export const WishlistButton = ({itemFound}:{itemFound:boolean}) => {
+  const { pending } = useFormStatus();
+
+  
+  return (
+    <button 
+      type="submit"
+      disabled={pending}
+    >
+      {itemFound ? <FaHeart size={24}/> : <FaRegHeart size={24} />}
+    </button>
+  )
+}

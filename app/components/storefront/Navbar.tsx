@@ -1,16 +1,14 @@
 
-
 import { AlignJustify } from "lucide-react";
 import { NavbarLinks } from "./NavbarLinks";
 import { redis } from "@/app/lib/redis";
-import { Cart } from "@/app/lib/interfaces";
+import { Cart, Wishlist } from "@/app/lib/interfaces";
 import Logo from "./Logo";
 import Wrapper from "./Wrapper";
 import HeaderIcons from "./HeaderIcons";
 import Search from "./Search";
 import Topbar from "./Topbar";
 import { cookies } from "next/headers";
-import getSession from "@/lib/getSession";
 import { auth } from "@/auth";
 
 export async function Navbar() {
@@ -19,12 +17,17 @@ export async function Navbar() {
 
   const cookieStore = cookies();
   const cartId = cookieStore.get('cartId')?.value;
+  const wishilistId = cookieStore.get('wishlistId')?.value;
 
   const cart: Cart | null = await redis.get(`cart-${cartId}`);
+
+  const wishlist: Wishlist | null = await redis.get(`wishlist-${wishilistId}`);
 
   const total = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   const totalSum = cart?.items.reduce((sum,item) => sum + item.price*item.quantity, 0) || 0;
+
+  const totalWishlistProduct = wishlist?.items.length;
 
   return (
     <div className="bg-white lg:sticky lg:top-0 z-10 lg:shadow-md">
@@ -40,11 +43,11 @@ export async function Navbar() {
                 <Logo />
               </div>
             </div>
-            <div className="hidden lg:block col-span-7">
+            <div className="hidden lg:block col-span-6">
               <Search />
             </div>
-            <div className="col-span-1 lg:col-span-2">
-              <HeaderIcons total={total} totalSum={totalSum} user={user} />
+            <div className="col-span-1 lg:col-span-3">
+              <HeaderIcons total={total} totalSum={totalSum} user={user} totalWishlistProduct={totalWishlistProduct}/>
             </div>
           </div>
           <div className="lg:hidden mt-2">

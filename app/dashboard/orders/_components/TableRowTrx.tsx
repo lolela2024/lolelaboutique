@@ -6,9 +6,12 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { Fulfilled, Order } from "@prisma/client";
 import { cn } from "@/lib/utils";
+import { User } from 'lucide-react';
 
 export default function TableRowTrx({ item }: { item: any }) {
   const { push } = useRouter();
+
+  console.log(item)
   return (
     <TableRow
       className="cursor-pointer"

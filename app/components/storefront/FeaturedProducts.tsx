@@ -2,6 +2,9 @@ import prisma from "@/app/lib/db";
 import { LoadingProductCard, ProductCard } from "./ProductCard";
 import { Suspense } from "react";
 import { unstable_noStore as noStore, revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { Wishlist } from "@/app/lib/interfaces";
+import { redis } from "@/app/lib/redis";
 
 async function getData() {
   const data = await prisma.product.findMany({
@@ -20,6 +23,8 @@ async function getData() {
 }
 
 export function FeaturedProducts() {
+
+
   return (
     <>
       <h2 className="text-2xl font-medium tracking-tight uppercase">Produse Recomandate</h2>
@@ -34,10 +39,16 @@ async function LoadFeaturedproducts() {
   noStore();
   const data = await getData();
 
+  const cookieStore = cookies();
+  const wishlistId = cookieStore.get("wishlistId")?.value;
+
+  const wishlist: Wishlist | null = await redis.get(`wishlist-${wishlistId}`);
+
+
   return (
     <div className="mt-5 grid  md:grid-cols-3 lg:grid-cols-4 gap-5">
       {data.map((item) => (
-        <ProductCard loading key={item.id} item={item} />
+        <ProductCard loading key={item.id} item={item} wishlist={wishlist}/>
       ))}
     </div>
   );

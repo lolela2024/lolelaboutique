@@ -37,7 +37,7 @@ export default async function BagRoute() {
   const cookieStore = cookies();
   const cartId = cookieStore.get("cartId")?.value;
 
-  let gratuit = 700;
+  let gratuit = 199;
   let transport = "plata";
   let diferenta = 0;
 

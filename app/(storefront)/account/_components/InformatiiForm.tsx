@@ -43,15 +43,7 @@ export default function InformatiiForm({ user }: InformatiiFormProps) {
     shouldRevalidate: "onInput",
   });  
 
-  useEffect(()=>{
-    const passwordB = bcrypt.compareSync(password || "", user?.password || "")
-
-    if(!passwordB || password !== user?.password){
-      setError("The current password is incorrect. Please try again.")
-    }else{
-      setError("")
-    }
-  },[password])
+  
   
   return (
     <form id={form.id} onSubmit={form.onSubmit} action={action}>

@@ -80,9 +80,9 @@ export default function ShippingForm({fields, user}:{fields:any, user:CheckoutFo
         <div className="flex flex-col gap-3 w-full">
           <Input
             type="text"
-            key={fields.firstName.key}
-            name={fields.firstName.name}
-            defaultValue={user?.firstName || ''}
+            key={fields.name.key}
+            name={fields.name.name}
+            defaultValue={user?.name || ''}
             className={
               fields.firstName.errors
                 ? "w-full border-red-500 border-2"
@@ -92,12 +92,12 @@ export default function ShippingForm({fields, user}:{fields:any, user:CheckoutFo
           />
           <p className="text-red-500 text-sm">{fields.firstName.errors}</p>
         </div>
-        <div className="flex flex-col gap-3 w-full">
+        {/* <div className="flex flex-col gap-3 w-full">
           <Input
             type="text"
             key={fields.lastName.key}
             name={fields.lastName.name}
-            defaultValue={user?.lastName || ''}
+            defaultValue={user?.name || ''}
             className={
               fields.lastName.errors
                 ? "w-full border-red-500 border-2"
@@ -106,7 +106,7 @@ export default function ShippingForm({fields, user}:{fields:any, user:CheckoutFo
             placeholder="Last name"
           />
           <p className="text-red-500 text-sm">{fields.lastName.errors}</p>
-        </div>
+        </div> */}
       </div>
       <div className="flex flex-col gap-3 w-full">
         <Input

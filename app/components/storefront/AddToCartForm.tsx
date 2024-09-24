@@ -6,7 +6,7 @@ import { addItem } from "@/app/actions/bag";
 import { Product } from "@prisma/client";
 import { productSchema } from "../../lib/zodSchemas";
 import { Input } from "@/components/ui/input";
-import { FaMinus, FaPlus } from "react-icons/fa";
+import { FaMinus, FaPlus } from "react-icons/fa";  
 
 export default function AddToCartForm({ dataId }: { dataId: string }) {
   const [quantity, setQuantity] = useState(1);

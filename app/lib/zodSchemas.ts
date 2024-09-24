@@ -47,6 +47,7 @@ export const dateLivrare = z.object({
 export const ceckoutSchema = z.object({
   email: z.string( { required_error: "Enter an email" } ).email(),
   country:z.string().min(1,{message:"Select a Country"}),
+  name:z.string({ required_error: "Enter a name"}),
   firstName:z.string({ required_error: "Enter a first name"}),
   lastName:z.string({ required_error: "Enter a last name"}),
   company:z.string().optional(),

@@ -35,8 +35,7 @@ import {
 import ShippingForm from "./ShippingForm";
 import AccordionAddress from "./AccordionAddress";
 import { CheckoutFormProps } from "@/app/types/types";
-import LogoutButton from "@/app/(storefront)/account/_components/LogoutButton";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const județeRomânia = [
   { romanian: "Arad", english: "Arad" },

@@ -21,13 +21,7 @@ function getOrSetCartId(): string {
 }
 
 export async function addItem(productId:string, quantity:number) {
-  // const {getUser} = getKindeServerSession();
-  // const user = await getUser();
-  const cartId = getOrSetCartId()
-
-  // if(!user){
-  //   return redirect('/');
-  // }
+  const cartId = getOrSetCartId();
 
   let cart: Cart | null = await redis.get(`cart-${cartId}`)
 
