@@ -25,7 +25,7 @@ export default function AccordionAddress({
           <div className="text-sm text-secondary-foreground">
             {user && user.address.length > 0 ? (
               <p className="text-xs font-light">
-                {user.firstName} {user.lastName}, {user?.address[0].address},{" "}
+                {user.name}, {user?.address[0].address},{" "}
                 {user.address[0].postalCode}, {user.address[0].city}, {user.address[0].county}, {user.phone}
               </p>
             ) : (
