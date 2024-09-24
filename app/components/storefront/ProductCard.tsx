@@ -13,7 +13,7 @@ import { Wishlist } from "@/app/lib/interfaces";
 interface iAppProps {
   item: any;
   loading: boolean;
-  wishlist: Wishlist | null;
+  wishlist?: Wishlist | null;
 }
 
 export function ProductCard({ item,loading, wishlist }: iAppProps) {
