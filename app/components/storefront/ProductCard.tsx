@@ -32,7 +32,7 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
 
   return (
     <div
-      className="rounded-lg"
+      className="rounded-lg shadow-lg border border-gray-200"
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
     >
@@ -81,7 +81,7 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
         </div>
         <CardContent className="p-0">
           <h1
-            className="font-semibold text-sm my-2 cursor-pointer"
+            className="font-semibold text-sm my-2 cursor-pointer px-2"
             onClick={() => push(`/product/${item.id}`)}
           >
             {item.name}
@@ -110,7 +110,7 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
 export function LoadingProductCard() {
   return (
     <div className="flex flex-col">
-      <Skeleton className="w-full h-[330px]" />
+      <Skeleton className="w-full h-[220px]" />
       <div className="flex flex-col mt-2 gap-y-2">
         <Skeleton className="h-4 w-full" />
         <Skeleton className="w-full h-6" />

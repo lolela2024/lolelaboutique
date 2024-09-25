@@ -16,7 +16,7 @@ export default function AddProductToWishlistForm({
 
   return (
     <form
-      className="absolute top-0 right-0 text-pink-500 p-1 hover:text-pink-300"
+      className="absolute top-1 right-1 text-pink-500 p-1 hover:text-pink-300"
       action={addProductToWishlist}
     >
       <WishlistButton itemFound={itemFound}/>

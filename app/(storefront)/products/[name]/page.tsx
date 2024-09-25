@@ -1,4 +1,3 @@
-"use client";
 
 import { ProductCard } from "@/app/components/storefront/ProductCard";
 import CategoriesHeroHolder from "@/app/components/storefront/CategoriesHeroHolder";
@@ -6,7 +5,6 @@ import CategoriesHeroHolder from "@/app/components/storefront/CategoriesHeroHold
 import axios from "axios";
 import { QueriesResults, useQuery } from "@tanstack/react-query";
 
-import {  useState } from "react";
 import { LoadingProductCard } from "@/app/components/ProductCard";
 
 import PietrePretioaseSort from "@/app/components/storefront/sort/PietrePretioaseSort";
@@ -16,6 +14,11 @@ import SortFilter from "@/app/components/storefront/sort/SortFilter";
 import { unstable_noStore as  noStore} from "next/cache";
 import prisma from "@/app/lib/db";
 import { notFound } from "next/navigation";
+import { useState } from "react";
+import ProductFilter from "@/app/components/storefront/ProductFilter";
+import { cookies } from "next/headers";
+import { Wishlist } from "@/app/lib/interfaces";
+import { redis } from "@/app/lib/redis";
 
 async function getData(productCategory: string) {
   const data = await prisma.product.findMany({
@@ -81,15 +84,9 @@ async function getData(productCategory: string) {
   }
 }
 
-export type Product = {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  images: [];
-}[];
 
-export default function CategoriesPage({
+
+export default async function CategoriesPage({
   params,
 }: {
   params: { name: string };
@@ -97,121 +94,12 @@ export default function CategoriesPage({
   noStore();
   // const { data, title } = await getData(params.name);
 
-  let title = "";
+  const cookieStore = cookies();
+  const wishlistId = cookieStore.get("wishlistId")?.value;
 
-  switch (params.name) {
-    case "all": {
-      title = "All products";
-      break;
-    }
-
-    case "cercei": {
-      title = "Cercei";
-      break;
-    }
-
-    case "coliere": {
-      title = "Coliere";
-      break;
-    }
-
-    case "bratari": {
-      title = "Brățări";
-      break;
-    }
-
-    default: {
-      title = "All";
-    }
-  }
-
-  const [filter, setFilter] = useState({
-    sort: "none",
-    sortType: "",
-    categorySlug: "all",
-    category: "",
-    selectedPriceRange: "",
-  });
-  const [loading, setLoading] = useState(false);
-
-  const { data: products, refetch } = useQuery({
-    queryKey: ["products"],
-    queryFn: async () => {
-      try {
-        setLoading(true);
-
-        const { data } = await axios.post<QueriesResults<Product>>(
-          "/api/products",
-          {
-            filter: {
-              sort: filter.sort,
-              sortType: filter.sortType,
-              categorySlug: params.name,
-              category: filter.category,
-              selectedPriceRange: filter.selectedPriceRange,
-            },
-          }
-        );
-
-        return data;
-      } catch (error) {
-        throw new Error("Something went wrong!");
-      } finally {
-        setLoading(false);
-      }
-    },
-  });
-
-  if(filter.category){
-    title = filter.category
-  }
+  const wishlist: Wishlist | null = await redis.get(`wishlist-${wishlistId}`);
 
   return (
-    <section>
-      <CategoriesHeroHolder />
-      <div className="grid grid-cols-12">
-        {/* filter */}
-        <div className="hidden md:block md:col-span-2 pl-4">
-          <div className="filter-group border-r border-b pb-6">
-            <PriceFilter
-              filter={filter}
-              setFilter={setFilter}
-              refetch={refetch}
-            />
-          </div>
-
-          <div className="filter-group border-r border-b pb-6">
-            <CategoryFilter
-              filter={filter}
-              setFilter={setFilter}
-              refetch={refetch}
-            />
-          </div>
-          <div className="filter-group border-r border-b pb-6">
-            <PietrePretioaseSort />
-          </div>
-        </div>
-
-        <div className="col-span-12 md:col-span-10 ml-4">
-          <div className="flex items-baseline justify-between">
-            <h1 className="font-semibold text-3xl my-5 capitalize">{title}</h1>
-            <SortFilter
-              filter={filter}
-              setFilter={setFilter}
-              refetch={refetch}
-            />
-          </div>
-
-          <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {loading
-              ? LoadingProductCard()
-              : products &&
-                products.map((item, index) => (
-                  <ProductCard loading={loading} item={item} key={index} />
-                ))}
-          </div>
-        </div>
-      </div>
-    </section>
+    <ProductFilter params={params} wishlist={wishlist}/>
   );
 }
