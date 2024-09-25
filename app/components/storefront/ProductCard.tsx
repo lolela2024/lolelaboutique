@@ -49,7 +49,7 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
                   src={item.images[0]}
                   alt="Product Image"
                   sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
-                  className={`absolute transition-opacity duration-700 ease-in-out ${
+                  className={`absolute rounded-lg overflow-hidden transition-opacity duration-700 ease-in-out ${
                     visible && item.images[1] ? "opacity-0" : "opacity-100"
                   }`}
                 />
@@ -60,7 +60,7 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
                     width={640}
                     height={640}
                     sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
-                    className={` transition-opacity duration-700 ease-in-out ${
+                    className={`rounded-lg overflow-hidden transition-opacity duration-700 ease-in-out ${
                       visible ? "opacity-100" : "opacity-0"
                     }`}
                   />
