@@ -50,7 +50,7 @@ export const ceckoutSchema = z.object({
   name:z.string({ required_error: "Enter a name"}),
   firstName:z.string({ required_error: "Enter a first name"}),
   lastName:z.string({ required_error: "Enter a last name"}),
-  company:z.string().optional(),
+  numeFirma:z.string().optional(),
   address:z.string({ required_error: "Enter an address"}),
   address2:z.string().optional(),
   county:z.string({ required_error: "Select a state / province"}),
@@ -73,7 +73,8 @@ export const ceckoutSchema = z.object({
   shipping:z.string().optional(),
   payment:z.string().optional(),
   billingAddress: z.enum(['same-address', 'different-address']),
-
+  
+  tipPersoana: z.enum(['persoana-fizica', 'persoana-juridica']),
   countryBilling:z.string().optional(),
   firstNameBilling:z.string().optional(),
   lastNameBilling:z.string().optional(),
@@ -86,6 +87,15 @@ export const ceckoutSchema = z.object({
   phoneBilling:z.string().optional()
 })
 .superRefine((data, ctx) => {
+  if(data.tipPersoana === "persoana-juridica") {
+    if(!data.numeFirma){
+      ctx.addIssue({
+        code: 'custom',
+        path: ['numeFirma'],
+        message: 'Dați un nume de firma',
+      });
+    }
+  }
   if (data.billingAddress === 'different-address') {
     if (!data.countryBilling) {
       ctx.addIssue({
@@ -157,8 +167,11 @@ export const RegisterSchema = z.object({
   password:z.string().min(6,{
     message: "Minimum 6 characters required"
   }),
-  name:z.string().min(1,{
-    message: "Name is required"
+  firstName:z.string().min(1,{
+    message: "Firstname is required"
+  }),
+  lastName:z.string().min(1,{
+    message: "Lastname is required"
   })
 })
 

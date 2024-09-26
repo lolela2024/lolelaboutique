@@ -7,13 +7,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { RegisterSchema } from "@/app/lib/zodSchemas";
 import { CardWrapper } from "./CardWrapper";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FormError } from "@/app/components/FormError";
 import { FormSuccess } from "@/app/components/FormSuccess";
 import { Button } from "@/components/ui/button";
 import { register } from "@/app/actions/register";
-
 
 export const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();
@@ -25,7 +31,8 @@ export const RegisterForm = () => {
     defaultValues: {
       email: "",
       password: "",
-      name: "",
+      firstName: "",
+      lastName: ""
     },
   });
 
@@ -37,8 +44,6 @@ export const RegisterForm = () => {
       register(values).then((data) => {
         setError(data.error);
         setSuccess(data.success);
-
-        
       });
     });
   };
@@ -56,22 +61,42 @@ export const RegisterForm = () => {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="name"
+              name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Nume:</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isPending}
                       type="text"
-                      placeholder="John Doe"
+                      placeholder="Nume"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Prenume:</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      type="text"
+                      placeholder="Prenume"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="email"

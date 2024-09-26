@@ -78,6 +78,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       
       token.isOAuth = !!existingAccount;
       token.name = existingUser.name;
+      token.firstName = existingUser.firstName;
+      token.lastName = existingUser.lastName;
       token.username = existingUser.username;
       token.gender = existingUser.gender;
       token.dateOfBirth = existingUser.dateOfBirth;
@@ -104,6 +106,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (session.user) {
         session.user.name = token.name;
+        session.user.firstName = token.firstName as string;
+        session.user.lastName = token.lastName as string;
         session.user.username = token.username as string;
         session.user.gender = token.gender as string;
         session.user.dateOfBirth = token.dateOfBirth as Date;

@@ -8,6 +8,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
+  CardHeader,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useForm } from "@conform-to/react";
@@ -36,6 +37,9 @@ import ShippingForm from "./ShippingForm";
 import AccordionAddress from "./AccordionAddress";
 import { CheckoutFormProps } from "@/app/types/types";
 import { useSearchParams } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
+import PersoanaFizica from "./PersoanaFizica";
+import PersoanaJuridica from "./PersoanaJuridica";
 
 const județeRomânia = [
   { romanian: "Arad", english: "Arad" },
@@ -104,7 +108,7 @@ export default function StoreCheckoutForm({
   return (
     <div className="max-w-6xl w-full mx-auto space-y-8">
       <div className="grid lg:grid-cols-2">
-        <div className="bg-white">
+        <div className="bg-white py-4">
           <Form
             user={user}
             shipping={shipping}
@@ -204,6 +208,8 @@ function Form({
   const [lastResult, action] = useFormState(createCeckout, undefined);
 
   const [billingAddress, setBillingAddress] = useState<string>("same-address");
+  const [tipPersoana, setTipPersoana] = useState<string>("persoana-fizica");
+
   const [payment, setPayment] = useState<string>("card");
 
   const [form, fields] = useForm({
@@ -221,14 +227,15 @@ function Form({
     setState(event.target.value);
   };
 
-  if(transport==="gratuit"){
-    setSipping("free")
+  if (transport === "gratuit") {
+    setSipping("free");
   }
 
-  if(transport==="plata"){
-    setSipping("dhl")
+  if (transport === "plata") {
+    setSipping("dhl");
   }
 
+  console.log(tipPersoana);
   const countyOptions = județeRomânia.map((judet, index) => (
     <SelectItem key={index} value={judet.romanian}>
       {judet.romanian}
@@ -268,8 +275,54 @@ function Form({
               </Accordion>
             </div>
           ) : (
-            <Fragment>
-              <div className="flex items-center justify-between mb-2">
+            <div className="space-y-4">
+              <Card className="mb-4">
+                <CardContent className="py-4">
+                  <div className="block md:flex items-center justify-between space-y-4 md:space-y-0">
+                    <Label className="font-semibold">Tip Persoana</Label>
+
+                    <RadioGroup
+                      defaultValue="persoana-fizica"
+                      key={fields.tipPersoana.key}
+                      name={fields.tipPersoana.name}
+                      onValueChange={(value) => setTipPersoana(value)} // Folosim onValueChange pentru a actualiza starea
+                    >
+                      <div className="flex items-center gap-8">
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem
+                            value="persoana-fizica"
+                            id="persoana-fizica"
+                          />
+                          <Label htmlFor="persoana-fizica">
+                            Persoana Fizica
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem
+                            value="persoana-juridica"
+                            id="persoana-juridica"
+                          />
+                          <Label htmlFor="persoana-juridica">
+                            Persoana Juridica
+                          </Label>
+                        </div>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                </CardContent>
+              </Card>
+              {tipPersoana === "persoana-fizica" && (
+                <PersoanaFizica fields={fields} />
+              )}
+
+              {tipPersoana === "persoana-juridica" && (
+                <div className="space-y-4">
+                  <PersoanaJuridica fields={fields}/>
+                  <PersoanaFizica fields={fields} />
+                </div>
+              )}
+
+              {/* <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold">Contact</h3>
                 <div className="text-sm text-gray-600">
                   Ai deja un cont?
@@ -281,9 +334,9 @@ function Form({
                     Autentifica-te
                   </Button>
                 </div>
-              </div>
+              </div> */}
 
-              <div className="flex flex-col gap-3">
+              {/* <div className="flex flex-col gap-3">
                 <Input
                   type="text"
                   key={fields.email.key}
@@ -297,14 +350,13 @@ function Form({
                   placeholder="Email"
                 />
                 <p className="text-red-500 text-sm">{fields.email.errors}</p>
-              </div>
-              {/* livrare */}
-              <div className="mt-4 space-y-2">
-                <h3 className="font-semibold">Date livrare</h3>
+              </div> */}
 
-                <ShippingForm fields={fields} user={user} />
-              </div>
-            </Fragment>
+              {/* livrare */}
+        
+              <ShippingForm fields={fields} user={user} />
+              
+            </div>
           )}
 
           {/* Shipping method */}
@@ -419,7 +471,7 @@ function Form({
             </Card>
           </div>
           {/* Billing address */}
-          <div className="mt-4 space-y-2">
+          {/* <div className="mt-4 space-y-2">
             <h3 className="font-semibold">Billing address</h3>
             <Card className="border-none">
               <div className="">
@@ -651,7 +703,7 @@ function Form({
                 )}
               </div>
             </Card>
-          </div>
+          </div> */}
         </CardContent>
         <CardFooter>
           <ChceckoutButton />

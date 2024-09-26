@@ -1,7 +1,16 @@
 import { CheckoutFormProps } from "@/app/types/types";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import React from "react";
 
 const județeRomânia = [
@@ -48,7 +57,13 @@ const județeRomânia = [
   { romanian: "Vrancea", english: "Vrancea" },
 ];
 
-export default function ShippingForm({fields, user}:{fields:any, user:CheckoutFormProps["user"]}) {
+export default function ShippingForm({
+  fields,
+  user,
+}: {
+  fields: any;
+  user: CheckoutFormProps["user"];
+}) {
   const countyOptions = județeRomânia.map((judet, index) => (
     <SelectItem key={index} value={judet.romanian}>
       {judet.romanian}
@@ -56,151 +71,224 @@ export default function ShippingForm({fields, user}:{fields:any, user:CheckoutFo
   ));
 
   return (
-    <div className="p-4 border rounded-md bg-[#f5f5f5] space-y-2">
-      <div className="flex flex-col gap-3 mt-4">
-        <Label>Country</Label>
-        <Select
-          key={fields.country.key}
-          name={fields.country.name}
-          defaultValue={user?.address[0] ? user?.address[0].country : "romania"}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select Country" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="romania">Romania</SelectItem>
-            <SelectItem value="germany">Germany</SelectItem>
-            <SelectItem value="hungary">Hungary</SelectItem>
-          </SelectContent>
-        </Select>
-        <p className="text-red-500 text-sm">{fields.country.errors}</p>
-      </div>
+    <Card>
+      <CardHeader className="p-0 bg-primary px-2 text-white py-1 overflow-hidden rounded-t-md font-semibold">
+        Adresa de livrare:
+      </CardHeader>
+      <CardContent className="py-4">
+        <div className="grid grid-cols-12 items-start">
+          <Label className="col-span-12 mb-2 md:mb-0 md:col-span-2">
+            Adresa:
+          </Label>
+          <div className="col-span-full md:col-span-10 ">
+            <Label>Telefon:</Label>
+            <Input
+              type="text"
+              key={fields.numeFirma.key}
+              name={fields.numeFirma.name}
+              defaultValue={fields.numeFirma.initialValue}
+              className={
+                fields.numeFirma.errors
+                  ? "w-full border-red-500 border-2 "
+                  : "w-full"
+              }
+              placeholder="Telefon"
+            />
+            <p className="text-red-500 text-sm">{fields.numeFirma.errors}</p>
+          </div>
 
-      <div className="flex gap-4">
-        <div className="flex flex-col gap-3 w-full">
-          <Input
-            type="text"
-            key={fields.name.key}
-            name={fields.name.name}
-            defaultValue={user?.name || ''}
-            className={
-              fields.firstName.errors
-                ? "w-full border-red-500 border-2"
-                : "w-full"
-            }
-            placeholder="First name"
-          />
-          <p className="text-red-500 text-sm">{fields.firstName.errors}</p>
-        </div>
-        {/* <div className="flex flex-col gap-3 w-full">
-          <Input
-            type="text"
-            key={fields.lastName.key}
-            name={fields.lastName.name}
-            defaultValue={user?.name || ''}
-            className={
-              fields.lastName.errors
-                ? "w-full border-red-500 border-2"
-                : "w-full"
-            }
-            placeholder="Last name"
-          />
-          <p className="text-red-500 text-sm">{fields.lastName.errors}</p>
-        </div> */}
-      </div>
-      <div className="flex flex-col gap-3 w-full">
-        <Input
-          type="text"
-          key={fields.company.key}
-          name={fields.company.name}
-          defaultValue={fields.company.initialValue}
-          
-          className={
-            fields.company.errors ? "w-full border-red-500 border-2" : "w-full"
-          }
-          placeholder="Company (optional)"
-        />
-        <p className="text-red-500 text-sm">{fields.company.errors}</p>
-      </div>
-      <div className="flex flex-col gap-3 w-full">
-        <Input
-          type="text"
-          key={fields.address.key}
-          name={fields.address.name}
-          defaultValue={user?.address[0]?.address}
-          className={
-            fields.address.errors ? "w-full border-red-500 border-2" : "w-full"
-          }
-          placeholder="Address"
-        />
-        <p className="text-red-500 text-sm">{fields.address.errors}</p>
-      </div>
-      <div className="flex flex-col gap-3 w-full">
-        <Input
-          type="text"
-          key={fields.address2.key}
-          name={fields.address2.name}
-          defaultValue={user?.address[0]?.address2 || undefined}
-          className={
-            fields.address2.errors ? "w-full border-red-500 border-2" : "w-full"
-          }
-          placeholder="Apartment, suite, etc. (optional)"
-        />
-        <p className="text-red-500 text-sm">{fields.address2.errors}</p>
-      </div>
+          <Label className="col-span-12 mb-2 md:mb-0 md:col-span-2"></Label>
+          <div className="col-span-full md:col-span-10">
+            <div className="grid grid-cols-12 gap-4">
+              <div className="col-span-9">
+                <Label>Strada:</Label>
+                <Input
+                  type="text"
+                  key={fields.numeFirma.key}
+                  name={fields.numeFirma.name}
+                  defaultValue={fields.numeFirma.initialValue}
+                  className={
+                    fields.numeFirma.errors
+                      ? "w-full border-red-500 border-2 "
+                      : "w-full"
+                  }
+                  placeholder="Strada *"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.numeFirma.errors}
+                </p>
+              </div>
+              <div className="col-span-3">
+                <Label>Nr:</Label>
+                <Input
+                  type="text"
+                  key={fields.numeFirma.key}
+                  name={fields.numeFirma.name}
+                  defaultValue={fields.numeFirma.initialValue}
+                  className={
+                    fields.numeFirma.errors
+                      ? "w-full border-red-500 border-2 "
+                      : "w-full"
+                  }
+                  placeholder="Nr *"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.numeFirma.errors}
+                </p>
+              </div>
+            </div>
+          </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="flex flex-col gap-3 w-full">
+          <Label className="col-span-12 mb-2 md:mb-0 md:col-span-2"></Label>
+          <div className="col-span-full md:col-span-10">
+            <div className="grid grid-cols-12 gap-4">
+              <div className="col-span-3">
+                <Label>Bloc:</Label>
+                <Input
+                  type="text"
+                  key={fields.numeFirma.key}
+                  name={fields.numeFirma.name}
+                  defaultValue={fields.numeFirma.initialValue}
+                  className={
+                    fields.numeFirma.errors
+                      ? "w-full border-red-500 border-2 "
+                      : "w-full"
+                  }
+                  placeholder="Bloc"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.numeFirma.errors}
+                </p>
+              </div>
+              <div className="col-span-3">
+                <Label>Scara:</Label>
+                <Input
+                  type="text"
+                  key={fields.numeFirma.key}
+                  name={fields.numeFirma.name}
+                  defaultValue={fields.numeFirma.initialValue}
+                  className={
+                    fields.numeFirma.errors
+                      ? "w-full border-red-500 border-2 "
+                      : "w-full"
+                  }
+                  placeholder="Scara"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.numeFirma.errors}
+                </p>
+              </div>
+              <div className="col-span-3">
+                <Label>Etaj:</Label>
+                <Input
+                  type="text"
+                  key={fields.numeFirma.key}
+                  name={fields.numeFirma.name}
+                  defaultValue={fields.numeFirma.initialValue}
+                  className={
+                    fields.numeFirma.errors
+                      ? "w-full border-red-500 border-2 "
+                      : "w-full"
+                  }
+                  placeholder="Etaj"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.numeFirma.errors}
+                </p>
+              </div>
+              <div className="col-span-3">
+                <Label>Ap:</Label>
+                <Input
+                  type="text"
+                  key={fields.numeFirma.key}
+                  name={fields.numeFirma.name}
+                  defaultValue={fields.numeFirma.initialValue}
+                  className={
+                    fields.numeFirma.errors
+                      ? "w-full border-red-500 border-2 "
+                      : "w-full"
+                  }
+                  placeholder="Ap"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.numeFirma.errors}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <Separator className="mb-3" />
+        <div className="">
+          <Label className="mb-2">Localitate:</Label>
           <Input
             type="text"
-            key={fields.postalCode.key}
-            name={fields.postalCode.name}
-            defaultValue={user?.address[0]?.postalCode || undefined}
+            key={fields.numeFirma.key}
+            name={fields.numeFirma.name}
+            defaultValue={fields.numeFirma.initialValue}
             className={
-              fields.postalCode.errors
-                ? "w-full border-red-500 border-2"
-                : "w-full"
+              fields.numeFirma.errors
+                ? "w-full border-red-500 border-2 "
+                : "w-full "
             }
-            placeholder="Postal code (optional)"
+            placeholder="Localitate *"
           />
-          <p className="text-red-500 text-sm">{fields.postalCode.errors}</p>
+          <p className="text-red-500 text-sm">{fields.numeFirma.errors}</p>
         </div>
-        <div className="flex flex-col gap-3 w-full">
+        <Separator className="mb-3" />
+
+        <div className="">
+          <Label className="mb-2">Judet:</Label>
           <Input
             type="text"
-            key={fields.city.key}
-            name={fields.city.name}
-            defaultValue={user?.address[0]?.city}
+            key={fields.numeFirma.key}
+            name={fields.numeFirma.name}
+            defaultValue={fields.numeFirma.initialValue}
             className={
-              fields.city.errors ? "w-full border-red-500 border-2" : "w-full"
+              fields.numeFirma.errors
+                ? "w-full border-red-500 border-2 "
+                : "w-full "
             }
-            placeholder="City"
+            placeholder="Judet *"
           />
-          <p className="text-red-500 text-xs">{fields.city.errors}</p>
+          <p className="text-red-500 text-sm">{fields.numeFirma.errors}</p>
         </div>
-        <div className="flex flex-col gap-3 ">
-          <Select key={fields.county.key} name={fields.county.name} defaultValue={user?.address[0]?.county}>
-            <SelectTrigger>
-              <SelectValue placeholder="County" />
-            </SelectTrigger>
-            <SelectContent>{countyOptions}</SelectContent>
-          </Select>
-          <p className="text-red-500 text-xs">{fields.county.errors}</p>
+        <Separator className="mb-3" />
+
+        <div className="">
+          <Label className="mb-2">Cod Postal:</Label>
+          <Input
+            type="text"
+            key={fields.numeFirma.key}
+            name={fields.numeFirma.name}
+            defaultValue={fields.numeFirma.initialValue}
+            className={
+              fields.numeFirma.errors
+                ? "w-full border-red-500 border-2 "
+                : "w-full "
+            }
+            placeholder="Cod Postal"
+          />
+          <p className="text-red-500 text-sm">{fields.numeFirma.errors}</p>
         </div>
-      </div>
-      <div className="flex flex-col gap-3 w-full">
-        <Input
-          type="text"
-          key={fields.phone.key}
-          name={fields.phone.name}
-          defaultValue={user?.phone || ''}
-          className={
-            fields.phone.errors ? "w-full border-red-500 border-2" : "w-full"
-          }
-          placeholder=" 0040 111 1111111"
-        />
-        <p className="text-red-500 text-xs">{fields.phone.errors}</p>
-      </div>
-    </div>
+        <Separator className="mb-3" />
+
+        <div className="">
+          <Label className="mb-2">Alte detalii:</Label>
+          <Textarea
+            key={fields.numeFirma.key}
+            name={fields.numeFirma.name}
+            defaultValue={fields.numeFirma.initialValue}
+            className={
+              fields.numeFirma.errors
+                ? "w-full border-red-500 border-2 "
+                : "w-full "
+            }
+            placeholder="Alte detalii"
+          />
+          <p className="text-red-500 text-sm">{fields.numeFirma.errors}</p>
+        </div>
+        <Separator className="mb-3" />  
+      </CardContent>
+    </Card>
   );
 }
