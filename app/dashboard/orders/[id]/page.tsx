@@ -8,8 +8,6 @@ import Image from "next/image";
 import { formatCurrency } from "../../../lib/formatters";
 import MenuCustomer from "../_components/MenuCustomer";
 import { OrderStatus } from "@prisma/client";
-import { Product } from "../../../(storefront)/products/[name]/page";
-import { Button } from "@/components/ui/button";
 import HeaderMenu from "../_components/HeaderMenu";
 import MenuStatus from "../_components/MenuStatus";
 
