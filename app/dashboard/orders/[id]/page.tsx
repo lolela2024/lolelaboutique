@@ -208,8 +208,8 @@ export default async function EditOrder({
               <h4 className="my-4 text-black text-base">Contact information</h4>
               <p>{data?.Customer?.email || data?.User?.email}</p>
               <p>
-                {data?.Customer?.phone || data?.User?.phone
-                  ? data.Customer?.phone || data.User?.phone
+                {data?.Customer?.mobilePhone || data?.User?.phone
+                  ? data.Customer?.mobilePhone || data.User?.phone
                   : "No phone number"}
               </p>
               <h4 className="my-4 text-black text-base">Shipping address</h4>

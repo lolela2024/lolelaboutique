@@ -212,7 +212,7 @@ export async function createCeckout(prevState: unknown, formData: FormData) {
           email: submission.value.email,
           firstName: submission.value.firstName,
           lastName: submission.value.lastName,
-          phone: submission.value.phone,
+          mobilePhone: submission.value.phone,
         },
       });
     } else {
@@ -221,7 +221,7 @@ export async function createCeckout(prevState: unknown, formData: FormData) {
         data: {
           firstName: submission.value.firstName,
           lastName: submission.value.lastName,
-          phone: submission.value.phone,
+          mobilePhone: submission.value.phone,
         },
       });
     }
