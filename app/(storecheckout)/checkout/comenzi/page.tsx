@@ -128,7 +128,7 @@ export default async function CheckoutComenzi({
                 {data.shippingAddress?.city}, {data.shippingAddress?.county},{" "}
                 {data.shippingAddress?.postalCode}
               </p>
-              <p>{user ? userBazaDeDate?.phone : data.Customer?.phone}</p>
+              {/* <p>{user ? userBazaDeDate?.phone : data.Customer?.phone}</p> */}
             </>
           )}
         </div>
