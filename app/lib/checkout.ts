@@ -22,7 +22,6 @@ export async function updateAddress(userData:{id:string},formData:FormData) {
         postalCode:submission.value.postalCode,
         county:submission.value.county,
         userId:userData.id,
-        company: submission.value.company
       }
     })
   } catch (error) {
@@ -49,7 +48,6 @@ export async function createAddress(userData:{id:string},formData:FormData) {
         postalCode:submission.value.postalCode,
         county:submission.value.county,
         userId:userData.id,
-        company: submission.value.company
       }
     })
   } catch (error) {

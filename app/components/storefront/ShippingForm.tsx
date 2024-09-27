@@ -287,7 +287,6 @@ export default function ShippingForm({
           />
           <p className="text-red-500 text-sm">{fields.numeFirma.errors}</p>
         </div>
-        <Separator className="mb-3" />  
       </CardContent>
     </Card>
   );

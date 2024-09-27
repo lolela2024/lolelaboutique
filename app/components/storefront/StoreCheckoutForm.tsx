@@ -40,6 +40,8 @@ import { useSearchParams } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import PersoanaFizica from "./PersoanaFizica";
 import PersoanaJuridica from "./PersoanaJuridica";
+import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 
 const județeRomânia = [
   { romanian: "Arad", english: "Arad" },
@@ -317,7 +319,7 @@ function Form({
 
               {tipPersoana === "persoana-juridica" && (
                 <div className="space-y-4">
-                  <PersoanaJuridica fields={fields}/>
+                  <PersoanaJuridica fields={fields} />
                   <PersoanaFizica fields={fields} />
                 </div>
               )}
@@ -353,68 +355,71 @@ function Form({
               </div> */}
 
               {/* livrare */}
-        
+
               <ShippingForm fields={fields} user={user} />
-              
             </div>
           )}
 
           {/* Shipping method */}
-          <div className="mt-4 space-y-2">
-            <h3 className="font-semibold mb-4">Shipping method</h3>
-            <Card className="border-none">
-              <div className="">
-                <RadioGroup
-                  className="gap-0"
-                  defaultValue={transport === "gratuit" ? "free" : "dhl"}
-                  key={fields.shipping.key}
-                  name={fields.shipping.name}
-                  onChange={(event) => handleChange(event, setSipping)}
-                >
-                  {transport === "gratuit" ? (
-                    <Label
-                      className={`flex items-center space-x-2 w-full   text-end px-4 py-4 cursor-pointer ${
-                        shipping === "free"
-                          ? "bg-red-100 border border-red-500 rounded-t-sm"
-                          : "border rounded-t-sm"
-                      }`}
-                    >
-                      <RadioGroupItem value="free" id="free" />
-                      <div className="flex w-full justify-between items-center">
-                        <p>Livrare GRATUITĂ</p>
-                        <p>Free</p>
-                      </div>
-                    </Label>
-                  ) : (
-                    <Label
-                      className={`flex items-center space-x-2 w-full  text-end px-4 py-4 cursor-pointer ${
-                        shipping === "dhl"
-                          ? "bg-red-100 overflow-hidden rounded-b-sm border border-red-500 "
-                          : "rounded-b-sm border"
-                      }`}
-                    >
-                      <RadioGroupItem value="dhl" id="dhl" />
-                      <div className="flex w-full justify-between items-center">
-                        <p className="text-sm text-start">Taxă de Transport</p>
-                        <p>{formatCurrency(24.99)}</p>
-                      </div>
-                    </Label>
-                  )}
-                </RadioGroup>
-              </div>
-            </Card>
-          </div>
+          <Card className="mt-4 space-y-2">
+            <CardHeader className="p-0 bg-primary px-2 text-white py-1 overflow-hidden rounded-t-md font-semibold">
+              Metoda de livrare
+            </CardHeader>
+
+            <CardContent>
+              <RadioGroup
+                className="gap-0"
+                defaultValue={transport === "gratuit" ? "free" : "dhl"}
+                key={fields.shipping.key}
+                name={fields.shipping.name}
+                onChange={(event) => handleChange(event, setSipping)}
+              >
+                {transport === "gratuit" ? (
+                  <Label
+                    className={`flex items-center space-x-2 w-full   text-end px-4 py-4 cursor-pointer ${
+                      shipping === "free"
+                        ? "bg-primary/20 border rounded-lg"
+                        : "border rounded-lg"
+                    }`}
+                  >
+                    <RadioGroupItem value="free" id="free" />
+                    <div className="flex w-full justify-between items-center">
+                      <p>Livrare GRATUITĂ</p>
+                      <p>Free</p>
+                    </div>
+                  </Label>
+                ) : (
+                  <Label
+                    className={`flex items-center space-x-2 w-full  text-end px-4 py-4 cursor-pointer ${
+                      shipping === "dhl"
+                        ? "bg-primary/20 border rounded-lg"
+                        : "border rounded-lg"
+                    }`}
+                  >
+                    <RadioGroupItem value="dhl" id="dhl" />
+                    <div className="flex w-full justify-between items-center">
+                      <p className="text-sm text-start">Taxă de Transport</p>
+                      <p>{formatCurrency(24.99)}</p>
+                    </div>
+                  </Label>
+                )}
+              </RadioGroup>
+            </CardContent>
+          </Card>
 
           {/* Payment */}
-          <div className="mt-4 space-y-2">
-            <h3 className="font-semibold">Payment</h3>
-            <CardDescription>
-              All transactions are secure and encrypted.
-            </CardDescription>
-            <Card className="border-none">
-              <div className="">
+          <Card className="mt-4 space-y-2">
+            <CardHeader className="p-0 bg-primary px-2 text-white py-1 overflow-hidden rounded-t-md font-semibold">
+              Metoda de plată
+            </CardHeader>
+
+            <CardContent className="border-none">
+              <CardDescription>
+                Toate tranzacțiile sunt securizate și criptate.
+              </CardDescription>
+              <div>
                 <RadioGroup
-                  className="gap-0"
+                  className="gap-0 space-y-4"
                   defaultValue="card"
                   key={fields.payment.key}
                   name={fields.payment.name}
@@ -423,8 +428,8 @@ function Form({
                   <Label
                     className={`flex items-center space-x-2 w-full   text-end px-4 py-4 cursor-pointer ${
                       payment === "ramburs"
-                        ? "bg-red-100 border border-red-500 rounded-t-sm"
-                        : "border rounded-t-sm"
+                        ? "bg-primary/20 border rounded-lg"
+                        : "border rounded-lg"
                     }`}
                   >
                     <RadioGroupItem value="ramburs" id="ramburs" />
@@ -445,8 +450,8 @@ function Form({
                   <Label
                     className={`flex items-center space-x-2 w-full  text-end px-4 py-4 cursor-pointer ${
                       payment === "card"
-                        ? "bg-red-100 overflow-hidden rounded-b-sm border border-red-500 "
-                        : "rounded-b-sm border"
+                        ? "bg-primary/20 border rounded-lg"
+                        : "border rounded-lg"
                     }`}
                   >
                     <RadioGroupItem value="card" id="card" />
@@ -468,8 +473,8 @@ function Form({
                   </Label>
                 </RadioGroup>
               </div>
-            </Card>
-          </div>
+            </CardContent>
+          </Card>
           {/* Billing address */}
           {/* <div className="mt-4 space-y-2">
             <h3 className="font-semibold">Billing address</h3>
@@ -704,6 +709,30 @@ function Form({
               </div>
             </Card>
           </div> */}
+
+          {/* Termeni si conditii */}
+          <div className="flex items-center space-x-2 mt-4">
+            <Checkbox id="terms" />
+            <label
+              htmlFor="terms"
+              className="text-sm font-light leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Accept{" "}
+              <Link className="text-primary font-normal" href={"#"}>
+                termenii si conditiile
+              </Link>{" "}
+              website-ului si,
+              <br /> 
+              in conformitate cu{" "}
+              <Link className="text-primary font-normal" href={"#"}>
+                Politica de Protectie a Datelor Personale
+              </Link>
+              , 
+              <br />
+              sunt de acord cu prelucrarea datelor mele cu caracter personal
+              completate in formular.
+            </label>
+          </div>
         </CardContent>
         <CardFooter>
           <ChceckoutButton />

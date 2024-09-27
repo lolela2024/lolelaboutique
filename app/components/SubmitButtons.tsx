@@ -170,11 +170,11 @@ export function ChceckoutButton() {
   return (
     <>
       {pending ? (
-        <Button disabled size="lg" className="w-full mt-5">
-          <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Please Wait
+        <Button disabled size="lg" className="w-full mt-5 bg-buttonColor hover:bg-buttonColor/90">
+          <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Va rugam asteptati
         </Button>
       ) : (
-        <Button type="submit" size="lg" className="w-full mt-5">
+        <Button type="submit" size="lg" className="w-full mt-5 bg-buttonColor hover:bg-buttonColor/90">
           Complete order
         </Button>
       )}

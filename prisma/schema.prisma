@@ -133,7 +133,7 @@ model Customer {
 
   createdAt DateTime @default(now())
 
-  phone String
+  mobilePhone String
 
   billingAddress BillingAddress[]
   address        Address[]
