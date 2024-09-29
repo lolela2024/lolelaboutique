@@ -13,6 +13,7 @@ import { createAddress, updateAddress } from "../lib/checkout"
 import { Fulfilled, OrderStatus } from "@prisma/client"
 import { auth } from "@/auth"
 import prisma from '@/app/lib/db';
+import { sentEmailOrder } from "@/lib/mail"
 
 
 async function getNextOrderNumber(): Promise<number> {
@@ -379,6 +380,7 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
     });
 
     await redis.del(`cart-${cartId}`);
+    await sentEmailOrder(submission.value.email,orderNumber);
     return redirect(`/checkout/comenzi?verify=${verify}`);
   }
 
