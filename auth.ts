@@ -77,7 +77,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const existingAccount = await getAccountByUserId(existingUser.id)
       
       token.isOAuth = !!existingAccount;
-      token.name = existingUser.name;
       token.firstName = existingUser.firstName;
       token.lastName = existingUser.lastName;
       token.username = existingUser.username;
@@ -105,7 +104,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       if (session.user) {
-        session.user.name = token.name;
         session.user.firstName = token.firstName as string;
         session.user.lastName = token.lastName as string;
         session.user.username = token.username as string;

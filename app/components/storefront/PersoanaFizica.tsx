@@ -4,11 +4,18 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import React from "react";
 
-export default function PersoanaFizica({ fields }: { fields: any }) {
+export default function PersoanaFizica({
+  fields,
+  tipPersoana,
+}: {
+  fields: any;
+  tipPersoana?: string | null;
+}) {
+  
   return (
     <Card>
       <CardHeader className="p-0 bg-primary px-2 text-white py-1 overflow-hidden rounded-t-md font-semibold">
-        Persoana Fizica:
+        {tipPersoana === "persoana-juridica" ? "Persoana contact"  : "Persoana Fizica:"}
       </CardHeader>
       <CardContent className="py-4">
         <div>
@@ -63,11 +70,11 @@ export default function PersoanaFizica({ fields }: { fields: any }) {
             </Label>
             <Input
               type="text"
-              key={fields.phone.key}
-              name={fields.phone.name}
-              defaultValue={fields.phone.initialValue}
+              key={fields.mobilePhone.key}
+              name={fields.mobilePhone.name}
+              defaultValue={fields.mobilePhone.initialValue}
               className={
-                fields.phone.errors
+                fields.mobilePhone.errors
                   ? "w-full col-span-12 md:col-span-8 border-red-500 border-2"
                   : "w-full col-span-12 md:col-span-8"
               }
@@ -75,7 +82,7 @@ export default function PersoanaFizica({ fields }: { fields: any }) {
             />
 
             <p className="text-red-500 text-sm col-span-12">
-              {fields.phone.errors}
+              {fields.mobilePhone.errors}
             </p>
           </div>
           <Separator className="mb-3" />

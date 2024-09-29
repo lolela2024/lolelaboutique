@@ -77,141 +77,139 @@ export default function ShippingForm({
       </CardHeader>
       <CardContent className="py-4">
         <div className="grid grid-cols-12 items-start">
-          <Label className="col-span-12 mb-2 md:mb-0 md:col-span-2">
-            Adresa:
-          </Label>
-          <div className="col-span-full md:col-span-10 ">
+         
+          <div className="col-span-full md:col-span-12 ">
             <Label>Telefon:</Label>
             <Input
               type="text"
-              key={fields.numeFirma.key}
-              name={fields.numeFirma.name}
-              defaultValue={fields.numeFirma.initialValue}
+              key={fields.phone.key}
+              name={fields.phone.name}
+              defaultValue={fields.phone.initialValue}
               className={
-                fields.numeFirma.errors
+                fields.phone.errors
                   ? "w-full border-red-500 border-2 "
                   : "w-full"
               }
               placeholder="Telefon"
             />
-            <p className="text-red-500 text-sm">{fields.numeFirma.errors}</p>
+            <p className="text-red-500 text-sm">{fields.phone.errors}</p>
           </div>
 
-          <Label className="col-span-12 mb-2 md:mb-0 md:col-span-2"></Label>
-          <div className="col-span-full md:col-span-10">
+          
+          <div className="col-span-full md:col-span-12">
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-9">
                 <Label>Strada:</Label>
                 <Input
                   type="text"
-                  key={fields.numeFirma.key}
-                  name={fields.numeFirma.name}
-                  defaultValue={fields.numeFirma.initialValue}
+                  key={fields.strada.key}
+                  name={fields.strada.name}
+                  defaultValue={fields.strada.initialValue}
                   className={
-                    fields.numeFirma.errors
+                    fields.strada.errors
                       ? "w-full border-red-500 border-2 "
                       : "w-full"
                   }
                   placeholder="Strada *"
                 />
                 <p className="text-red-500 text-sm">
-                  {fields.numeFirma.errors}
+                  {fields.strada.errors}
                 </p>
               </div>
               <div className="col-span-3">
                 <Label>Nr:</Label>
                 <Input
                   type="text"
-                  key={fields.numeFirma.key}
-                  name={fields.numeFirma.name}
-                  defaultValue={fields.numeFirma.initialValue}
+                  key={fields.numar.key}
+                  name={fields.numar.name}
+                  defaultValue={fields.numar.initialValue}
                   className={
-                    fields.numeFirma.errors
+                    fields.numar.errors
                       ? "w-full border-red-500 border-2 "
                       : "w-full"
                   }
                   placeholder="Nr *"
                 />
                 <p className="text-red-500 text-sm">
-                  {fields.numeFirma.errors}
+                  {fields.numar.errors}
                 </p>
               </div>
             </div>
           </div>
 
           <Label className="col-span-12 mb-2 md:mb-0 md:col-span-2"></Label>
-          <div className="col-span-full md:col-span-10">
+          <div className="col-span-full md:col-span-12">
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-3">
                 <Label>Bloc:</Label>
                 <Input
                   type="text"
-                  key={fields.numeFirma.key}
-                  name={fields.numeFirma.name}
-                  defaultValue={fields.numeFirma.initialValue}
+                  key={fields.bloc.key}
+                  name={fields.bloc.name}
+                  defaultValue={fields.bloc.initialValue}
                   className={
-                    fields.numeFirma.errors
+                    fields.bloc.errors
                       ? "w-full border-red-500 border-2 "
                       : "w-full"
                   }
                   placeholder="Bloc"
                 />
                 <p className="text-red-500 text-sm">
-                  {fields.numeFirma.errors}
+                  {fields.bloc.errors}
                 </p>
               </div>
               <div className="col-span-3">
                 <Label>Scara:</Label>
                 <Input
                   type="text"
-                  key={fields.numeFirma.key}
-                  name={fields.numeFirma.name}
-                  defaultValue={fields.numeFirma.initialValue}
+                  key={fields.scara.key}
+                  name={fields.scara.name}
+                  defaultValue={fields.scara.initialValue}
                   className={
-                    fields.numeFirma.errors
+                    fields.scara.errors
                       ? "w-full border-red-500 border-2 "
                       : "w-full"
                   }
                   placeholder="Scara"
                 />
                 <p className="text-red-500 text-sm">
-                  {fields.numeFirma.errors}
+                  {fields.scara.errors}
                 </p>
               </div>
               <div className="col-span-3">
                 <Label>Etaj:</Label>
                 <Input
                   type="text"
-                  key={fields.numeFirma.key}
-                  name={fields.numeFirma.name}
-                  defaultValue={fields.numeFirma.initialValue}
+                  key={fields.etaj.key}
+                  name={fields.etaj.name}
+                  defaultValue={fields.etaj.initialValue}
                   className={
-                    fields.numeFirma.errors
+                    fields.etaj.errors
                       ? "w-full border-red-500 border-2 "
                       : "w-full"
                   }
                   placeholder="Etaj"
                 />
                 <p className="text-red-500 text-sm">
-                  {fields.numeFirma.errors}
+                  {fields.etaj.errors}
                 </p>
               </div>
               <div className="col-span-3">
                 <Label>Ap:</Label>
                 <Input
                   type="text"
-                  key={fields.numeFirma.key}
-                  name={fields.numeFirma.name}
-                  defaultValue={fields.numeFirma.initialValue}
+                  key={fields.apartament.key}
+                  name={fields.apartament.name}
+                  defaultValue={fields.apartament.initialValue}
                   className={
-                    fields.numeFirma.errors
+                    fields.apartament.errors
                       ? "w-full border-red-500 border-2 "
                       : "w-full"
                   }
                   placeholder="Ap"
                 />
                 <p className="text-red-500 text-sm">
-                  {fields.numeFirma.errors}
+                  {fields.apartament.errors}
                 </p>
               </div>
             </div>
@@ -222,17 +220,17 @@ export default function ShippingForm({
           <Label className="mb-2">Localitate:</Label>
           <Input
             type="text"
-            key={fields.numeFirma.key}
-            name={fields.numeFirma.name}
-            defaultValue={fields.numeFirma.initialValue}
+            key={fields.localitate.key}
+            name={fields.localitate.name}
+            defaultValue={fields.localitate.initialValue}
             className={
-              fields.numeFirma.errors
+              fields.localitate.errors
                 ? "w-full border-red-500 border-2 "
                 : "w-full "
             }
             placeholder="Localitate *"
           />
-          <p className="text-red-500 text-sm">{fields.numeFirma.errors}</p>
+          <p className="text-red-500 text-sm">{fields.localitate.errors}</p>
         </div>
         <Separator className="mb-3" />
 
@@ -240,17 +238,17 @@ export default function ShippingForm({
           <Label className="mb-2">Judet:</Label>
           <Input
             type="text"
-            key={fields.numeFirma.key}
-            name={fields.numeFirma.name}
-            defaultValue={fields.numeFirma.initialValue}
+            key={fields.judet.key}
+            name={fields.judet.name}
+            defaultValue={fields.judet.initialValue}
             className={
-              fields.numeFirma.errors
+              fields.judet.errors
                 ? "w-full border-red-500 border-2 "
                 : "w-full "
             }
             placeholder="Judet *"
           />
-          <p className="text-red-500 text-sm">{fields.numeFirma.errors}</p>
+          <p className="text-red-500 text-sm">{fields.judet.errors}</p>
         </div>
         <Separator className="mb-3" />
 
@@ -258,34 +256,34 @@ export default function ShippingForm({
           <Label className="mb-2">Cod Postal:</Label>
           <Input
             type="text"
-            key={fields.numeFirma.key}
-            name={fields.numeFirma.name}
-            defaultValue={fields.numeFirma.initialValue}
+            key={fields.codPostal.key}
+            name={fields.codPostal.name}
+            defaultValue={fields.codPostal.initialValue}
             className={
-              fields.numeFirma.errors
+              fields.codPostal.errors
                 ? "w-full border-red-500 border-2 "
                 : "w-full "
             }
             placeholder="Cod Postal"
           />
-          <p className="text-red-500 text-sm">{fields.numeFirma.errors}</p>
+          <p className="text-red-500 text-sm">{fields.codPostal.errors}</p>
         </div>
         <Separator className="mb-3" />
 
         <div className="">
           <Label className="mb-2">Alte detalii:</Label>
           <Textarea
-            key={fields.numeFirma.key}
-            name={fields.numeFirma.name}
-            defaultValue={fields.numeFirma.initialValue}
+            key={fields.alteDetalii.key}
+            name={fields.alteDetalii.name}
+            defaultValue={fields.alteDetalii.initialValue}
             className={
-              fields.numeFirma.errors
+              fields.alteDetalii.errors
                 ? "w-full border-red-500 border-2 "
                 : "w-full "
             }
             placeholder="Alte detalii"
           />
-          <p className="text-red-500 text-sm">{fields.numeFirma.errors}</p>
+          <p className="text-red-500 text-sm">{fields.alteDetalii.errors}</p>
         </div>
       </CardContent>
     </Card>

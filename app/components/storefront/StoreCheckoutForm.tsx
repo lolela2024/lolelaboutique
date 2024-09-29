@@ -1,6 +1,5 @@
 "use client";
 
-import { createCeckout } from "@/app/actions/createCeckout";
 import { formatCurrency } from "@/app/lib/formatters";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,6 +41,8 @@ import PersoanaFizica from "./PersoanaFizica";
 import PersoanaJuridica from "./PersoanaJuridica";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { createCheckout } from "@/app/actions/createCeckout";
+import AdresaDeFacturare from "./AdresaDeFacturare";
 
 const județeRomânia = [
   { romanian: "Arad", english: "Arad" },
@@ -94,7 +95,7 @@ export default function StoreCheckoutForm({
   const searchParams = useSearchParams();
   const transport = searchParams.get("transport");
 
-  const [shipping, setSipping] = useState<string>("free");
+  const [shipping, setShipping] = useState<string>("free");
   const totalAmountItems = products.items.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -114,7 +115,7 @@ export default function StoreCheckoutForm({
           <Form
             user={user}
             shipping={shipping}
-            setSipping={setSipping}
+            setShipping={setShipping}
             transport={transport}
           />
         </div>
@@ -199,18 +200,20 @@ export default function StoreCheckoutForm({
 function Form({
   user,
   shipping,
-  setSipping,
+  setShipping,
   transport,
 }: {
   user: CheckoutFormProps["user"];
   shipping: any;
-  setSipping: any;
+  setShipping: any;
   transport: any;
 }) {
-  const [lastResult, action] = useFormState(createCeckout, undefined);
+  const [lastResult, action] = useFormState(createCheckout, undefined);
 
-  const [billingAddress, setBillingAddress] = useState<string>("same-address");
   const [tipPersoana, setTipPersoana] = useState<string>("persoana-fizica");
+  const [tipAdresaFactura, setTipAdresaFactura] =
+    useState<string>("same-address");
+  const [termeniSiConditii, setTermeniSiConditii] = useState<boolean>(false);
 
   const [payment, setPayment] = useState<string>("card");
 
@@ -230,14 +233,13 @@ function Form({
   };
 
   if (transport === "gratuit") {
-    setSipping("free");
+    setShipping("free");
   }
 
   if (transport === "plata") {
-    setSipping("dhl");
+    setShipping("dhl");
   }
 
-  console.log(tipPersoana);
   const countyOptions = județeRomânia.map((judet, index) => (
     <SelectItem key={index} value={judet.romanian}>
       {judet.romanian}
@@ -320,7 +322,7 @@ function Form({
               {tipPersoana === "persoana-juridica" && (
                 <div className="space-y-4">
                   <PersoanaJuridica fields={fields} />
-                  <PersoanaFizica fields={fields} />
+                  <PersoanaFizica fields={fields} tipPersoana={tipPersoana} />
                 </div>
               )}
 
@@ -357,6 +359,12 @@ function Form({
               {/* livrare */}
 
               <ShippingForm fields={fields} user={user} />
+
+              <AdresaDeFacturare
+                fields={fields}
+                tipAdresaFactura={tipAdresaFactura}
+                setTipAdresaFactura={setTipAdresaFactura}
+              />
             </div>
           )}
 
@@ -372,7 +380,7 @@ function Form({
                 defaultValue={transport === "gratuit" ? "free" : "dhl"}
                 key={fields.shipping.key}
                 name={fields.shipping.name}
-                onChange={(event) => handleChange(event, setSipping)}
+                onChange={(event) => handleChange(event, setShipping)}
               >
                 {transport === "gratuit" ? (
                   <Label
@@ -475,244 +483,16 @@ function Form({
               </div>
             </CardContent>
           </Card>
-          {/* Billing address */}
-          {/* <div className="mt-4 space-y-2">
-            <h3 className="font-semibold">Billing address</h3>
-            <Card className="border-none">
-              <div className="">
-                <RadioGroup
-                  className="gap-0"
-                  defaultValue="same-address"
-                  key={fields.billingAddress.key}
-                  name={fields.billingAddress.name}
-                  onChange={(event) => handleChange(event, setBillingAddress)}
-                >
-                  <Label
-                    className={`flex items-center space-x-2 w-full text-end px-4 py-4 cursor-pointer ${
-                      billingAddress === "same-address"
-                        ? "bg-red-100 border border-red-500 rounded-t-sm"
-                        : "border rounded-t-sm"
-                    }`}
-                  >
-                    <RadioGroupItem value="same-address" id="same-address" />
-                    <div className="flex w-full justify-between items-center">
-                      <p className="text-sm text-start">
-                        Same as shipping address
-                      </p>
-                    </div>
-                  </Label>
-                  <Label
-                    className={`flex items-center space-x-2 w-full  text-end px-4 py-4 cursor-pointer ${
-                      billingAddress === "different-address"
-                        ? "bg-red-100 overflow-hidden border border-red-500 "
-                        : "rounded-b-sm border"
-                    }`}
-                  >
-                    <RadioGroupItem
-                      value="different-address"
-                      id="different-address"
-                    />
-                    <div className="flex w-full justify-between items-center">
-                      <p className="text-sm text-start">
-                        Use a different billing address
-                      </p>
-                    </div>
-                  </Label>
-                </RadioGroup>
-                {billingAddress === "different-address" && (
-                  <div className="border bg-[#f5f5f5] rounded-b-sm transition ease-in-out pt-4">
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div className="flex flex-col gap-3 mt-4">
-                          <Label>Country</Label>
-                          <Select
-                            key={fields.countryBilling.key}
-                            name={fields.countryBilling.name}
-                            defaultValue={"romania"}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Country" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="romania">Romania</SelectItem>
-                              <SelectItem value="germany">Germany</SelectItem>
-                              <SelectItem value="hungary">Hungary</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <p className="text-red-500 text-sm">
-                            {fields.countryBilling.errors}
-                          </p>
-                        </div>
-                        <div className="flex gap-4">
-                          <div className="flex flex-col gap-3 w-full">
-                            <Input
-                              type="text"
-                              key={fields.firstNameBilling.key}
-                              name={fields.firstNameBilling.name}
-                              defaultValue={
-                                fields.firstNameBilling.initialValue
-                              }
-                              className={
-                                fields.firstNameBilling.errors
-                                  ? "w-full border-red-500 border-2"
-                                  : "w-full"
-                              }
-                              placeholder="First name"
-                            />
-                            <p className="text-red-500 text-sm">
-                              {fields.firstNameBilling.errors}
-                            </p>
-                          </div>
-                          <div className="flex flex-col gap-3 w-full">
-                            <Input
-                              type="text"
-                              key={fields.lastNameBilling.key}
-                              name={fields.lastNameBilling.name}
-                              defaultValue={fields.lastNameBilling.initialValue}
-                              className={
-                                fields.lastNameBilling.errors
-                                  ? "w-full border-red-500 border-2"
-                                  : "w-full"
-                              }
-                              placeholder="Last name"
-                            />
-                            <p className="text-red-500 text-sm">
-                              {fields.lastNameBilling.errors}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-3 w-full">
-                          <Input
-                            type="text"
-                            key={fields.companyBilling.key}
-                            name={fields.companyBilling.name}
-                            defaultValue={fields.companyBilling.initialValue}
-                            className={
-                              fields.companyBilling.errors
-                                ? "w-full border-red-500 border-2"
-                                : "w-full"
-                            }
-                            placeholder="Company (optional)"
-                          />
-                          <p className="text-red-500 text-sm">
-                            {fields.companyBilling.errors}
-                          </p>
-                        </div>
-                        <div className="flex flex-col gap-3 w-full">
-                          <Input
-                            type="text"
-                            key={fields.addressBilling.key}
-                            name={fields.addressBilling.name}
-                            defaultValue={fields.addressBilling.initialValue}
-                            className={
-                              fields.addressBilling.errors
-                                ? "w-full border-red-500 border-2"
-                                : "w-full"
-                            }
-                            placeholder="Address"
-                          />
-                          <p className="text-red-500 text-sm">
-                            {fields.addressBilling.errors}
-                          </p>
-                        </div>
-                        <div className="flex flex-col gap-3 w-full">
-                          <Input
-                            type="text"
-                            key={fields.address2Billing.key}
-                            name={fields.address2Billing.name}
-                            defaultValue={fields.address2Billing.initialValue}
-                            className={
-                              fields.address2.errors
-                                ? "w-full border-red-500 border-2"
-                                : "w-full"
-                            }
-                            placeholder="Apartment, suite, etc. (optional)"
-                          />
-                          <p className="text-red-500 text-sm">
-                            {fields.address2Billing.errors}
-                          </p>
-                        </div>
-
-                        <div className="grid md:grid-cols-3 gap-4">
-                          <div className="flex flex-col gap-3 w-full">
-                            <Input
-                              type="text"
-                              key={fields.postalCodeBilling.key}
-                              name={fields.postalCodeBilling.name}
-                              defaultValue={
-                                fields.postalCodeBilling.initialValue
-                              }
-                              className={
-                                fields.postalCodeBilling.errors
-                                  ? "w-full border-red-500 border-2"
-                                  : "w-full text-[11px]"
-                              }
-                              placeholder="Postal code (optional)"
-                            />
-                            <p className="text-red-500 text-sm">
-                              {fields.postalCodeBilling.errors}
-                            </p>
-                          </div>
-                          <div className="flex flex-col gap-3 w-full">
-                            <Input
-                              type="text"
-                              key={fields.cityBilling.key}
-                              name={fields.cityBilling.name}
-                              defaultValue={fields.cityBilling.initialValue}
-                              className={
-                                fields.cityBilling.errors
-                                  ? "w-full border-red-500 border-2"
-                                  : "w-full"
-                              }
-                              placeholder="City"
-                            />
-                            <p className="text-red-500 text-xs">
-                              {fields.cityBilling.errors}
-                            </p>
-                          </div>
-                          <div className="flex flex-col gap-3 ">
-                            <Select
-                              key={fields.countyBilling.key}
-                              name={fields.countyBilling.name}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="County" />
-                              </SelectTrigger>
-                              <SelectContent>{countyOptions}</SelectContent>
-                            </Select>
-                            <p className="text-red-500 text-xs">
-                              {fields.countyBilling.errors}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-3 w-full">
-                          <Input
-                            type="text"
-                            key={fields.phoneBilling.key}
-                            name={fields.phoneBilling.name}
-                            defaultValue={fields.phoneBilling.initialValue}
-                            className={
-                              fields.phoneBilling.errors
-                                ? "w-full border-red-500 border-2"
-                                : "w-full"
-                            }
-                            placeholder="Phone (optional)"
-                          />
-                          <p className="text-red-500 text-xs">
-                            {fields.phoneBilling.errors}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </div>
-                )}
-              </div>
-            </Card>
-          </div> */}
 
           {/* Termeni si conditii */}
           <div className="flex items-center space-x-2 mt-4">
-            <Checkbox id="terms" />
+            <Checkbox
+              required
+              id="terms"
+              key={fields.termeniSiConditii.key}
+              name={fields.termeniSiConditii.name}
+              // onChange={(event) => handleChange(event, setTermeniSiConditii)}
+            />
             <label
               htmlFor="terms"
               className="text-sm font-light leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -722,12 +502,12 @@ function Form({
                 termenii si conditiile
               </Link>{" "}
               website-ului si,
-              <br /> 
+              <br />
               in conformitate cu{" "}
               <Link className="text-primary font-normal" href={"#"}>
                 Politica de Protectie a Datelor Personale
               </Link>
-              , 
+              ,
               <br />
               sunt de acord cu prelucrarea datelor mele cu caracter personal
               completate in formular.

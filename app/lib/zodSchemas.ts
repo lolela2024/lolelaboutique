@@ -46,17 +46,9 @@ export const dateLivrare = z.object({
 
 export const ceckoutSchema = z.object({
   email: z.string( { required_error: "Enter an email" } ).email(),
-  country:z.string().min(1,{message:"Select a Country"}),
-  name:z.string({ required_error: "Enter a name"}),
-  firstName:z.string({ required_error: "Enter a first name"}),
-  lastName:z.string({ required_error: "Enter a last name"}),
-  numeFirma:z.string().optional(),
-  address:z.string({ required_error: "Enter an address"}),
-  address2:z.string().optional(),
-  county:z.string({ required_error: "Select a state / province"}),
-  city:z.string({ required_error: "Enter a city"}),
-  postalCode:z.string().optional(),
-  phone:z.string({ required_error: "Enter a phone number"})
+  firstName:z.string({ required_error: "Enter a first name" }),
+  lastName:z.string({ required_error: "Enter a last name" }),
+  mobilePhone:z.string({ required_error: "Enter a mobile phone" })
     .regex(
       /^[\d+\-() ]+$/,
       'Phone number must contain only digits, plus, minus, parentheses, and spaces'
@@ -70,24 +62,44 @@ export const ceckoutSchema = z.object({
       },
       'Phone number must have at least 7 digits after removing non-numeric characters'
     ),
+
+  numeFirma:z.string().optional(),
+  cif:z.string().optional(),
+  nrRegComert:z.string().optional(),
+
+  phone:z.string().optional(),
+  strada:z.string({ required_error: "Enter an address"}),
+  numar:z.string({ required_error: "Enter an address"}),
+
+  bloc:z.string().optional(),
+  scara:z.string().optional(),
+  etaj:z.string().optional(),
+  apartament:z.string().optional(),
+  localitate:z.string({ required_error: "Enter an address"}),
+  judet:z.string({ required_error: "Enter an address"}),
+  codPostal:z.string().optional(),
+  alteDetalii:z.string().optional(),
+
   shipping:z.string().optional(),
   payment:z.string().optional(),
-  billingAddress: z.enum(['same-address', 'different-address']),
   
   tipPersoana: z.enum(['persoana-fizica', 'persoana-juridica']),
-  countryBilling:z.string().optional(),
-  firstNameBilling:z.string().optional(),
-  lastNameBilling:z.string().optional(),
-  companyBilling:z.string().optional(),
-  addressBilling:z.string().optional(),
-  address2Billing:z.string().optional(),
-  countyBilling:z.string().optional(),
-  cityBilling:z.string().optional(),
-  postalCodeBilling:z.string().optional(),
-  phoneBilling:z.string().optional()
+  tipAdresaFactura: z.enum(['same-address','different-address']),
+
+  stradaAdreseFacturare: z.string().optional(),
+  numarAdreseFacturare: z.string().optional(),
+  blocAdreseFacturare: z.string().optional(),
+  scaraAdreseFacturare: z.string().optional(),
+  etajAdreseFacturare: z.string().optional(),
+  apartamentAdreseFacturare: z.string().optional(),
+  localitateAdreseFacturare: z.string().optional(),
+  judetAdreseFacturare: z.string().optional(),
+
+
+  termeniSiConditii:z.string({ required_error: "Required"}),
 })
 .superRefine((data, ctx) => {
-  if(data.tipPersoana === "persoana-juridica") {
+  if(data.tipPersoana === "persoana-juridica" && (data.numeFirma || data.cif || data.nrRegComert)) {
     if(!data.numeFirma){
       ctx.addIssue({
         code: 'custom',
@@ -95,51 +107,50 @@ export const ceckoutSchema = z.object({
         message: 'Dați un nume de firma',
       });
     }
+    if(!data.cif){
+      ctx.addIssue({
+        code: 'custom',
+        path: ['cif'],
+        message: 'Se cere CIF',
+      });
+    }
+    if(!data.nrRegComert){
+      ctx.addIssue({
+        code: 'custom',
+        path: ['nrRegComert'],
+        message: 'Se cere Nr. reg. comertului / An',
+      });
+    }
   }
-  if (data.billingAddress === 'different-address') {
-    if (!data.countryBilling) {
+  if(data.tipAdresaFactura === "different-address"){
+    if(!data.stradaAdreseFacturare){
       ctx.addIssue({
         code: 'custom',
-        path: ['countryBilling'],
-        message: 'Country for billing address is required',
+        path: ['stradaAdreseFacturare'],
+        message: 'Required',
       });
     }
-    if (!data.firstNameBilling) {
+    if(!data.numarAdreseFacturare){
       ctx.addIssue({
         code: 'custom',
-        path: ['firstNameBilling'],
-        message: 'First name is required',
+        path: ['numarAdreseFacturare'],
+        message: 'Required',
       });
     }
-    if (!data.lastNameBilling) {
+    if(!data.localitateAdreseFacturare){
       ctx.addIssue({
         code: 'custom',
-        path: ['lastNameBilling'],
-        message: 'Last name is required',
+        path: ['localitateAdreseFacturare'],
+        message: 'Required',
       });
     }
-    if (!data.addressBilling) {
+    if(!data.judetAdreseFacturare){
       ctx.addIssue({
         code: 'custom',
-        path: ['addressBilling'],
-        message: 'Address is required',
+        path: ['judetAdreseFacturare'],
+        message: 'Required',
       });
     }
-    if (!data.cityBilling) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['cityBilling'],
-        message: 'City is required',
-      });
-    }
-    if (!data.countyBilling) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['countyBilling'],
-        message: 'County is required',
-      });
-    }
-  
   }
 });
 

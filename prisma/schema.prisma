@@ -25,7 +25,7 @@ model User {
   id            String    @id @unique @default(uuid())
   email         String    @unique
   password      String?
-  name          String?
+  // name          String?
   username      String?
   gender        String?
   dateOfBirth   DateTime?
@@ -46,9 +46,10 @@ model User {
   Product               Product[]
   orders                Order[]
   address               Address[]
-  billingAddress        BillingAddress[]
+  persoanaJuridica      PersoanaJuridica[]
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
+  AdresaFacturare       AdresaFacturare[]
 
   @@map("users")
 }
@@ -135,9 +136,10 @@ model Customer {
 
   mobilePhone String
 
-  billingAddress BillingAddress[]
-  address        Address[]
-  orders         Order[]
+  address          Address[]
+  orders           Order[]
+  persoanaJuridica PersoanaJuridica[]
+  AdresaFacturare  AdresaFacturare[]
 }
 
 model Product {
@@ -201,6 +203,7 @@ model Order {
   payment        String
   amount         Int
   verify         String
+  tipPersoana    String?
   userId         String?
   customerId     String?
   fulfilled      Fulfilled   @default(Unfulfilled)
@@ -216,9 +219,12 @@ model Order {
 
   // Relații cu adresele de livrare și facturare
   shippingAddressId Int?
-  billingAddressId  Int?
-  shippingAddress   Address?        @relation(fields: [shippingAddressId], references: [id])
-  billingAddress    BillingAddress? @relation(fields: [billingAddressId], references: [id])
+  dateFacturareId   Int?
+  adresaFacturareId Int?
+
+  shippingAddress Address?          @relation(fields: [shippingAddressId], references: [id])
+  dateFacturare   PersoanaJuridica? @relation(fields: [dateFacturareId], references: [id])
+  adresaFacturare AdresaFacturare?  @relation(fields: [adresaFacturareId], references: [id])
 }
 
 enum Fulfilled {
@@ -251,13 +257,20 @@ enum shippingMethod {
 model Address {
   id Int @id @default(autoincrement())
 
-  address    String
-  address2   String?
-  postalCode String?
-  city       String
-  county     String
-  country    String
-  company    String?
+  phone String?
+
+  strada     String
+  numar      String
+  bloc       String?
+  scara      String?
+  etaj       String?
+  apartament String?
+
+  localitate String
+  judet      String
+  codPostal  String?
+
+  alteDetalii String?
 
   User   User?   @relation(fields: [userId], references: [id])
   userId String?
@@ -268,19 +281,19 @@ model Address {
   shippingOrders Order[]
 }
 
-model BillingAddress {
+model AdresaFacturare {
   id Int @id @default(autoincrement())
 
-  firstName  String
-  lastName   String
-  address    String
-  address2   String?
-  postalCode String?
-  company    String?
-  city       String
-  county     String
-  country    String
-  phone      String
+  strada     String
+  numar      String
+  bloc       String?
+  scara      String?
+  etaj       String?
+  apartament String?
+
+  localitate String
+  judet      String
+  codPostal  String?
 
   User   User?   @relation(fields: [userId], references: [id])
   userId String?
@@ -288,7 +301,23 @@ model BillingAddress {
   Customer   Customer? @relation(fields: [customerId], references: [id])
   customerId String?
 
-  billingOrders Order[]
+  adresaFacturareOrders Order[]
+}
+
+model PersoanaJuridica {
+  id Int @id @default(autoincrement())
+
+  numeFirma    String
+  CIF          String
+  nrRegComert  String
+
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  Customer   Customer? @relation(fields: [customerId], references: [id])
+  customerId String?
+
+  dateFacturare Order[]
 }
 
 model BannerTop {

@@ -8,7 +8,7 @@ export default function Logo() {
     <div className="flex items-center">
       <Link href="/">
         <div className="">
-          <CustomImage src={"/cropped-logooo8.png"} alt="logo" priority width={240} height={75} sizes="(min-width: 620px) 240px, calc(48.67vw - 52px)"/>
+          <CustomImage src={"/cropped-logooo8.png"} alt="logo" priority width={200} height={65} sizes="(min-width: 620px) 240px, calc(48.67vw - 52px)"/>
         </div>
       </Link>
     </div>

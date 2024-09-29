@@ -2,7 +2,6 @@
 
 import { parseWithZod } from "@conform-to/zod"
 import { ceckoutSchema } from "../lib/zodSchemas"
-import prisma from "../lib/db"
 import { cookies } from "next/headers"
 import { Cart } from "../lib/interfaces"
 import { redis } from "../lib/redis"
@@ -10,10 +9,12 @@ import { redirect } from "next/navigation"
 import { v4 as uuidv4 } from 'uuid';
 import { stripe } from "../lib/stripe"
 import Stripe from "stripe";
-import { createAddress, createBillingAddress, createCustomerAddress, createCustomerBillingAddress, updateAddress, updateBillingAddress, updateCustomerAddress, updateCustomerBillingAddress } from "../lib/checkout"
+import { createAddress, updateAddress } from "../lib/checkout"
 import { Fulfilled, OrderStatus } from "@prisma/client"
 import { auth } from "@/auth"
-// sau altă metodă de a obține user-ul logat
+import prisma from '@/app/lib/db';
+
+
 async function getNextOrderNumber(): Promise<number> {
   const lastOrder = await prisma.order.findFirst({
     orderBy: { orderNumber: 'desc' },
@@ -21,9 +22,52 @@ async function getNextOrderNumber(): Promise<number> {
   return lastOrder ? lastOrder.orderNumber + 1 : 10000;
 }
 
+// Funcție pentru calcularea prețului total
+function calculateTotalPrice(cart: Cart | null): number {
+  let totalPrice = 0;
+  cart?.items.forEach((item) => {
+    totalPrice += item.price * item.quantity;
+  });
+  return totalPrice;
+}
 
+// Funcție pentru procesarea creării sau actualizării adresei
+async function handleAddress(userData: any, formData: FormData) {
+  const existingAddress = await prisma.address.findFirst({
+    where: { userId: userData.id },
+  });
 
-export async function createCeckout(prevState: unknown, formData: FormData) {
+  if (existingAddress) {
+    await updateAddress(userData, formData);
+  } else {
+    await createAddress(userData, formData);
+  }
+
+  return prisma.address.findFirst({
+    where: { userId: userData.id },
+  });
+}
+
+// Functie pentru creare sau actualizare adresaFacturare
+async function handleFacturareAddressUser(userData: any, formData: FormData) {
+  
+  const existingAddress = await prisma.adresaFacturare.findFirst({
+    where: { userId: userData.id },
+  });
+
+  if (existingAddress) {
+    await updateAddress(userData, formData);
+  } else {
+    await createAddress(userData, formData);
+  }
+
+  return prisma.address.findFirst({
+    where: { userId: userData.id },
+  });
+}
+
+// Functie pentru creare sau actualizare adresaFacturare
+async function handleFacturareAddressCustomer(customerId: string, formData: FormData) {
   const submission = parseWithZod(formData, {
     schema: ceckoutSchema
   });
@@ -32,351 +76,330 @@ export async function createCeckout(prevState: unknown, formData: FormData) {
     return submission.reply();
   }
 
+  const existingAddress = await prisma.adresaFacturare.findFirst({
+    where: { customerId: customerId },
+  });
+
+  if (existingAddress) {
+    await prisma.adresaFacturare.updateMany({
+      where:{customerId:customerId},
+      data:{
+        strada:submission.value.stradaAdreseFacturare as string,
+        numar:submission.value.numarAdreseFacturare as string,
+        localitate:submission.value.localitateAdreseFacturare as string,
+        judet:submission.value.judetAdreseFacturare as string,
+        bloc:submission.value.blocAdreseFacturare,
+        scara:submission.value.scaraAdreseFacturare,
+        etaj:submission.value.etajAdreseFacturare,
+        apartament:submission.value.apartamentAdreseFacturare,
+      }
+    })
+  } else {
+    await prisma.adresaFacturare.create({
+      data:{
+        strada:submission.value.stradaAdreseFacturare as string,
+        numar:submission.value.numarAdreseFacturare as string,
+        localitate:submission.value.localitateAdreseFacturare as string,
+        judet:submission.value.judetAdreseFacturare as string,
+        bloc:submission.value.blocAdreseFacturare,
+        scara:submission.value.scaraAdreseFacturare,
+        etaj:submission.value.etajAdreseFacturare,
+        apartament:submission.value.apartamentAdreseFacturare,
+        customerId:customerId
+      }
+    });
+  }
+
+  return prisma.adresaFacturare.findFirst({
+    where: { customerId: customerId },
+  });
+}
+
+
+// Funcție pentru creare sau actualizare Persoana Juridica
+async function handlePersoanaJuridica(customerId: string, submission: any) {
+  const existingPersoanaJuridica = await prisma.persoanaJuridica.findFirst({
+    where: { customerId },
+  });
+
+  if (!existingPersoanaJuridica && submission.value.numeFirma) {
+    await prisma.persoanaJuridica.create({
+      data: {
+        numeFirma: submission.value.numeFirma,
+        CIF: submission.value.cif,
+        nrRegComert: submission.value.nrRegComert,
+        customerId,
+      },
+    });
+  } else {
+    await prisma.persoanaJuridica.update({
+      where: { id: existingPersoanaJuridica?.id },
+      data: {
+        numeFirma: submission.value.numeFirma,
+        CIF: submission.value.cif,
+        nrRegComert: submission.value.nrRegComert,
+      },
+    });
+  }
+}
+
+// Funcție pentru crearea comenzii
+async function createOrder(data: {
+  verify: string,
+  orderNumber: number,
+  shippingMethod: string,
+  payment: string,
+  amount: number,
+  userId?: string,
+  customerId?: string,
+  shippingAddressId: number | undefined,
+  dateFacturareId?: number | undefined,
+  adresaFacturareId?: number | undefined,
+  cart: Cart | null,
+  tipPersoana?: string | null,
+}) {
+  const { 
+    verify, 
+    orderNumber, 
+    shippingMethod, 
+    payment, 
+    amount, 
+    userId, 
+    customerId, 
+    shippingAddressId, 
+    cart, 
+    tipPersoana, 
+    dateFacturareId, 
+    adresaFacturareId 
+  } = data;
+  return prisma.order.create({
+    data: {
+      verify,
+      orderNumber,
+      shippingMethod,
+      payment,
+      status: OrderStatus.pending,
+      amount,
+      userId,
+      customerId,
+      tipPersoana,
+      shippingAddressId,
+      adresaFacturareId: adresaFacturareId ? adresaFacturareId : undefined,
+      dateFacturareId: dateFacturareId ? dateFacturareId : undefined,
+      fulfilled: Fulfilled.Unfulfilled,
+      products: {
+        create: cart?.items.map((item) => ({
+          Product: { connect: { id: item.id } },
+          quantity: item.quantity,
+        })),
+      },
+    },
+    include: {
+      products: true,
+      shippingAddress: true,
+    },
+  });
+}
+
+// Funcție pentru crearea sesiunii Stripe
+async function createStripeSession(cart: Cart | null, submission: any, cartId: string) {
+  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = cart?.items.map((item) => ({
+    price_data: {
+      currency: "ron",
+      unit_amount: item.price * 100,
+      product_data: {
+        name: item.name,
+        images: [item.imageString],
+      },
+    },
+    quantity: item.quantity,
+  })) || [];
+
+  const shippingCost = 2499;
+  if (submission.value.shipping === "dhl") {
+    lineItems.push({
+      price_data: {
+        currency: "ron",
+        unit_amount: shippingCost,
+        product_data: { name: "Cost de livrare" },
+      },
+      quantity: 1,
+    });
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    line_items: lineItems,
+    customer_email: submission.value.email,
+    success_url: process.env.NODE_ENV === "development"
+      ? "http://localhost:3000/payment/success"
+      : "https://lolelaboutique.vercel.app/payment/success",
+    cancel_url: process.env.NODE_ENV === "development"
+      ? "http://localhost:3000/payment/cancel"
+      : "https://lolelaboutique.vercel.app/payment/cancel",
+    metadata: { cartId: cartId || '' },
+  });
+
+  return session.url;
+}
+
+// Funcție principală pentru crearea checkout-ului
+export async function createCheckout(prevState: unknown, formData: FormData) {
+  const submission = parseWithZod(formData, { schema: ceckoutSchema });
+  if (submission.status !== "success") {
+    return submission.reply();
+  }
+
   const orderNumber = await getNextOrderNumber();
   const cookieStore = cookies();
   const cartId = cookieStore.get('cartId')?.value;
   const cart: Cart | null = await redis.get(`cart-${cartId}`);
-  let totalPrice = 0;
+  const totalPrice = calculateTotalPrice(cart);
   const verify = uuidv4();
-
-  cart?.items.forEach((item) => {
-    totalPrice += item.price * item.quantity;
-  });
-
-  const session = await auth()
-  const user = session?.user
+  const session = await auth();
+  const user = session?.user;
 
   
   if (user?.email) {
-    // Procesare pentru utilizatori autentificați
-    
-    await prisma.user.update({
-      where:{ email: user.email },
-      data:{
-        phone:submission.value.phone
-      }
-    })
-
-    const userData = await prisma.user.findUnique({
+    const userData = await prisma.user.update({
       where: { email: user.email },
+      data: { phone: submission.value.phone },
     });
+    
+    const address = await handleAddress(userData, formData);
 
-    if (userData) {
-      const existingAddress = await prisma.address.findFirst({
-        where: { userId: userData.id },
+    // Dacă plata este "ramburs"
+    if (submission.value.payment === "ramburs") {
+      const shippingMethod = submission.value.shipping ? submission.value.shipping : 'standard';
+
+      await createOrder({ 
+        verify, 
+        orderNumber, 
+        shippingMethod: shippingMethod, 
+        payment: submission.value.payment, 
+        amount: totalPrice, 
+        userId: userData.id, 
+        shippingAddressId: address?.id, 
+        cart, 
+        tipPersoana: submission.value.tipPersoana,
+        
       });
-
-      const existingBillingAddress = await prisma.billingAddress.findFirst({
-        where: { userId: userData.id },
-      });
-
-      if(existingAddress){
-        updateAddress(userData,formData)
-      }else if(!existingAddress){
-        createAddress(userData,formData)
-      }
-
-      if(existingBillingAddress && submission.value.billingAddress === "different-address"){
-        updateBillingAddress(userData,formData)
-      }else if(!existingBillingAddress && submission.value.billingAddress === "different-address"){
-        createBillingAddress(userData,formData)
-      }
-
-      const address = await prisma.address.findFirst({
-        where: { userId: userData.id },
-      });
-
-      const billingAddress = await prisma.billingAddress.findFirst({
-        where: { userId: userData.id },
-      });
-
-      if(submission.value.payment === "ramburs"){
-
-        await prisma.order.create({
-          data: {
-            verify,
-            orderNumber,
-            shippingMethod: submission.value.shipping || '',
-            payment: submission.value.payment as string,
-            status: OrderStatus.pending,
-            amount: totalPrice,
-            userId: userData.id,
-            shippingAddressId: address?.id,
-            billingAddressId: billingAddress?.id,
-            fulfilled:Fulfilled.Unfulfilled,
-            products: {
-              create: cart?.items.map(item => ({
-                Product: { connect: { id: item.id } },
-                quantity: item.quantity,
-              })),
-            },
-          },
-          include: {
-            products: true,
-            shippingAddress: true,
-            billingAddress: true,
-          },
-        });
-  
-        await redis.del(`cart-${cartId}`);
-        redirect(`/checkout/comenzi?verify=${verify}`);
-      }else if(submission.value.payment === "card") {
-        await prisma.order.create({
-          data: {
-            verify,
-            orderNumber,
-            shippingMethod: submission.value.shipping || '',
-            payment: submission.value.payment as string,
-            status: OrderStatus.pending,
-            amount: totalPrice,
-            userId: userData.id,
-            shippingAddressId: address?.id,
-            billingAddressId: billingAddress?.id,
-            fulfilled:Fulfilled.Unfulfilled,
-            products: {
-              create: cart?.items.map(item => ({
-                Product: { connect: { id: item.id } },
-                quantity: item.quantity,
-              })),
-            },
-          },
-          include: {
-            products: true,
-            shippingAddress: true,
-            billingAddress: true,
-          },
-        });
-
-        if(cart && cart.items) {
-          const shippingCost = 2499;
-
-          const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = cart.items.map((item) => (
-            {
-                price_data:{
-                  currency: "ron",
-                  unit_amount: item.price * 100,
-                  product_data: {
-                    name: item.name,
-                    images: [item.imageString]
-                  }
-                },
-                quantity: item.quantity
-            }
-          ))
-
-          if(submission.value.shipping === "dhl"){
-            lineItems.push({
-              price_data: {
-                currency: "ron",
-                unit_amount: shippingCost, // Înmulțește suma cu 100 pentru a o converti în bani
-                product_data: {
-                  name: "Cost de livrare",
-                }
-              },
-              quantity: 1
-            });
-          }
-      
-          const session = await stripe.checkout.sessions.create({
-            mode: "payment",
-            line_items: lineItems,
-            customer_email:submission.value.email,
-            success_url:
-              process.env.NODE_ENV === "development"
-                ? "http://localhost:3000/payment/success"
-                : "https://shoe-marshal.vercel.app/payment/success",
-            cancel_url:
-              process.env.NODE_ENV === "development"
-                ? "http://localhost:3000/payment/cancel"
-                : "https://shoe-marshal.vercel.app/payment/cancel",
-            metadata: {
-              cartId:cartId || ''
-            },
-          });
-      
-          return redirect(session.url as string) 
-        }
-      }
+      await redis.del(`cart-${cartId}`);
+      return redirect(`/checkout/comenzi?verify=${verify}`);
     }
 
+    // Dacă plata este "card"
+    const url = await createStripeSession(cart, submission, cartId || '');
+    return redirect(url as string);
   }
-  
-    // Procesare pentru customers neregistrați
-    const existingCustomer = await prisma.customer.findUnique({
-      where: { email: submission.value.email },
-    });
-  
-    if (!existingCustomer) {
-      await prisma.customer.create({
-        data: {
-          email: submission.value.email,
-          firstName: submission.value.firstName,
-          lastName: submission.value.lastName,
-          mobilePhone: submission.value.phone,
-        },
-      });
-    } else {
-      await prisma.customer.update({
-        where: { email: submission.value.email },
-        data: {
-          firstName: submission.value.firstName,
-          lastName: submission.value.lastName,
-          mobilePhone: submission.value.phone,
-        },
-      });
-    }
-  
-    const customer = await prisma.customer.findUnique({
-      where: { email: submission.value.email },
-    });
-  
-    const customerId = customer?.id;
-  
-    const existingAddress = await prisma.address.findFirst({
-      where: { customerId },
-    });
-  
-    const existingBillingAddress = await prisma.billingAddress.findFirst({
-      where: { customerId },
-    });
-  
-    if (!existingAddress) {
-      if(!customerId){
-        return null
-      }
-      createCustomerAddress(customerId,formData)
-    } else if (existingAddress) {
-      updateCustomerAddress(existingAddress,formData);
-    }
-  
-    if (!existingBillingAddress && submission.value.billingAddress === "different-address") {
-      if(!customerId){
-        return null
-      }
-      createCustomerBillingAddress(customerId,formData)
-    } else if (existingBillingAddress && submission.value.billingAddress === "different-address") {
-      updateCustomerBillingAddress(existingBillingAddress,formData)
-    }
-  
-    const address = await prisma.address.findFirst({
-      where: { customerId },
-    });
-  
-    const billingAddress = await prisma.billingAddress.findFirst({
-      where: { customerId },
-    });
-  
 
-  if(submission.value.payment === "ramburs") {
-    await prisma.order.create({
-      data: {
-        verify,
-        orderNumber,
-        shippingMethod: submission.value.shipping || '',
-        payment: submission.value.payment as string,
-        status: OrderStatus.pending,
-        amount: totalPrice,
-        customerId,
-        shippingAddressId: address?.id,
-        billingAddressId: billingAddress?.id,
-        fulfilled:Fulfilled.Unfulfilled,
-        products: {
-          create: cart?.items.map(item => ({
-            Product: { connect: { id: item.id } },
-            quantity: item.quantity,
-          })),
-        },
-      },
-      include: {
-        products: true,
-        shippingAddress: true,
-        billingAddress: true,
-      },
+  // Procesare pentru clienți neînregistrați
+  const customer = await prisma.customer.upsert({
+    where: { email: submission.value.email },
+    create: {
+      email: submission.value.email,
+      firstName: submission.value.firstName,
+      lastName: submission.value.lastName,
+      mobilePhone: submission.value.mobilePhone,
+    },
+    update: {
+      firstName: submission.value.firstName,
+      lastName: submission.value.lastName,
+      mobilePhone: submission.value.mobilePhone,
+    },
+  });
+
+
+  // Extrage datele necesare pentru adresa clientului din formData
+  const addressData = {
+    strada: formData.get('strada') as string,
+    numar: formData.get('numar') as string,
+    localitate: formData.get('localitate') as string,
+    judet: formData.get('judet') as string,
+    bloc: formData.get("bloc") as string,
+    scara: formData.get("scara") as string,
+    etaj: formData.get("etaj") as string,
+    apartament: formData.get("apartament") as string,
+    codPostal: formData.get("codPostal") as string,
+    alteDetalii: formData.get("alteDetalii") as string
+  };
+
+  const customerId = customer.id;
+
+  const existingAddress = await prisma.address.findFirst({
+    where: { customerId: customerId },
+  });
+
+  const address = await prisma.address.upsert({
+    where: { id: existingAddress ? existingAddress.id : 0 }, // Folosește id-ul unic sau 0 dacă nu există
+    create: {
+      customerId,
+      ...addressData, // Asigură-te că adresa conține toate câmpurile necesare
+    },
+    update: {
+      ...addressData, // Actualizează câmpurile obligatorii
+    },
+  });
+
+  if (submission.value.tipPersoana === "persoana-juridica") {
+    await handlePersoanaJuridica(customerId, submission);
+  }
+
+  if (submission.value.tipPersoana === "persoana-juridica" && submission.value.tipAdresaFactura === "different-address"){
+    await handleFacturareAddressCustomer(customerId, formData)
+  }
+
+  const dateFacturare = await prisma.persoanaJuridica.findFirst({
+    where:{customerId:customerId}
+  })
+
+  const dateAdresaFacturare = await prisma.adresaFacturare.findFirst({
+    where:{customerId:customerId}
+  })
+
+  const dateFacturareId = dateFacturare?.id || undefined;
+
+  const dateAdresaFacturareId = dateAdresaFacturare?.id || undefined;
+
+  if (submission.value.payment === "ramburs") {
+    const shippingMethod = submission.value.shipping ? submission.value.shipping : 'standard';
+    await createOrder({ 
+      verify, 
+      orderNumber, 
+      shippingMethod: shippingMethod, 
+      payment: submission.value.payment, 
+      amount: totalPrice, 
+      customerId, 
+      shippingAddressId: address?.id,
+      cart, 
+      tipPersoana: submission.value.tipPersoana, 
+      dateFacturareId: dateFacturareId,
+      adresaFacturareId: dateAdresaFacturareId,
+      
     });
-  
+
     await redis.del(`cart-${cartId}`);
-  
-    redirect(`/checkout/comenzi?verify=${verify}`);
-  }else if (submission.value.payment === "card") {
-    await prisma.order.create({
-      data: {
-        verify,
-        orderNumber,
-        shippingMethod: submission.value.shipping || '',
-        payment: submission.value.payment as string,
-        status: OrderStatus.pending,
-        amount: totalPrice,
-        customerId,
-        shippingAddressId: address?.id,
-        billingAddressId: billingAddress?.id,
-        fulfilled:Fulfilled.Unfulfilled,
-        products: {
-          create: cart?.items.map(item => ({
-            Product: { connect: { id: item.id } },
-            quantity: item.quantity,
-          })),
-        },
-      },
-      include: {
-        products: true,
-        shippingAddress: true,
-        billingAddress: true,
-      },
-    });
-
-    if(cart && cart.items) {
-      const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = cart.items.map((item) => (
-        {
-            price_data:{
-              currency: "ron",
-              unit_amount: item.price * 100,
-              product_data: {
-                name: item.name,
-                images: [item.imageString]
-              }
-            },
-            quantity: item.quantity
-        }
-      ))
-
-
-
-      const shippingCost = 2499;
-
-      if(submission.value.shipping === "dhl"){
-        lineItems.push({
-          price_data: {
-            currency: "ron",
-            unit_amount: shippingCost, // Înmulțește suma cu 100 pentru a o converti în bani
-            product_data: {
-              name: "Cost de livrare",
-            }
-          },
-          quantity: 1
-        });
-      }
-      
-  
-      const session = await stripe.checkout.sessions.create({
-        mode: "payment",
-        line_items: lineItems,
-        customer_email:submission.value.email,
-        success_url:
-          process.env.NODE_ENV === "development"
-            ? "http://localhost:3000/payment/success"
-            : "https://shoe-marshal.vercel.app/payment/success",
-        cancel_url:
-          process.env.NODE_ENV === "development"
-            ? "http://localhost:3000/payment/cancel"
-            : "https://shoe-marshal.vercel.app/payment/cancel",
-        metadata: {
-          cartId:cartId || ''
-        },
-      });
-  
-      return redirect(session.url as string) 
-    }
+    return redirect(`/checkout/comenzi?verify=${verify}`);
   }
 
-  
+  if(submission.value.payment === "card") {
+    const shippingMethod = submission.value.shipping ? submission.value.shipping : 'standard';
+
+    await createOrder({
+      verify,
+      orderNumber,
+      shippingMethod,
+      payment:submission.value.payment,
+      amount: totalPrice,
+      customerId,
+      shippingAddressId: address.id,
+      dateFacturareId,
+      adresaFacturareId:dateAdresaFacturareId,
+      cart,
+      tipPersoana:submission.value.tipPersoana
+    })
+  }
+
+  const url = await createStripeSession(cart, submission, cartId || '');
+  return redirect(url as string);
 }

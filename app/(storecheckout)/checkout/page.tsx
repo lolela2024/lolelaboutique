@@ -23,11 +23,11 @@ export default async function CeckoutPage() {
     const userData = await prisma.user.findFirst({
       where: { email: user.email },
       select:{
+        firstName:true,
+        lastName:true,
         email:true,
-        name:true,
         profileImage:true,
         address:true,
-        billingAddress:true,
         phone:true || undefined
       }
     });

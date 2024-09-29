@@ -18,7 +18,8 @@ interface InformatiiFormProps {
     id: string;
     email: string;
     password: string | null;
-    name: string | null;
+    firstName: string | null;
+    lastName: string | null;
     username: string | null;
     gender: string | null;
     dateOfBirth: Date | null;
@@ -71,7 +72,7 @@ export default function InformatiiForm({ user }: InformatiiFormProps) {
             type="text"
             key={fields.name.key}
             name={fields.name.name}
-            defaultValue={user?.name || ""}
+            defaultValue={user?.firstName || ""}
             className="w-full"
           />
           <p className="text-red-500 mt-1">{fields.name.errors}</p>

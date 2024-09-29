@@ -40,11 +40,11 @@ export default function PersoanaJuridica({fields}:{fields:any}) {
             </Label>
             <Input
               type="text"
-              key={fields.lastName.key}
-              name={fields.lastName.name}
-              defaultValue={fields.lastName.initialValue}
+              key={fields.cif.key}
+              name={fields.cif.name}
+              defaultValue={fields.cif.initialValue}
               className={
-                fields.lastName.errors
+                fields.cif.errors
                   ? "w-full col-span-12 md:col-span-8 border-red-500 border-2"
                   : "w-full col-span-12 md:col-span-8"
               }
@@ -52,7 +52,7 @@ export default function PersoanaJuridica({fields}:{fields:any}) {
             />
 
             <p className="text-red-500 text-sm col-span-12">
-              {fields.lastName.errors}
+              {fields.cif.errors}
             </p>
           </div>
           <Separator className="mb-3" />
@@ -63,11 +63,11 @@ export default function PersoanaJuridica({fields}:{fields:any}) {
             </Label>
             <Input
               type="text"
-              key={fields.phone.key}
-              name={fields.phone.name}
-              defaultValue={fields.phone.initialValue}
+              key={fields.nrRegComert.key}
+              name={fields.nrRegComert.name}
+              defaultValue={fields.nrRegComert.initialValue}
               className={
-                fields.phone.errors
+                fields.nrRegComert.errors
                   ? "w-full col-span-12 md:col-span-8 border-red-500 border-2"
                   : "w-full col-span-12 md:col-span-8"
               }
@@ -75,30 +75,7 @@ export default function PersoanaJuridica({fields}:{fields:any}) {
             />
 
             <p className="text-red-500 text-sm col-span-12">
-              {fields.phone.errors}
-            </p>
-          </div>
-          <Separator className="mb-3" />
-
-          <div className="grid grid-cols-12 items-start">
-            <Label className="col-span-12 mb-2 md:mb-0 md:col-span-4">
-              Sediul firmei:
-            </Label>
-            <Input
-              type="text"
-              key={fields.email.key}
-              name={fields.email.name}
-              defaultValue={fields.email.initialValue}
-              className={
-                fields.email.errors
-                  ? "w-full col-span-12 md:col-span-8 border-red-500 border-2"
-                  : "w-full col-span-12 md:col-span-8"
-              }
-              placeholder="Sediul firmei *"
-            />
-
-            <p className="text-red-500 text-sm col-span-12">
-              {fields.email.errors}
+              {fields.nrRegComert.errors}
             </p>
           </div>
         </div>

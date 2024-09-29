@@ -34,7 +34,7 @@ export async function informatiiUpdate(prevState: unknown,formData:FormData) {
     where:{id:user.id},
     data:{
       gender:submission.value.gender,
-      name:submission.value.name,
+      firstName:submission.value.name,
       email:submission.value.email,
     }
   })

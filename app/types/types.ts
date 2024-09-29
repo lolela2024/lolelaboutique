@@ -7,30 +7,23 @@ export type CheckoutFormProps = {
   user?: {
     email: string;
     phone: string | null;
-    name: string | null;
+    firstName: string | null;
+    lastName: string | null;
     profileImage: string | null;
     address: {
       id: number;
-      company:string | null;
-      address: string;
-      address2: string | null;
-      postalCode: string | null;
-      city: string;
-      county: string;
-      country: string;
+      phone: string | null;
+      strada: string | null;
+      numar: string | null;
+      bloc: string | null;
+      scara: string | null;
+      etaj: string | null;
+      apartament: string | null; // Permitem și valoarea null
+      localitate: string;
+      judet: string | null;
+      codPostal: string | null;
       userId: string | null;
-      customerId: string | null;
-    }[];
-    billingAddress: {
-      id: number;
-      address: string;
-      address2: string | null;
-      postalCode: string | null;
-      company: string | null;
-      city: string;
-      county: string;
-      userId: string | null;
-      customerId: string | null;
+      customerId: string | null;    
     }[];
   } | null | undefined;
 };

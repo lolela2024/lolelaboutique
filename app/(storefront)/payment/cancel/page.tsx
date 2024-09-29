@@ -4,6 +4,7 @@ import { XCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function CancelRoute() {
+  
   return (
     <section className="w-full min-h-[80vh] flex items-center justify-center">
       <Card className="w-[350px]">

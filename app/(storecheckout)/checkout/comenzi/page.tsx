@@ -11,11 +11,14 @@ async function getData(verify: string) {
     select: {
       shippingAddress: true,
       Customer: true,
-      billingAddress: true,
       createdAt: true,
       orderNumber: true,
       payment: true,
       shippingMethod: true,
+      adresaFacturare: true,
+      tipPersoana: true,
+      dateFacturare: true,
+      User:true
     },
   });
 
@@ -46,7 +49,6 @@ export default async function CheckoutComenzi({
         lastName: true,
         profileImage: true,
         address: true,
-        billingAddress: true,
         phone: true || undefined,
       },
     });
@@ -66,6 +68,11 @@ export default async function CheckoutComenzi({
   const data = await getData(searchParams.verify);
 
   const formattedTime = data.createdAt.toLocaleDateString("ro-RO");
+
+  const methodaDeLivrare = "Livrare la adresa";
+  const timpLivrare = "Livrare in 1-2 zile";
+
+  console.log(data.tipPersoana);
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h1 className="text-2xl mt-4 font-semibold">
@@ -96,51 +103,70 @@ export default async function CheckoutComenzi({
         <span className="font-light">Plata in sistem ramburs</span>
       </p>
       <p className="font-semibold">
-        Metoda de livrare: <span className="font-light">Livrare la adresa</span>
+        Metoda de livrare:{" "}
+        <span className="font-light">{methodaDeLivrare}</span>
       </p>
       <p className="font-semibold">
-        Durata de livrare:{" "}
-        <span className="font-light">Livrare in 1-2 zile</span>
+        Durata de livrare: <span className="font-light">{timpLivrare}</span>
       </p>
       <br />
       <div className="flex flex-wrap gap-4">
         <div className="flex-grow">
           <p className="font-semibold">Date facturare</p>
-          {data.billingAddress ? (
+          {data.tipPersoana === "persoana-juridica" && data.adresaFacturare && (
             <>
-              <p className="font-light">
-                {data.billingAddress.firstName} {data.billingAddress.lastName}
-              </p>
-              <p className="font-light">{data.billingAddress?.address}</p>
-              <p className="font-light">
-                {data.billingAddress?.city}, {data.billingAddress?.county},{" "}
-                {data.billingAddress?.postalCode}
-              </p>
-              <p className="font-light">{data.billingAddress?.phone}</p>
-            </>
-          ) : (
-            <>
+              <p>{data.dateFacturare?.numeFirma}</p>
               <p>
-                {data.Customer?.firstName} {data.Customer?.lastName}
+                {data.adresaFacturare?.strada} {data.adresaFacturare.numar}{" "}
               </p>
-              <p>{data.shippingAddress?.address}</p>
               <p>
-                {data.shippingAddress?.city}, {data.shippingAddress?.county},{" "}
-                {data.shippingAddress?.postalCode}
+                {data.adresaFacturare?.localitate},{" "}
+                {data.adresaFacturare?.judet} {data.adresaFacturare?.codPostal}
               </p>
               {/* <p>{user ? userBazaDeDate?.phone : data.Customer?.phone}</p> */}
             </>
           )}
+          {data.tipPersoana === "persoana-juridica" &&
+            !data.adresaFacturare && (
+              <>
+                <p>{data.dateFacturare?.numeFirma}</p>
+                <p>
+                  {data.shippingAddress?.strada} {data.shippingAddress?.numar}{" "}
+                </p>
+                <p>
+                  {data.shippingAddress?.localitate},{" "}
+                  {data.shippingAddress?.judet}{" "}
+                  {data.shippingAddress?.codPostal}
+                </p>
+                {/* <p>{user ? userBazaDeDate?.phone : data.Customer?.phone}</p> */}
+              </>
+            )}
+
+          {data.tipPersoana === "persoana-fizica" && (
+              <>
+                <p>{data.User?.firstName || data.Customer?.firstName} {data.User?.lastName || data.Customer?.lastName}</p>
+                <p>
+                  {data.shippingAddress?.strada} {data.shippingAddress?.numar}{" "}
+                </p>
+                <p>
+                  {data.shippingAddress?.localitate},{" "}
+                  {data.shippingAddress?.judet}{" "}
+                  {data.shippingAddress?.codPostal}
+                </p>
+                {/* <p>{user ? userBazaDeDate?.phone : data.Customer?.phone}</p> */}
+              </>
+            )}
         </div>
         <div className="flex-grow font-light">
           <p className="font-semibold">Date livrare</p>
           <p>
-            {user ? userBazaDeDate?.firstName : data.Customer?.firstName} {user ? userBazaDeDate?.lastName : data.Customer?.lastName}
+            {user ? userBazaDeDate?.firstName : data.Customer?.firstName}{" "}
+            {user ? userBazaDeDate?.lastName : data.Customer?.lastName}
           </p>
-          <p>{data.shippingAddress?.address}</p>
+          <p>{data.shippingAddress?.strada}{" "}{data.shippingAddress?.numar}</p>
           <p>
-            {data.shippingAddress?.city}, {data.shippingAddress?.county},{" "}
-            {data.shippingAddress?.postalCode}
+            {data.shippingAddress?.localitate}, {data.shippingAddress?.judet},{" "}
+            {data.shippingAddress?.codPostal}
           </p>
           {/* <p>{user ? userBazaDeDate?.phone : data.Customer?.phone}</p> */}
         </div>
@@ -148,7 +174,7 @@ export default async function CheckoutComenzi({
       <br />
       {!user && (
         <>
-          <h1 className="text-2xl mt-4 font-semibold">
+          <h1 className="text-2xl font-semibold">
             Vrei sa comanzi mai rapid pe viitor?
           </h1>
           <p className="font-light">

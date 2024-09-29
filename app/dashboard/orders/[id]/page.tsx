@@ -10,13 +10,15 @@ import MenuCustomer from "../_components/MenuCustomer";
 import { OrderStatus } from "@prisma/client";
 import HeaderMenu from "../_components/HeaderMenu";
 import MenuStatus from "../_components/MenuStatus";
+import PersoanaJuridica from "../../../components/storefront/PersoanaJuridica";
 
 async function getData(id: string) {
   const data = await prisma.order.findUnique({
     where: { id },
     include: {
       shippingAddress: true,
-      billingAddress: true,
+      adresaFacturare: true,
+      dateFacturare: true,
       User: true,
       Customer: true,
       _count: {
@@ -144,7 +146,9 @@ export default async function EditOrder({
                 >
                   {data?.status}
                 </p>
-                {data?.payment==="ramburs" && <MenuStatus orderId={data?.id}/>}
+                {data?.payment === "ramburs" && (
+                  <MenuStatus orderId={data?.id} />
+                )}
               </div>
             </CardHeader>
             <CardContent className="border rounded-sm pt-2 space-y-2">
@@ -217,35 +221,36 @@ export default async function EditOrder({
                 {data?.Customer?.firstName || data?.User?.firstName}{" "}
                 {data?.Customer?.lastName || data?.User?.lastName}
               </p>
-              {data?.shippingAddress?.address} {data?.shippingAddress?.address2}
-              {data?.shippingAddress?.company ? (
+              <p>
+                {data?.shippingAddress?.strada} {data?.shippingAddress?.numar}
+              </p>
+
+              {/* {data?.shippingAddress?.company ? (
                 <p>Company: {data?.shippingAddress?.company}</p>
-              ) : null}
-              <div>
-                {data?.shippingAddress?.postalCode}{" "}
-                {data?.shippingAddress?.city}
-              </div>
-              <p>{data?.shippingAddress?.county}</p>
-              <p>{data?.shippingAddress?.country}</p>
+              ) : null} */}
+              <p>
+                {data?.shippingAddress?.codPostal}{" "}
+                {data?.shippingAddress?.localitate}
+              </p>
+              <p>{data?.shippingAddress?.judet}</p>
+              <p>{"Romania"}</p>
               <h4 className="my-4 text-black text-base">Billing address</h4>
-              {data?.billingAddress ? (
+              {data?.adresaFacturare ? (
                 <div>
                   <p>
-                    {data.billingAddress.firstName}{" "}
-                    {data.billingAddress.lastName}
+                    {data.Customer?.firstName || data.User?.firstName} {data.Customer?.lastName || data.User?.lastName}
                   </p>
-                  {data?.billingAddress?.company ? (
-                    <p>Company: {data?.billingAddress?.company}</p>
+                  {data?.tipPersoana === "persoana-juridica" ? (
+                    <p>Company: {data?.dateFacturare?.numeFirma}</p>
                   ) : null}
                   <p>
-                    {data.billingAddress.address} {data.billingAddress.address2}
+                    {data.adresaFacturare.strada} {data.adresaFacturare.numar}
                   </p>
                   <p>
-                    {data.billingAddress.postalCode} {data.billingAddress.city}
+                    {data.adresaFacturare.codPostal}{" "}
+                    {data.adresaFacturare.localitate}
                   </p>
-                  <p>{data.billingAddress.county}</p>
-                  <p>{data.billingAddress.country}</p>
-                  <p>{data.billingAddress.phone}</p>
+                  <p>{data.adresaFacturare.judet}</p>
                 </div>
               ) : (
                 "Same as shipping address"

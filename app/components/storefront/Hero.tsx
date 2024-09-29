@@ -11,7 +11,7 @@ export async function Hero() {
   const data = await getData();
   const banner = data[0];
 
-  if (banner.on === true) {
+  if (banner?.on === true) {
     return (
       <>
         <div className="relative h-[60vh] lg:h-[300px]">
