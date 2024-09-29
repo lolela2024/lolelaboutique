@@ -36,11 +36,11 @@ export const sentVerificationEmail = async (email:string, token:string) => {
 };
 
 export const sentEmailOrder = async (email:string,orderNumar:number) => {
-  const userFirstname = "theodor"
+  
   await resend.emails.send({
     from: "LolelaBoutique <lolela.orders@lolelaboutique.ro> ",
     to: email,
     subject:`Confirmarea comenzii tale LolelaBoutique ${orderNumar}`,
-    html:render(KoalaWelcomeEmail({userFirstname}))
+    html:"email order"
   })
 }
