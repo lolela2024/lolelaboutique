@@ -233,3 +233,10 @@ p {
 .custom-text-shadow {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
+
+input,
+textarea,
+select,
+button {
+  font-size: 16px;
+}
