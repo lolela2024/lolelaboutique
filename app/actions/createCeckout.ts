@@ -15,7 +15,7 @@ import { auth } from "@/auth"
 import prisma from '@/app/lib/db';
 import { Resend } from "resend";
 import { render } from '@react-email/render';
-import KoalaWelcomeEmail from "@/emails"
+import EmailConfirmareOrder from '../../emails/ConfirmareOrder/index';
 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -368,6 +368,7 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
   const dateAdresaFacturareId = dateAdresaFacturare?.id || undefined;
 
   const userFirstname = customer.firstName
+  const userLastname = customer.lastName;
 
   if (submission.value.payment === "ramburs") {
     const shippingMethod = submission.value.shipping ? submission.value.shipping : 'standard';
@@ -390,7 +391,22 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
       from:"LolelaBoutique <lolela.orders@lolelaboutique.ro>",
       to: customer.email,
       subject:`Confirmarea comenzii tale LolelaBoutique ${orderNumber}`,
-      html: render(KoalaWelcomeEmail({userFirstname}))
+      react: EmailConfirmareOrder(
+        {
+          userFirstname,
+          userLastname,
+          strada:submission.value.strada,
+          bloc:submission.value.bloc,
+          scara:submission.value.scara,
+          etaj:submission.value.etaj,
+          apartament:submission.value.apartament,
+          numar:submission.value.numar,
+          localitate:submission.value.localitate,
+          judet:submission.value.judet,
+          codPostal:submission.value.codPostal,
+          orderNumber
+        }
+      )
     });
     await redis.del(`cart-${cartId}`);
     return redirect(`/checkout/comenzi?verify=${verify}`);
