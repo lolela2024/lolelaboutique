@@ -13,7 +13,12 @@ import { createAddress, updateAddress } from "../lib/checkout"
 import { Fulfilled, OrderStatus } from "@prisma/client"
 import { auth } from "@/auth"
 import prisma from '@/app/lib/db';
-import { sentEmailOrder } from "@/lib/mail"
+import { Resend } from "resend";
+import { render } from '@react-email/render';
+import KoalaWelcomeEmail from "@/emails"
+
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 async function getNextOrderNumber(): Promise<number> {
@@ -362,6 +367,8 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
 
   const dateAdresaFacturareId = dateAdresaFacturare?.id || undefined;
 
+  const userFirstname = customer.firstName
+
   if (submission.value.payment === "ramburs") {
     const shippingMethod = submission.value.shipping ? submission.value.shipping : 'standard';
     await createOrder({ 
@@ -379,8 +386,13 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
       
     });
 
+    await resend.emails.send({
+      from:"LolelaBoutique <lolela.orders@lolelaboutique.ro>",
+      to: customer.email,
+      subject:`Confirmarea comenzii tale LolelaBoutique ${orderNumber}`,
+      html: render(KoalaWelcomeEmail({userFirstname}))
+    });
     await redis.del(`cart-${cartId}`);
-    await sentEmailOrder(submission.value.email,orderNumber);
     return redirect(`/checkout/comenzi?verify=${verify}`);
   }
 
