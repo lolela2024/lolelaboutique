@@ -204,3 +204,14 @@ export const newsletterSchema = z.object({
     .min(1, "Email is required")
     .email("Invalid email"),
 })
+
+export const MaterialSchema = z.object({
+  id:z.number().min(1),
+  name:z.string().min(1, "Name is required"), 
+  value:z.string().min(1,"Value is required")
+})
+
+export const MaterialCreateSchema = z.object({
+  name:z.string().min(1, "Name is required"), 
+  value:z.string().min(1,"Value is required")
+})

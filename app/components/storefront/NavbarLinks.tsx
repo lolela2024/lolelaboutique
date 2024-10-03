@@ -11,6 +11,21 @@ export const navbarLinks = [
     href: "/",
   },
   {
+    id: 1,
+    name: "Bijuterii oțel inoxidabil",
+    href: "/products/cercei",
+  },
+  {
+    id: 5,
+    name: "Bijuterii pietre semiprețioase",
+    href: "/products/coliere",
+  },
+  {
+    id: 6,
+    name: "Bijuterii personalizate",
+    href: "/products/coliere",
+  },
+  {
     id: 2,
     name: "Cercei",
     href: "/products/cercei",
@@ -29,6 +44,7 @@ export const navbarLinks = [
 
 export function NavbarLinks() {
   const location = usePathname();
+  
   return (
     <div className="flex justify-center items-center gap-x-2 ml-8">
       {navbarLinks.map((item) => (

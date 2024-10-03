@@ -6,13 +6,12 @@ import prisma from "../lib/db";
 import { utapi } from "../server/uploadthing";
 import { auth } from "@/auth";
 
-const adminEmail = process.env.ADMIN_EMAIL;
 
 export async function createProduct(prevState: unknown, formData:FormData) {
   const session = await auth()
   const user = session?.user
 
-  if(!user || user.email !== adminEmail) {
+  if(!user || user.role !== "ADMIN") {
     redirect("/");
   }
 
@@ -68,7 +67,7 @@ export async function editProduct(prevState: any, formData: FormData) {
   const session = await auth()
   const user = session?.user
 
-  if (!user || user.email !== adminEmail) {
+  if (!user || user.role !== "ADMIN") {
     return redirect("/");
   }
 
@@ -122,7 +121,7 @@ export async function deleteProduct(formData: FormData) {
   const session = await auth()
   const user = session?.user
 
-  if (!user || user.email !== adminEmail) {
+  if (!user || user.role !== "ADMIN") {
     return redirect("/");
   }
 

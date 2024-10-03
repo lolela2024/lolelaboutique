@@ -157,21 +157,54 @@ model Product {
   isFeatured       Boolean       @default(false)
   smallDescription String?
 
-  createdAt DateTime @default(now())
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String?
+  createdAt   DateTime     @default(now())
+  User        User?        @relation(fields: [userId], references: [id])
+  userId      String?
+  productTags ProductTag[] @relation("ProductToProductTag") // Relație inversă către ProductTag
+  
+  materialId  Int?
+  material    Material?    @relation(fields: [materialId], references: [id])
 
   piatra String?
 
   productCategoryId Int?
   productCategory   ProductCategory? @relation(fields: [productCategoryId], references: [id])
-  OrderProduct      OrderProduct[]
+
+  OrderProduct OrderProduct[]
 }
 
 enum ProductStatus {
   draft
   published
   archived
+}
+
+model Tag {
+  id       Int          @id @default(autoincrement())
+  name     String
+  slug     String       @unique
+  products ProductTag[] @relation("TagToProductTag") // Relație inversă către ProductTag
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductTag {
+  id        Int    @id @default(autoincrement())
+  productId String // Tipul trebuie să fie String pentru a corespunde cu id din Product
+  tagId     Int
+
+  product Product @relation("ProductToProductTag", fields: [productId], references: [id])
+  tag     Tag     @relation("TagToProductTag", fields: [tagId], references: [id])
+}
+
+model Material {
+  id        Int       @id @default(autoincrement())
+  name      String
+  value     String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updetedAt DateTime  @updatedAt
 }
 
 model ProductCategory {
@@ -307,9 +340,9 @@ model AdresaFacturare {
 model PersoanaJuridica {
   id Int @id @default(autoincrement())
 
-  numeFirma    String
-  CIF          String
-  nrRegComert  String
+  numeFirma   String
+  CIF         String
+  nrRegComert String
 
   User   User?   @relation(fields: [userId], references: [id])
   userId String?

@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { FormError } from "@/app/components/FormError";
 import { FormSuccess } from "@/app/components/FormSuccess";
 import { Button } from "@/components/ui/button";
-import { register } from "@/app/actions/register";
+import { register } from "@/app/actions/register";   
 
 export const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();

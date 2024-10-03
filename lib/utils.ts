@@ -13,6 +13,7 @@ export function slugify(text: string) {
     .replace(/ț/g, 't')             // Înlocuiește toate aparițiile lui "ț" cu "t"
     .replace(/ă/g, 'a')
     .replace(/ș/g, 's')             // Înlocuiește toate aparițiile lui "ț" cu "t"
+    .replace(/ţ/g, 't')             // Înlocuiește toate aparițiile lui "ț" cu "t"
     .replace(/\s+/g, '-')           // Înlocuiește spațiile cu "-"
     .replace(/\-\-+/g, '-')         // Înlocuiește multiple "-" cu unul singur
     .replace(/^-+/, '')             // Elimină "-" de la început

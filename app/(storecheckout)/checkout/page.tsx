@@ -11,13 +11,11 @@ import { auth } from "@/auth";
 
 
 export default async function CeckoutPage() {
-
   noStore();
-  const session = await auth()
-  const user = session?.user
+  const session = await auth();
+  const user = session?.user;
 
   let userBazaDeDate = null;
-
 
   if (user?.email) { 
     const userData = await prisma.user.findFirst({
@@ -74,12 +72,6 @@ export default async function CeckoutPage() {
   }
 
   return (
-
     <StoreCheckoutForm products={cart} user={userBazaDeDate}/>
-    // <CheckoutForm
-    //   user={user}
-    //   products={cart}
-    //   clientSecret={paymentIntent.client_secret}
-    // />
   );
 }
