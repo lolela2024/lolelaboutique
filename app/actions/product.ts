@@ -39,8 +39,9 @@ export async function createProduct(prevState: unknown, formData:FormData) {
 
   const description = submission.value.description;
 
-  
-
+  const material = await prisma.material.findFirst({
+    where:{value:submission.value.tipBijuterie}
+  })
 
   await prisma.product.create({
     data: {
@@ -55,7 +56,7 @@ export async function createProduct(prevState: unknown, formData:FormData) {
       productCategoryId: submission.value.productCategoryId,
       isFeatured: submission.value.isFeatured === true ? true : false,
       smallDescription:submission.value.smallDescription,
-     
+      materialId: material?.id
     },
   });
 
@@ -93,7 +94,9 @@ export async function editProduct(prevState: any, formData: FormData) {
     discountPercentage = Math.round(discountAmount / submission.value.price * 100)
   }
 
-  
+  const material = await prisma.material.findFirst({
+    where:{value:submission.value.tipBijuterie}
+  })
   
   await prisma.product.update({
     where: {
@@ -111,6 +114,7 @@ export async function editProduct(prevState: any, formData: FormData) {
       isFeatured: submission.value.isFeatured === true,
       status: submission.value.status,
       images: flattenUrls,
+      materialId: material?.id
     },
   });
 

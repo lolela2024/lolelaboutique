@@ -1,4 +1,3 @@
-
 import prisma from "@/app/lib/db";
 import { notFound } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
@@ -9,9 +8,10 @@ async function getData(productId: string) {
     where: {
       id: productId,
     },
-    include:{
-      productCategory:true
-    }
+    include: {
+      productCategory: true,
+      material: true,
+    },
   });
 
   if (!product) {
@@ -19,17 +19,17 @@ async function getData(productId: string) {
   }
 
   const categories = await prisma.productCategory.findMany({
-    select:{
-      name:true,
-      id:true,
-      slug:true
-    }
-  })
+    select: {
+      name: true,
+      id: true,
+      slug: true,
+    },
+  });
 
-  return {product,categories};
+  const tipMaterial = await prisma.material.findMany();
+
+  return { product, categories, tipMaterial };
 }
-
-
 
 export default async function EditRoute({
   params,
@@ -41,5 +41,11 @@ export default async function EditRoute({
 
   // console.log(data)
   // return <div>sdsd</div>
-  return <EditForm data={data.product as any} categories={data.categories}/>;
+  return (
+    <EditForm
+      data={data.product as any}
+      categories={data.categories}
+      tipMaterial={data.tipMaterial}
+    />
+  );
 }

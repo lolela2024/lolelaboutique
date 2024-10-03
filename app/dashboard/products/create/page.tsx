@@ -2,7 +2,7 @@ import CreateProductForm from "@/app/components/dashboard/CreateProductForm";
 import prisma from "@/app/lib/db";
 
 async function getData() {
-  const data = await prisma.productCategory.findMany({
+  const productCategories = await prisma.productCategory.findMany({
     select: {
       id: true,
       name: true,
@@ -10,11 +10,18 @@ async function getData() {
     },
   });
 
+  const tipBijuterie = await prisma.material.findMany();
+
+  const data = {
+    productCategories,
+    tipBijuterie
+  }
+
   return data;
 }
 
 export default async function ProductCreateRoute() {
   const data = await getData();
-
-  return <CreateProductForm data={data} />;
+ 
+  return <CreateProductForm productCategories={data.productCategories} tipBijuterie={data.tipBijuterie}/>;
 }

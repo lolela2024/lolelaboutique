@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import { Navbar } from "../components/storefront/Navbar";
 import { Footer } from "../components/storefront/Footer";
-import { Hero } from "../components/storefront/Hero";
+
 
 export default function StoreFrontLayout({
   children,

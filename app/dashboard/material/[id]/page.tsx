@@ -1,6 +1,7 @@
 import React from 'react'
 import EditMaterialForm from '../_components/EditMaterialForm';
 import prisma from '@/app/lib/db';
+import { notFound } from 'next/navigation';
 
 async function getData(id:number) {
   const data = await prisma.material.findUnique({
@@ -11,6 +12,10 @@ async function getData(id:number) {
       value: true
     },
   });
+
+  if(!data){
+    return notFound();
+  }
 
   return data;
 }

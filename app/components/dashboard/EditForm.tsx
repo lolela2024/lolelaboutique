@@ -20,7 +20,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Check, ChevronLeft, ChevronsUpDown, XIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  ChevronLeft,
+  ChevronsUpDown,
+  XIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
@@ -35,8 +41,19 @@ import { deleteImage, editProduct } from "@/app/actions/product";
 import { UploadButton, UploadDropzone } from "@/app/lib/uploadthing";
 import { Submitbutton } from "../SubmitButtons";
 import Tiptap from "@/components/Tiptap";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 
 const tagsPietre = [
@@ -63,17 +80,28 @@ interface iAppProps {
     images: string[];
     productCategoryId: number | null;
     isFeatured: boolean;
+    materialId: number | null;
   };
   categories: {
     name: string;
     id: number;
     slug: string;
   }[];
+  tipMaterial: {
+    id: number;
+    name: string;
+    value: string;
+  }[];
 }
 
-export function EditForm({ data, categories }: iAppProps) {
+export function EditForm({ data, categories, tipMaterial }: iAppProps) {
   const [images, setImages] = useState<string[]>(data.images);
-  const [categoryId, setCategoryId] = useState(categories.find((cat) => cat.id === data.productCategoryId)?.id);
+  const [categoryId, setCategoryId] = useState(
+    categories.find((cat) => cat.id === data.productCategoryId)?.id
+  );
+  const [tipBijuterie, setTipBijuterie] = useState(
+    tipMaterial.find((material) => material.id === data.materialId)?.value
+  );
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string | undefined>();
@@ -104,7 +132,6 @@ export function EditForm({ data, categories }: iAppProps) {
   const handleCategoryChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    
     const selectedCategory = categories.find(
       (cat) => cat.slug === (event as any)
     );
@@ -224,13 +251,21 @@ export function EditForm({ data, categories }: iAppProps) {
                       value={categoryId}
                       key={fields.productCategoryId.key}
                       name={fields.productCategoryId.name}
-                      defaultValue={categories.find((cat) => cat.id === data.productCategoryId)?.id}
+                      defaultValue={
+                        categories.find(
+                          (cat) => cat.id === data.productCategoryId
+                        )?.id
+                      }
                     />
                     <Select
                       onValueChange={(event) =>
                         handleCategoryChange(event as any)
                       }
-                      defaultValue={categories.find((cat) => cat.id === data.productCategoryId)?.slug}
+                      defaultValue={
+                        categories.find(
+                          (cat) => cat.id === data.productCategoryId
+                        )?.slug
+                      }
                       required
                     >
                       <SelectTrigger>
@@ -263,7 +298,9 @@ export function EditForm({ data, categories }: iAppProps) {
                     <Input
                       key={fields.price.key}
                       name={fields.price.name}
-                      defaultValue={data.originalPrice ? data.originalPrice : data.price}
+                      defaultValue={
+                        data.originalPrice ? data.originalPrice : data.price
+                      }
                       type="number"
                       placeholder="$55"
                     />
@@ -286,7 +323,7 @@ export function EditForm({ data, categories }: iAppProps) {
             </Card>
           </div>
           <div className="col-span-1 space-y-4">
-          <Card>
+            <Card>
               <CardContent className="py-4">
                 <div className="flex flex-col gap-3">
                   <Label>Status</Label>
@@ -383,20 +420,48 @@ export function EditForm({ data, categories }: iAppProps) {
                 </div>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardContent className="py-4">
+                <div className="flex flex-col gap-3">
+                  <Label>Tip bijuterie</Label>
+                  <Select
+                    key={fields.tipBijuterie.key}
+                    name={fields.tipBijuterie.name}
+                    defaultValue={
+                      tipMaterial.find(
+                        (material) => material.id === data.materialId
+                      )?.value
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tipMaterial.map((material) => (
+                        <SelectItem key={material.id} value={material.value}>
+                          {material.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-red-500">{fields.status.errors}</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
-       
+
         <div className="flex justify-end mt-4">
-            <Submitbutton title="Edit Product" />
-          </div>
+          <Submitbutton title="Edit Product" />
+        </div>
       </div>
     </form>
   );
 }
 
-
-
-{/* <Card>
+{
+  /* <Card>
 <CardContent>
   <div className="flex flex-col gap-6">
     
@@ -585,4 +650,5 @@ export function EditForm({ data, categories }: iAppProps) {
   </div>
 </CardContent>
 
-</Card> */}
+</Card> */
+}

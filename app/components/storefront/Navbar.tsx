@@ -14,8 +14,6 @@ export async function Navbar() {
   const session = await auth();
   const user = session?.user;
 
-  console.log(user);
-
   const cookieStore = cookies();
   const cartId = cookieStore.get("cartId")?.value;
   const wishilistId = cookieStore.get("wishlistId")?.value;

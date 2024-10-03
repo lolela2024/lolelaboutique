@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import debounce from "lodash.debounce";
@@ -8,7 +7,7 @@ const SORT_OPTIONS = [
   { name: "Inele", value: "inele" },
   { name: "Cercei", value: "cercei" },
   { name: "Pandantive", value: "pandantive" },
-  { name: "Brățări", value: "brățări" },
+  { name: "Brățări", value: "bratari" },
   { name: "Broşă", value: "broşă" },
   { name: "Coliere", value: "coliere" },
 ] as const;

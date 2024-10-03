@@ -19,8 +19,9 @@ const priceRanges: PriceRange[] = [
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
-  const { sort, sortType, categorySlug, category, selectedPriceRange } = body.filter;
+  const { sort, sortType, categorySlug, category, selectedPriceRange, tipBijuterie } = body.filter;
 
+  
   async function filterAndSortProducts(
     options: {
       where?: any;
@@ -39,6 +40,16 @@ export const POST = async (req: NextRequest) => {
   if (categorySlug && categorySlug !== "all") {
     options.where = {
       productCategory: { slug: categorySlug },
+    };
+  }
+
+  // Filtering by material type (tipBijuterie)
+  if (tipBijuterie) {
+    options.where = {
+      // ...options.where,
+      material: {
+        value: tipBijuterie,  // Assuming `material.value` holds the type of jewelry
+      },
     };
   }
 

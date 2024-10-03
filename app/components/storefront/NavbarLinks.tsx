@@ -13,38 +13,74 @@ export const navbarLinks = [
   {
     id: 1,
     name: "Bijuterii oțel inoxidabil",
-    href: "/products/cercei",
+    href: "/products/bijuterii-otel-inoxidabil",
+    submenu: [
+      {
+        id: 2,
+        name: "Cercei",
+        href: "/products/cercei",
+      },
+      {
+        id: 3,
+        name: "Brățări",
+        href: "/products/bratari",
+      },
+      {
+        id: 4,
+        name: "Coliere",
+        href: "/products/coliere",
+      },
+    ],
   },
   {
     id: 5,
     name: "Bijuterii pietre semiprețioase",
-    href: "/products/coliere",
+    href: "/products/bijuterii-pietre-semipretioase",
+    submenu: [
+      {
+        id: 2,
+        name: "Cercei",
+        href: "/products/cercei",
+      },
+      {
+        id: 3,
+        name: "Brățări",
+        href: "/products/bratari",
+      },
+      {
+        id: 4,
+        name: "Coliere",
+        href: "/products/coliere",
+      },
+    ],
   },
   {
     id: 6,
     name: "Bijuterii personalizate",
-    href: "/products/coliere",
-  },
-  {
-    id: 2,
-    name: "Cercei",
-    href: "/products/cercei",
-  },
-  {
-    id: 3,
-    name: "Brățări",
-    href: "/products/bratari",
-  },
-  {
-    id: 4,
-    name: "Coliere",
-    href: "/products/coliere",
+    href: "/products/bijuterii-personalizate",
+    submenu: [
+      {
+        id: 2,
+        name: "Cercei",
+        href: "/products/cercei",
+      },
+      {
+        id: 3,
+        name: "Brățări",
+        href: "/products/bratari",
+      },
+      {
+        id: 4,
+        name: "Coliere",
+        href: "/products/coliere",
+      },
+    ],
   },
 ];
 
 export function NavbarLinks() {
   const location = usePathname();
-  
+
   return (
     <div className="flex justify-center items-center gap-x-2 ml-8">
       {navbarLinks.map((item) => (
@@ -53,8 +89,8 @@ export function NavbarLinks() {
           key={item.id}
           className={cn(
             location === item.href
-              ? "border-b-2 border-primary bg-primary text-white rounded-lg "
-              : "hover:text-primary hover:bg-opacity-75",
+              ? "border-b-[3px] border-primary bg-buttonColor/30 rounded-lg "
+              : "hover:text-gray-600 hover:bg-opacity-75",
             "px-2 py-1 my-2 group uppercase text-sm font-semibold"
           )}
         >

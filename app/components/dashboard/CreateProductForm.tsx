@@ -63,14 +63,19 @@ const tagsPietre = [
 ] as const;
 
 interface iAppProps {
-  data: {
+  productCategories: {
     name: string;
     id: number;
     slug: string;
   }[];
+  tipBijuterie: {
+    id: number;
+    name: string;
+    value: string;
+  }[]
 }
 
-export default function CreateProductForm({ data }: iAppProps) {
+export default function CreateProductForm({ productCategories, tipBijuterie }: iAppProps) {
   const [images, setImages] = useState<string[]>([]);
   const [lastResult, action] = useFormState(createProduct, undefined);
 
@@ -104,7 +109,7 @@ export default function CreateProductForm({ data }: iAppProps) {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     console.log(event);
-    const selectedCategory = data.find((cat) => cat.slug === (event as any));
+    const selectedCategory = productCategories.find((cat) => cat.slug === (event as any));
     if (selectedCategory) {
       setCategoryId(selectedCategory.id as any);
     }
@@ -232,7 +237,7 @@ export default function CreateProductForm({ data }: iAppProps) {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          {data.map((category: any) => (
+                          {productCategories.map((category: any) => (
                             <SelectItem key={category.id} value={category.slug}>
                               {category.name}
                             </SelectItem>
@@ -374,6 +379,30 @@ export default function CreateProductForm({ data }: iAppProps) {
                       </Command>
                     </PopoverContent>
                   </Popover>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="py-4">
+              <div className="flex flex-col gap-3">
+                  <Label>Tip bijuterie</Label>
+                  <Select
+                    key={fields.tipBijuterie.key}
+                    name={fields.tipBijuterie.name}
+                    defaultValue={fields.tipBijuterie.initialValue}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Tip bijuterie" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tipBijuterie.map((tip)=>(
+                        <SelectItem key={tip.id} value={tip.value}>{tip.name}</SelectItem>
+                      ))}
+                     
+                    </SelectContent>
+                  </Select>
+                  <p className="text-red-500">{fields.status.errors}</p>
                 </div>
               </CardContent>
             </Card>
