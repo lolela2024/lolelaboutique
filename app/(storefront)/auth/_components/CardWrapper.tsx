@@ -23,8 +23,8 @@ export const CardWrapper = ({
   buttonLabel,
 }: CardWrapperProps) => {
   return (
-    <div className="bg-[#ffeefa] bg-cover bg-center rounded-lg">
-    <Card className="w-[500px] shadow-lg bg-white bg-opacity-40">
+    
+    <Card className=" shadow-lg bg-white ">
       <CardHeader className="font-normal">
         {/* <Header label={headerLabel} /> */}
       </CardHeader>
@@ -32,8 +32,8 @@ export const CardWrapper = ({
       <div className="flex w-full flex-col border-opacity-40">
         <CardFooter className="py-0">
           <BackButton
-            buttonLabel={buttonLabel}
-            label={backButtonLabel}
+            buttonLabel={backButtonLabel}
+            label={buttonLabel}
             href={backButtonHref}
           />
         </CardFooter>
@@ -50,6 +50,6 @@ export const CardWrapper = ({
         
       </CardFooter>
     </Card>
-    </div>
+   
   );
 };

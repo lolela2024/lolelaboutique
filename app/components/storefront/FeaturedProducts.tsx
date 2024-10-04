@@ -26,12 +26,12 @@ export function FeaturedProducts() {
 
 
   return (
-    <>
+    <div className="mb-8">
       <h2 className="text-2xl font-medium tracking-tight uppercase">Produse Recomandate</h2>
       <Suspense fallback={<LoadingRows />}>
         <LoadFeaturedproducts />
       </Suspense>
-    </>
+    </div>
   );
 }
 

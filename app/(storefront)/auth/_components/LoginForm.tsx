@@ -23,6 +23,10 @@ import { FormError } from "@/app/components/FormError";
 import { FormSuccess } from "@/app/components/FormSuccess";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
+import { Label } from "@/components/ui/label";
+import { Social } from "./Social";
+import { Submitbutton } from "@/app/components/SubmitButtons";
+import { Loader2 } from "lucide-react";
 
 export const LoginForm = () => {
   const searchParamas = useSearchParams();
@@ -74,97 +78,121 @@ export const LoginForm = () => {
   };
 
   return (
-    <CardWrapper
-      headerLabel="Welcome back!"
-      backButtonLabel="Don’t have an account?"
-      backButtonHref="/auth/register"
-      buttonLabel="Sign up"
-      showSocial
-    >
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
-            {showTwoFactor && (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="grid gap-2 text-center">
+          <h1 className="text-3xl font-bold">Contul tau</h1>
+          <p className="text-balance text-muted-foreground">
+            Ai mai cumparat de la noi sau esti deja inregistrat?
+          </p>
+        </div>
+        {error && <FormError message={error} />}
+        {urlError && <FormError message={urlError} />}
+        <FormSuccess message={success} />
+
+        {showTwoFactor && (
+          <div className="mb-4">
+            <FormField
+              control={form.control}
+              name="code"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Two Factor Code</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="123456"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        )}
+
+        <div className="grid gap-4">
+          {!showTwoFactor && (
+            <>
               <FormField
                 control={form.control}
-                name="code"
-                render={({ field }) => (
+                name="email"
+                render={({ field, fieldState: { error } }) => (
                   <FormItem>
-                    <FormLabel>Two Factor Code</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        disabled={isPending}
-                        placeholder="123456"
-                      />
-                    </FormControl>
-                    <FormMessage />
+                    <div className="grid">
+                      <Label className="mb-2" htmlFor="email">
+                        Email
+                      </Label>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          className={error ? "border-red-500 bg-red-100" : ""}
+                          id="email"
+                          type="email"
+                          placeholder="m@example.com"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </div>
                   </FormItem>
                 )}
               />
-            )}
-            {!showTwoFactor && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email *</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isPending}
-                          placeholder="john.doe@example.com"
-                          type="email"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
+              <div className="grid gap-1">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Parola</Label>
+                  <Link
+                    href="/auth/reset"
+                    className="ml-auto inline-block text-sm underline"
+                  >
+                    Ai uitat parola?
+                  </Link>
+                </div>
                 <FormField
                   control={form.control}
                   name="password"
-                  render={({ field }) => (
+                  render={({ field, fieldState: { error } }) => (
                     <FormItem>
-                      <FormLabel>Password *</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isPending}
-                          type="password"
-                          placeholder="******"
-                        />
-                      </FormControl>
-                      <Button
-                        size={"sm"}
-                        variant={"link"}
-                        asChild
-                        className="px-0 font-normal"
-                      >
-                        <Link
-                          className="text-xs font-semibold"
-                          href={"/auth/reset"}
-                        >
-                          Forgot password?
-                        </Link>
-                      </Button>
-                      <FormMessage />
+                      <div className="grid">
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className={error ? "border-red-500 bg-red-100" : ""}
+                            id="password"
+                            type="password"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </div>
                     </FormItem>
                   )}
                 />
-              </>
-            )}
-          </div>
-          {error && <FormError message={error} />}
-          {urlError && <FormError message={urlError} />}
-          <FormSuccess message={success} />
+              </div>
+            </>
+          )}
+
           <Button type="submit" className="w-full" disabled={isPending}>
-            {showTwoFactor ? "Confirm" : "Login"}
+            {showTwoFactor ? (
+              "Confirma"
+            ) : isPending ? (
+              <span className="flex items-center gap-1">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please Wait
+              </span>
+            ) : (
+              "Intra in cont"
+            )}
           </Button>
-        </form>
-      </Form>
-    </CardWrapper>
+          <Social />
+        </div>
+        <div className="mt-4 text-center text-sm">
+          Client nou?{" "}
+          <Link href="/auth/register" className="underline">
+            Inregistreaza-te
+          </Link>
+        </div>
+      </form>
+    </Form>
   );
 };

@@ -1,4 +1,4 @@
-import React, { ReactNode, use } from "react";
+import React, { ReactNode } from "react";
 import { DashboardNavigation } from "../components/dashboard/DasboardNavigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import getSession from "@/lib/getSession";
 import { UserRole } from "@prisma/client";
+import LogOut from "../components/dashboard/LogOut";
 
 export default async function DashboardLayout({
   children,
@@ -24,12 +25,12 @@ export default async function DashboardLayout({
   const session = await getSession();
   const user = session?.user;
 
-  if (!user ) {
+  if (!user) {
     redirect("/");
   }
 
-  if (user.role !== UserRole.ADMIN){
-    return <p>not authorized</p>
+  if (user.role !== UserRole.ADMIN) {
+    return <p>not authorized</p>;
   }
 
   return (
@@ -60,9 +61,9 @@ export default async function DashboardLayout({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
-                {session ? (
+                {user ? (
                   <Image
-                    src={user.image || ""}
+                    src={user.image ?? `https://avatar.vercel.sh/${user.name}`}
                     alt="User profil image"
                     width={50}
                     height={50}
@@ -77,7 +78,7 @@ export default async function DashboardLayout({
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                Logout
+                <LogOut />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

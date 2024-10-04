@@ -3,8 +3,15 @@ import { NewPasswordForm } from '../_components/NewPasswordForm'
 
 const NewPasswordPage = () => {
   return (
-    <NewPasswordForm />
+    <div className="w-full">
+      <div className="flex items-center justify-center py-12">
+        <div className="mx-auto">
+          <NewPasswordForm />
+        </div>
+      </div>
+    </div>
+    
   )
 }
 
-export default NewPasswordPage
+export default NewPasswordPage 

@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import CategoriesHeroHolder from "./CategoriesHeroHolder";
 import PriceFilter from "./sort/PriceFilter";
 import CategoryFilter from "./sort/CategoryFilter";
-import PietrePretioaseSort from "./sort/PietrePretioaseSort";
 import SortFilter from "./sort/SortFilter";
 import { LoadingProductCard, ProductCard } from "./ProductCard";
 import { QueriesResults, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Wishlist } from "@/app/lib/interfaces";
 import TipBijuterieFilter from './sort/TipBijuterieFilter';
+import TagsSort from "./sort/TagsSort";
 
 export type Product = {
   id: string;
@@ -130,8 +130,12 @@ export default function ProductFilter({
             />
           </div>
 
-          <div className="filter-group border-r border-b pb-6">
+          {/* <div className="filter-group border-r border-b pb-6">
             <PietrePretioaseSort />
+          </div> */}
+
+          <div className="filter-group border-r border-b pb-6">
+            <TagsSort />
           </div>
         </div>
 
@@ -158,6 +162,8 @@ export default function ProductFilter({
                   />
                 ))}
           </div>
+
+
         </div>
       </div>
     </section>

@@ -16,6 +16,7 @@ export const Social = () => {
   return (
     <div className="flex flex-col items-center w-full gap-y-2">
       <Button 
+        type="button"
         size={'lg'}
         className="w-full"
         variant={'outline'}
@@ -25,6 +26,7 @@ export const Social = () => {
         Google
       </Button>
       <Button 
+        type="button"
         size={'lg'}
         className="w-full"
         variant={'outline'}

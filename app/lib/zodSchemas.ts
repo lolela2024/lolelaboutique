@@ -218,3 +218,9 @@ export const MaterialCreateSchema = z.object({
   name:z.string().min(1, "Name is required"), 
   value:z.string().min(1,"Value is required")
 })
+
+export const ResetSchema = z.object({
+  email:z.string().email({
+    message:"Email is required"
+  }),
+})

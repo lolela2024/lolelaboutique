@@ -45,7 +45,7 @@ export default async function ProductIdRoute({
           <ImageSlider images={data.images} />
           <ProductDescription content={content} />
         </div>
-        <div className="col-span-1 sticky top-[150px]">
+        <div className="col-span-1 sticky top-[175px]">
           <div className="mb-4 ">
             {data.discountPercentage && (
               <span className="bg-primary py-1 px-4 rounded-lg text-white font-semibold shadow-sm">

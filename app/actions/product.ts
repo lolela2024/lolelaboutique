@@ -228,8 +228,19 @@ export async function deleteProduct(formData: FormData) {
 
   const product = await prisma.product.findUnique({
     where:{id:formData.get("productId") as string},
-    select:{images:true}
+    select:{images:true,id:true}
   }) 
+
+  
+  const productTags = await prisma.productTag.findFirst({
+    where:{productId:product?.id}
+  })
+
+  if(productTags){
+    await prisma.productTag.deleteMany({
+      where:{productId:product?.id}
+    })
+  }
 
   const images = product?.images || [];
 
