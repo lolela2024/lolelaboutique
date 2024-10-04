@@ -5,6 +5,7 @@ import { productSchema } from '../lib/zodSchemas';
 import prisma from "../lib/db";
 import { utapi } from "../server/uploadthing";
 import { auth } from "@/auth";
+import { slugify } from '../../lib/utils';
 
 
 export async function createProduct(prevState: unknown, formData:FormData) {
@@ -43,25 +44,71 @@ export async function createProduct(prevState: unknown, formData:FormData) {
     where:{value:submission.value.tipBijuterie}
   })
 
-  await prisma.product.create({
+  // Creare produs nou
+  const createdProduct = await prisma.product.create({
     data: {
       name: submission.value.name,
-      description:JSON.parse(JSON.stringify(description)) ,
+      description: JSON.parse(JSON.stringify(description)),
       status: submission.value.status,
       price: submission.value.salePrice ? submission.value.salePrice : submission.value.price,
       discountAmount: submission.value.salePrice ? discountAmount : undefined,
-      discountPercentage: submission.value.salePrice ?  discountPercentage : undefined,
+      discountPercentage: submission.value.salePrice ? discountPercentage : undefined,
       originalPrice: submission.value.salePrice ? submission.value.price : undefined,
       images: flattenUrls,
       productCategoryId: submission.value.productCategoryId,
       isFeatured: submission.value.isFeatured === true ? true : false,
-      smallDescription:submission.value.smallDescription,
-      materialId: material?.id
+      smallDescription: submission.value.smallDescription,
+      materialId: material?.id,
     },
   });
 
-  redirect("/dashboard/products");
+  const productId = createdProduct.id; // Ia productId după creare
+  let tags: string[] = [];
+  // Asigură-te că `tags` este un string sau un array
+  const tagInput = submission.value.tags;
 
+  if (typeof submission.value.tags === "string") {
+    // Dacă este un singur string, îl împărțim
+    tags = (submission.value.tags as string).split(",").map(tag => tag.trim());
+  } else if (Array.isArray(tagInput)) {
+    // Dacă este un array, verificăm fiecare element
+    tags = tagInput.flatMap((input) => {
+      // Verificăm dacă input este definit
+      if (input) {
+        return input.split(",").map((tag) => tag.trim());
+      }
+      return []; // Returnează un array gol dacă input este undefined
+    });
+  }
+  
+  //Salvare tag-uri și relații cu produsul
+  for (const tagName of tags) {
+    let tag = await prisma.tag.findFirst({
+      where: { name: tagName },
+    });
+
+    // Dacă tag-ul nu există, îl creăm
+    if (!tag) {
+      tag = await prisma.tag.create({
+        data: {
+          name: tagName,
+          slug: slugify(tagName),
+        },
+      });
+    }
+
+    // Creăm relația dintre produs și tag
+    await prisma.productTag.create({
+      data: {
+        productId: productId,
+        tagId: tag.id,
+      },
+    });
+  }
+
+
+  // Redirecționează la dashboard sau altă pagină
+  return redirect("/dashboard/products");
 }
 
 export async function editProduct(prevState: any, formData: FormData) {
@@ -98,13 +145,14 @@ export async function editProduct(prevState: any, formData: FormData) {
     where:{value:submission.value.tipBijuterie}
   })
   
+  // Actualizare produs
   await prisma.product.update({
     where: {
       id: productId,
     },
     data: {
       name: submission.value.name,
-      description:JSON.parse(JSON.stringify(submission.value.description) ),
+      description: JSON.parse(JSON.stringify(submission.value.description)),
       smallDescription: submission.value.smallDescription,
       productCategoryId: submission.value.productCategoryId,
       price: submission.value.salePrice ? submission.value.salePrice : submission.value.price,
@@ -114,9 +162,58 @@ export async function editProduct(prevState: any, formData: FormData) {
       isFeatured: submission.value.isFeatured === true,
       status: submission.value.status,
       images: flattenUrls,
-      materialId: material?.id
+      materialId: material?.id,
     },
   });
+
+  // 1. Ștergem relațiile vechi din `ProductTag`
+  await prisma.productTag.deleteMany({
+    where: {
+      productId: productId,
+    },
+  });
+
+  let tags: string[] = [];
+  // Asigură-te că `tags` este un string sau un array
+  const tagInput = submission.value.tags;
+
+  if (typeof submission.value.tags === "string") {
+    // Dacă este un singur string, îl împărțim
+    tags = (submission.value.tags as string).split(",").map(tag => tag.trim());
+  } else if (Array.isArray(tagInput)) {
+    // Dacă este un array, verificăm fiecare element
+    tags = tagInput.flatMap((input) => {
+      // Verificăm dacă input este definit
+      if (input) {
+        return input.split(",").map((tag) => tag.trim());
+      }
+      return []; // Returnează un array gol dacă input este undefined
+    });
+  }
+
+  for (const tagName of tags) {
+    let tag = await prisma.tag.findFirst({
+      where: { name: tagName },
+    });
+
+    // Dacă tag-ul nu există, îl creăm
+    if (!tag) {
+      tag = await prisma.tag.create({
+        data: {
+          name: tagName,
+          slug: slugify(tagName), // Generează slug pentru tag
+        },
+      });
+    }
+
+    // Creăm relația dintre produs și tag
+    await prisma.productTag.create({
+      data: {
+        productId: productId,
+        tagId: tag.id,
+      },
+    });
+  }
 
   redirect("/dashboard/products");
 }

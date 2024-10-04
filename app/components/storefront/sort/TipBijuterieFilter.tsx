@@ -28,13 +28,14 @@ export default function TipBijuterieFilter({
 
   // Setăm selectedValue când params se schimbă
   useEffect(() => {
-    if (params) {
+    if (tipBijuterii.find((item)=>item.value === params)) {
       setSelectedValue(params);
+      handleSelectionChange(params)
     } else if (tipBijuterii.length > 0) {
-      setSelectedValue(tipBijuterii[0].value); // Setează prima opțiune dacă params e null
+      setSelectedValue(""); // Setează prima opțiune dacă params e null
     }
 
-    handleSelectionChange(params)
+    
   }, [params, tipBijuterii]);
 
   // Function to handle the change in selection

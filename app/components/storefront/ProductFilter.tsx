@@ -35,20 +35,19 @@ export default function ProductFilter({
   tipBijuterii: TipBijuterieProps
 }) {
   let title = "";
-
-  switch (params.name) {
-    case "all": {
-      title = "All products";
-      break;
-    }
-
-   
-    default: {
-      title = "All";
+  if(params.name){
+    switch (params.name) {
+      case "all": {
+        title = "All products";
+        break;
+      }
+     
+      default: {
+        title = "All";
+      }
     }
   }
-
-  const tipBijuterieName = tipBijuterii.find((item) => item.value === params.name)?.name
+ 
 
   const [filter, setFilter] = useState({
     sort: "none",
@@ -98,6 +97,7 @@ export default function ProductFilter({
     title = filter.tipBijuterieNume
   }
   
+  console.log(filter)
   return (
     <section>
       <CategoriesHeroHolder />

@@ -191,7 +191,7 @@ model Tag {
 
 model ProductTag {
   id        Int    @id @default(autoincrement())
-  productId String // Tipul trebuie să fie String pentru a corespunde cu id din Product
+  productId String
   tagId     Int
 
   product Product @relation("ProductToProductTag", fields: [productId], references: [id])

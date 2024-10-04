@@ -11,6 +11,7 @@ async function getData(productId: string) {
     include: {
       productCategory: true,
       material: true,
+      productTags: true
     },
   });
 
@@ -28,7 +29,9 @@ async function getData(productId: string) {
 
   const tipMaterial = await prisma.material.findMany();
 
-  return { product, categories, tipMaterial };
+  const tags = await prisma.tag.findMany();
+
+  return { product, categories, tipMaterial, tags };
 }
 
 export default async function EditRoute({
@@ -39,10 +42,11 @@ export default async function EditRoute({
   noStore();
   const data = await getData(params.id);
 
-  // console.log(data)
+  console.log(data.product)
   // return <div>sdsd</div>
   return (
     <EditForm
+      allTags={data.tags}
       data={data.product as any}
       categories={data.categories}
       tipMaterial={data.tipMaterial}

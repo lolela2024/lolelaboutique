@@ -30,7 +30,7 @@ import {
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 
 import { useForm } from "@conform-to/react";
@@ -55,6 +55,9 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import { Checkbox } from "@/components/ui/checkbox";
+import { FaXmark } from "react-icons/fa6";
 
 const tagsPietre = [
   { label: "Acvamarin", value: "acvamarin" },
@@ -81,6 +84,9 @@ interface iAppProps {
     productCategoryId: number | null;
     isFeatured: boolean;
     materialId: number | null;
+    productTags:[
+      tagId: any
+    ]
   };
   categories: {
     name: string;
@@ -92,9 +98,14 @@ interface iAppProps {
     name: string;
     value: string;
   }[];
+  allTags: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
 }
 
-export function EditForm({ data, categories, tipMaterial }: iAppProps) {
+export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) {
   const [images, setImages] = useState<string[]>(data.images);
   const [categoryId, setCategoryId] = useState(
     categories.find((cat) => cat.id === data.productCategoryId)?.id
@@ -106,6 +117,34 @@ export function EditForm({ data, categories, tipMaterial }: iAppProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string | undefined>();
 
+
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState<string>("");
+  const [openTags, setOpenTags] = useState<boolean>(false);
+
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  // Funcția pentru a adăuga un tag
+  const handleAddItem = () => {
+    if (tagInput.trim() && !selectedTags.includes(tagInput.trim())) {
+      setSelectedTags((prevTags) => [...prevTags, tagInput.trim()]);
+      setTagInput(""); // Resetează input-ul după adăugare
+    }
+  };
+
+  useEffect(() => {
+    // Extrage tagId din productTags și setează în selectedTags
+    // const tags = data.productTags.map(tag => tag.tagId.toString()); // Conversia la string, dacă este necesar
+    // Extrage tagId din productTags și obține numele tagurilor
+    const tags = data.productTags.map(tag => {
+      const foundTag = allTags.find(t => t.id === tag.tagId);
+      return foundTag ? foundTag.name : 'Unknown'; // Returnează 'Unknown' dacă tagul nu este găsit
+    });
+
+    setSelectedTags(tags);
+  }, [data.productTags]); // Se va rula de fiecare dată când productTags se schimbă
+
+
   const [content, setContent] = useState(
     JSON.parse(JSON.stringify(data.description))
   );
@@ -114,6 +153,41 @@ export function EditForm({ data, categories, tipMaterial }: iAppProps) {
   const handleContentChange = (newContent: any) => {
     setContent(newContent);
   };
+
+  // Funcție pentru a gestiona schimbarea valorii unui checkbox
+  const handleCheckboxChange = (slug: string) => {
+    setSelectedTags(
+      (prev) =>
+        prev.includes(slug)
+          ? prev.filter((item) => item !== slug) // Dacă este deja selectat, îl eliminăm
+          : [...prev, slug] // Dacă nu este selectat, îl adăugăm
+    );
+  };
+
+  const handleDeleteTags = (tagToRemove: string) => {
+    setSelectedTags((prevTags) =>
+      prevTags.filter((tag) => tag !== tagToRemove)
+    );
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as Node;
+
+    if (dropdownRef.current && !dropdownRef.current.contains(target)) {
+      setOpenTags(false); // Închidem meniul
+    }
+  };
+
+  useEffect(() => {
+    if (openTags) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openTags]); 
 
   const [form, fields] = useForm({
     lastResult,
@@ -139,6 +213,12 @@ export function EditForm({ data, categories, tipMaterial }: iAppProps) {
       setCategoryId(selectedCategory.id as any);
     }
   };
+
+  // // Mapare pentru a obține numele tagurilor pe baza ID-urilor
+  // const getTagNameById = (id: number) => {
+  //   const tag = tags.find(tag => tag.id === id);
+  //   return tag ? tag.name : 'Unknown'; // Returnează 'Unknown' dacă tagul nu este găsit
+  // };
 
   return (
     <form id={form.id} onSubmit={form.onSubmit} action={action}>
@@ -446,6 +526,93 @@ export function EditForm({ data, categories, tipMaterial }: iAppProps) {
                     </SelectContent>
                   </Select>
                   <p className="text-red-500">{fields.status.errors}</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="py-4">
+                {/* Dropdown pentru tagPietre */}
+                <Label htmlFor="tags">Tags</Label>
+                <input
+                  type="hidden"
+                  value={selectedTags}
+                  key={fields.tags.key}
+                  name={fields.tags.name}
+                  defaultValue={fields.tags.initialValue as any}
+                />
+
+                <Input
+                  className="relative"
+                  id="tags"
+                  type="text"
+                  value={tagInput}
+                  onClick={() => setOpenTags(!openTags)}
+                  onChange={(ev) => (setTagInput(ev.target.value),setOpenTags(false))}
+                />
+
+                <div
+                  className={cn(
+                    tagInput ? "block" : "hidden",
+                    "bg-white border px-2 py-2 rounded-lg shadow-md"
+                  )}
+                >
+                  <button
+                    className="flex items-center gap-1 bg-gray-300 w-full rounded-lg px-2 py-1"
+                    type="button"
+                    onClick={handleAddItem}
+                  >
+                    <AiOutlinePlusCircle />
+                    Add {tagInput}
+                  </button>
+                </div>
+
+                <div
+                  ref={dropdownRef}
+                  className={cn(
+                    openTags ? "block" : "hidden",
+                    "border px-2 py-2 rounded-lg shadow-lg absolute bg-white w-[300px]"
+                  )}
+                >
+                  {allTags.length > 0 &&
+                    allTags.map((item, index) => (
+                      <div key={index} className="mb-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id={item.slug}
+                            checked={selectedTags.includes(item.slug)} // Verificăm dacă este selectat
+                            onCheckedChange={() =>
+                              handleCheckboxChange(item.slug)
+                            }
+                          />
+                          <label
+                            htmlFor={item.slug}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {item.name}
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center gap-2 w-full">
+                  {selectedTags.length > 0 &&
+                    selectedTags.map((item, index) => (
+                      <p
+                        key={index}
+                        className="bg-gray-300 py-0 flex items-center gap-1 rounded-2xl pl-2 pr-[2px] text-sm whitespace-nowrap"
+                      >
+                        {item}
+                        <button
+                          className="hover:bg-gray-400 p-[2px] rounded-full h-full w-full"
+                          type="button"
+                          onClick={() => handleDeleteTags(item)}
+                        >
+                          <FaXmark className="text-gray-600" size={14} />
+                        </button>
+                      </p>
+                    ))}
                 </div>
               </CardContent>
             </Card>

@@ -8,11 +8,13 @@ export const productSchema = z.object({
   price: z.number().min(1),
   salePrice: z.number().optional(),
   images: z.array(z.string()).min(1, "At least one image is required"),
+  tags: z.array(z.string().optional()),
   productCategoryId: z.number(),
   isFeatured: z.boolean().optional(),
   smallDescription: z.string().optional(),
   tagPiatra: z.string().optional(),
   tipBijuterie: z.string().optional(),
+  
 }).refine(data => !data.salePrice || data.salePrice < data.price, {
   message: "Sale price must be less than the regular price",
   path: ["salePrice"],

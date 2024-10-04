@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -16,15 +12,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import {
-  ArrowLeft,
-  Check,
-  ChevronsUpDown,
-  XIcon,
-} from "lucide-react";
+import { ArrowLeft, Check, ChevronsUpDown, XIcon } from "lucide-react";
 import Link from "next/link";
 import { useFormState } from "react-dom";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Image from "next/image";
 import { UploadButton } from "@/app/lib/uploadthing";
@@ -49,6 +40,22 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import Tiptap from "@/components/Tiptap";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
+import { z } from "zod";
+import { FaXmark } from "react-icons/fa6";
+import { AiFillGooglePlusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 
 const tagsPietre = [
   { label: "Acvamarin", value: "acvamarin" },
@@ -62,6 +69,12 @@ const tagsPietre = [
   { label: "Citrin", value: "citrin" },
 ] as const;
 
+const FormSchema = z.object({
+  items: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: "You have to select at least one item.",
+  }),
+});
+
 interface iAppProps {
   productCategories: {
     name: string;
@@ -72,20 +85,78 @@ interface iAppProps {
     id: number;
     name: string;
     value: string;
-  }[]
+  }[];
+  tags: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
 }
 
-export default function CreateProductForm({ productCategories, tipBijuterie }: iAppProps) {
+export default function CreateProductForm({
+  productCategories,
+  tipBijuterie,
+  tags,
+}: iAppProps) {
   const [images, setImages] = useState<string[]>([]);
   const [lastResult, action] = useFormState(createProduct, undefined);
 
   const [open, setOpen] = React.useState(false);
+  const [openTags, setOpenTags] = React.useState<boolean>(false);
   const [value, setValue] = React.useState<string | undefined>();
   const [categoryId, setCategoryId] = useState(0);
   const [content, setContent] = useState<string>();
+ 
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState<string>("");
+
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as Node;
+
+    if (dropdownRef.current && !dropdownRef.current.contains(target)) {
+      setOpenTags(false); // Închidem meniul
+    }
+  };
+
+  useEffect(() => {
+    if (openTags) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openTags]); 
+
+  // Funcție pentru a gestiona schimbarea valorii unui checkbox
+  const handleCheckboxChange = (slug: string) => {
+    setSelectedTags(
+      (prev) =>
+        prev.includes(slug)
+          ? prev.filter((item) => item !== slug) // Dacă este deja selectat, îl eliminăm
+          : [...prev, slug] // Dacă nu este selectat, îl adăugăm
+    );
+  };
+
+  // Funcția pentru a adăuga un tag
+  const handleAddItem = () => {
+    if (tagInput.trim() && !selectedTags.includes(tagInput.trim())) {
+      setSelectedTags((prevTags) => [...prevTags, tagInput.trim()]);
+      setTagInput(""); // Resetează input-ul după adăugare
+    }
+  };
 
   const handleContentChange = (reason: any) => {
     setContent(reason);
+  };
+
+  const handleDeleteTags = (tagToRemove: string) => {
+    setSelectedTags((prevTags) =>
+      prevTags.filter((tag) => tag !== tagToRemove)
+    );
   };
 
   const [form, fields] = useForm({
@@ -108,8 +179,9 @@ export default function CreateProductForm({ productCategories, tipBijuterie }: i
   const handleCategoryChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    console.log(event);
-    const selectedCategory = productCategories.find((cat) => cat.slug === (event as any));
+    const selectedCategory = productCategories.find(
+      (cat) => cat.slug === (event as any)
+    );
     if (selectedCategory) {
       setCategoryId(selectedCategory.id as any);
     }
@@ -307,6 +379,7 @@ export default function CreateProductForm({ productCategories, tipBijuterie }: i
                 </div>
               </CardContent>
             </Card>
+
             <Card>
               <CardContent className="py-4">
                 <div className="flex flex-col gap-3">
@@ -385,7 +458,7 @@ export default function CreateProductForm({ productCategories, tipBijuterie }: i
 
             <Card>
               <CardContent className="py-4">
-              <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3">
                   <Label>Tip bijuterie</Label>
                   <Select
                     key={fields.tipBijuterie.key}
@@ -396,13 +469,101 @@ export default function CreateProductForm({ productCategories, tipBijuterie }: i
                       <SelectValue placeholder="Select Tip bijuterie" />
                     </SelectTrigger>
                     <SelectContent>
-                      {tipBijuterie.map((tip)=>(
-                        <SelectItem key={tip.id} value={tip.value}>{tip.name}</SelectItem>
+                      {tipBijuterie.map((tip) => (
+                        <SelectItem key={tip.id} value={tip.value}>
+                          {tip.name}
+                        </SelectItem>
                       ))}
-                     
                     </SelectContent>
                   </Select>
                   <p className="text-red-500">{fields.status.errors}</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="py-4">
+                {/* Dropdown pentru tagPietre */}
+                <Label htmlFor="tags">Tags</Label>
+                <input
+                  type="hidden"
+                  value={selectedTags}
+                  key={fields.tags.key}
+                  name={fields.tags.name}
+                  defaultValue={fields.tags.initialValue as any}
+                />
+
+                <Input
+                  className="relative"
+                  id="tags"
+                  type="text"
+                  value={tagInput}
+                  onClick={() => setOpenTags(!openTags)}
+                  onChange={(ev) => (setTagInput(ev.target.value),setOpenTags(false))}
+                />
+
+                <div
+                  className={cn(
+                    tagInput ? "block" : "hidden",
+                    "bg-white border px-2 py-2 rounded-lg shadow-md"
+                  )}
+                >
+                  <button
+                    className="flex items-center gap-1 bg-gray-300 w-full rounded-lg px-2 py-1"
+                    type="button"
+                    onClick={handleAddItem}
+                  >
+                    <AiOutlinePlusCircle />
+                    Add {tagInput}
+                  </button>
+                </div>
+
+                <div
+                  ref={dropdownRef}
+                  className={cn(
+                    openTags ? "block" : "hidden",
+                    "border px-2 py-2 rounded-lg shadow-lg absolute bg-white w-[300px]"
+                  )}
+                >
+                  {tags.length > 0 &&
+                    tags.map((item, index) => (
+                      <div key={index} className="mb-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id={item.slug}
+                            checked={selectedTags.includes(item.slug)} // Verificăm dacă este selectat
+                            onCheckedChange={() =>
+                              handleCheckboxChange(item.slug)
+                            }
+                          />
+                          <label
+                            htmlFor={item.slug}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {item.name}
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center gap-2 w-full">
+                  {selectedTags.length > 0 &&
+                    selectedTags.map((item, index) => (
+                      <p
+                        key={index}
+                        className="bg-gray-300 py-0 flex items-center gap-1 rounded-2xl pl-2 pr-[2px] text-sm whitespace-nowrap"
+                      >
+                        {item}
+                        <button
+                          className="hover:bg-gray-400 p-[2px] rounded-full h-full w-full"
+                          type="button"
+                          onClick={() => handleDeleteTags(item)}
+                        >
+                          <FaXmark className="text-gray-600" size={14} />
+                        </button>
+                      </p>
+                    ))}
                 </div>
               </CardContent>
             </Card>

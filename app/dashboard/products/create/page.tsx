@@ -12,16 +12,21 @@ async function getData() {
 
   const tipBijuterie = await prisma.material.findMany();
 
+  const tags = await prisma.tag.findMany();
+
   const data = {
     productCategories,
-    tipBijuterie
+    tipBijuterie,
+    tags
   }
 
   return data;
 }
 
+
+
 export default async function ProductCreateRoute() {
   const data = await getData();
  
-  return <CreateProductForm productCategories={data.productCategories} tipBijuterie={data.tipBijuterie}/>;
+  return <CreateProductForm productCategories={data.productCategories} tipBijuterie={data.tipBijuterie} tags={data.tags}/>;
 }
