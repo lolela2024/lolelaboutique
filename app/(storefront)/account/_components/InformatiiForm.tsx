@@ -1,17 +1,26 @@
 "use client";
 
-import { useForm } from "@conform-to/react";
-import { parseWithZod } from "@conform-to/zod";
-import React, { useEffect, useState } from "react";
-import { useFormState } from "react-dom";
-import { informatiiUpdate } from "../_actions/informatii";
 import { informatiiSchema } from "@/app/lib/zodSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UserRole } from "@prisma/client";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { informatiiUpdate } from "../_actions/informatii";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import {  UserRole } from "@prisma/client";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Submitbutton } from "@/app/components/SubmitButtons";
-import bcrypt from 'bcryptjs';
+import { Input } from "@/components/ui/input";
+import { FormError } from "@/app/components/FormError";
+import { FormSuccess } from "@/app/components/FormSuccess";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 interface InformatiiFormProps {
   user: {
@@ -29,94 +38,199 @@ interface InformatiiFormProps {
 }
 
 export default function InformatiiForm({ user }: InformatiiFormProps) {
-  const [lastResult, action] = useFormState(informatiiUpdate, undefined);
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string | undefined>("");
 
-  const [form, fields] = useForm({
-    lastResult,
-
-    onValidate({ formData }) {
-      return parseWithZod(formData, { schema: informatiiSchema });
+  const form = useForm<z.infer<typeof informatiiSchema>>({
+    resolver: zodResolver(informatiiSchema),
+    defaultValues: {
+      firstName: user?.firstName as string,
+      lastName: user?.lastName as string,
+      email: user?.email,
+      password: "",
+      newPassword: "",
+      gender: user?.gender as string,
     },
+  });
 
-    shouldValidate: "onBlur",
-    shouldRevalidate: "onInput",
-  });  
+  const onSubmit = (values: z.infer<typeof informatiiSchema>) => {
+    setError("");
+    setSuccess("");
 
-  
-  
+    startTransition(() => {
+      informatiiUpdate(values).then((data) => {
+        setError(data.error);
+        setSuccess(data.success);
+      });
+    });
+  };
+
   return (
-    <form id={form.id} onSubmit={form.onSubmit} action={action}>
-      <div className="">
-        <div className="flex items-center gap-6 mb-6">
-          <Label>Mod de adresare</Label>
-          <RadioGroup
-            key={fields.gender.key}
-            name={fields.gender.name}
-            defaultValue={user?.gender || ""}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="masculin" id="r1" />
-              <Label htmlFor="r1">Dl.</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="feminin" id="r2" />
-              <Label htmlFor="r2">Dna.</Label>
-            </div>
-          </RadioGroup>
-        </div>
-        <div className="flex flex-col mb-4">
-          <Label className="mb-2">Nume de familie</Label>
-          <Input
-            type="text"
-            key={fields.name.key}
-            name={fields.name.name}
-            defaultValue={user?.firstName || ""}
-            className="w-full"
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="space-y-4">
+          <div className="mb-4">
+            <FormError message={error} />
+            <FormSuccess message={success} />
+          </div>
+          <FormField
+            control={form.control}
+            name="gender"
+            render={({ field, fieldState: { error } }) => (
+              <FormItem>
+                <div className="flex items-center gap-6 mb-6 ">
+                  <Label>Mod de adresare</Label>
+                  <FormControl>
+                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="masculin" id="r1" />
+                        <Label htmlFor="r1">Dl.</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="feminin" id="r2" />
+                        <Label htmlFor="r2">Dna.</Label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
           />
-          <p className="text-red-500 mt-1">{fields.name.errors}</p>
-        </div>
 
-        <div className="flex flex-col mb-4">
-          <Label className="mb-2">E-mail</Label>
-          <Input
-            type="email"
-            key={fields.email.key}
-            name={fields.email.name}
-            defaultValue={user?.email}
-            className="w-full"
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field, fieldState: { error } }) => (
+              <FormItem>
+                <div className="grid">
+                  <Label className="mb-2" htmlFor="nume">
+                    Nume de familie
+                  </Label>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className={error ? "border-red-500 bg-red-100" : ""}
+                      id="nume"
+                      type="text"
+                      placeholder="Jacob"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
           />
-          <p className="text-red-500 mt-1">{fields.email.errors}</p>
-        </div>
 
-        <div className="flex flex-col mb-4">
-          <Label className="mb-2">Parola</Label>
-          <Input
-            type="password"
-            key={fields.password.key}
-            name={fields.password.name}
-            defaultValue={user?.password || ""}
-            onChange={(ev)=>setPassword(ev.target.value)}
-            className="w-full"
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field, fieldState: { error } }) => (
+              <FormItem>
+                <div className="grid">
+                  <Label className="mb-2" htmlFor="nume">
+                    Prenume
+                  </Label>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className={error ? "border-red-500 bg-red-100" : ""}
+                      id="nume"
+                      type="text"
+                      placeholder="Daniel"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
           />
-          <p className="text-red-500 mt-1">{fields.password.errors || error}</p>
-        </div>
 
-        <div className="flex flex-col mb-4">
-          <Label className="mb-2">Parola noua</Label>
-          <Input
-            type="password"
-            key={fields.newPassword.key}
-            name={fields.newPassword.name}
-            className="w-full"
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field, fieldState: { error } }) => (
+              <FormItem>
+                <div className="grid">
+                  <Label className="mb-2" htmlFor="email">
+                    Email
+                  </Label>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className={error ? "border-red-500 bg-red-100" : ""}
+                      id="email"
+                      type="email"
+                      placeholder="m@example.com"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
           />
-          <p className="text-red-500 mt-1">{fields.newPassword.errors}</p>
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field, fieldState: { error } }) => (
+              <FormItem>
+                <div className="grid">
+                  <Label className="mb-2" htmlFor="parola">
+                    Parola
+                  </Label>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className={error ? "border-red-500 bg-red-100" : ""}
+                      id="parola"
+                      type="password"
+                      placeholder="******"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="newPassword"
+            render={({ field, fieldState: { error } }) => (
+              <FormItem>
+                <div className="grid">
+                  <Label className="mb-2" htmlFor="parola-noua">
+                    Parola
+                  </Label>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className={error ? "border-red-500 bg-red-100" : ""}
+                      id="parola-noua"
+                      type="password"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
+          />
         </div>
-      </div>
-      <div className="flex justify-end">
-        <Submitbutton title="Salveaza" error={error} />
-      </div>
-    </form>
+        <div className="flex justify-end mt-4">
+          <Button type="submit" disabled={isPending}>
+            {isPending ? (
+              <span className="flex items-center gap-1">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please Wait
+              </span>
+            ) : (
+              "Salveaza"
+            )}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

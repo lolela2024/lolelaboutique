@@ -18,7 +18,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
             "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
           description: "group-[.toast]:text-muted-foreground",
           actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
+            "group-[.toast]:bg-red-500 group-[.toast]:text-primary-foreground group-[.toast]:absolute group-[.toast]:right-0 group-[.toast]:top-0 group-[.toast]:rounded-full  group-[.toast]:hover:bg-red-500", // Stiluri pentru butonul "Close"
           cancelButton:
             "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
         },

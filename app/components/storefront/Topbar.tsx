@@ -6,7 +6,7 @@ export default function Topbar() {
     <div className='h-10 bg-primary'>
       <Wrapper className='py-0 h-full'>
         <div className='flex items-center justify-center h-full text-white'>
-          <p className='text-sm'>CADOU SURPRIZA la fiecare comanda! Transport Gratuit la o comanda de minim 199lei!</p>
+          <p className='text-sm'>CADOU SURPRIZĂ la fiecare comandă! Transport Gratuit la o comandă de minim 199 lei. (Doar pe teritoriul României)</p>
         </div>
       </Wrapper>
     </div>

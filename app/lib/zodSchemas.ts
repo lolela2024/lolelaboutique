@@ -158,7 +158,8 @@ export const ceckoutSchema = z.object({
 });
 
 export const informatiiSchema = z.object({
-  name:z.string({ required_error: "Enter a name"}),
+  firstName:z.string({ required_error: "Enter a name"}),
+  lastName:z.string({ required_error: "Enter a name"}),
   email: z.string( { required_error: "Enter an email" } ).email(),
   gender:z.string().optional(),
   password:z.string({ required_error: "Enter an password" }),
@@ -171,7 +172,7 @@ export const LoginSchema = z.object({
     .email("Invalid email"),
   password: z.string({ required_error: "Password is required" })
     .min(1, "Password is required")
-    .min(8, "Password must be more than 8 characters")
+    .min(6, "Password must be more than 6 characters")
     .max(32, "Password must be less than 32 characters"),
   code:z.optional(z.string())
 })
@@ -223,4 +224,18 @@ export const ResetSchema = z.object({
   email:z.string().email({
     message:"Email is required"
   }),
+})
+
+export const AddresSchema = z.object({
+  phone:      z.string().optional(),
+  strada:     z.string().min(1,"Strada este obligatorie."),
+  numar:      z.string().min(1, "Numar este obligatoriu."),
+  bloc:       z.string().optional(),
+  scara:      z.string().optional(),
+  etaj:       z.string().optional(),
+  apartament: z.string().optional(),
+  localitate: z.string().min(1, "Localitatea este obligatorie."),
+  judet:      z.string().min(1, "Judetul este obligatoriu."),
+  codPostal:  z.string().optional(),
+  alteDetalii:z.string().optional(),
 })

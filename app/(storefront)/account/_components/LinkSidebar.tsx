@@ -1,6 +1,7 @@
 import { ChevronRight, LogOut } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import LogoutButton from "./LogoutButton";
 
 const links = [
   {
@@ -9,10 +10,10 @@ const links = [
   },
   {
     name: "Comenzi",
-    href: "/account/comenzi",
+    href: "/account/orders",
   },
   {
-    name: "Adrese",
+    name: "Livrare & Facturare",
     href: "/account/address",
   },
 ];
@@ -26,7 +27,7 @@ export default function LinkSidebar() {
           
         </li>
       ))}
-      <li className="text-primary py-1"><LogOut className="w-4 h-4 mr-2"/>Deconectare</li>
+      <li className="text-primary py-1"><LogoutButton  /></li>
     </ul>
   );
 }

@@ -42,8 +42,6 @@ export default async function EditRoute({
   noStore();
   const data = await getData(params.id);
 
-  console.log(data.product)
-  // return <div>sdsd</div>
   return (
     <EditForm
       allTags={data.tags}

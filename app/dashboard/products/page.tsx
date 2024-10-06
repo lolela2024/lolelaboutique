@@ -98,7 +98,7 @@ export default async function ProductsRoute({
                     />
                   </TableCell>
                   <TableCell>{item.name}</TableCell>
-                  <TableCell>{"activ"}</TableCell>
+                  <TableCell>{item.status === "published" ? "activ" : item.status }</TableCell>
                   <TableCell>${item.price}</TableCell>
                   <TableCell>
                     {new Intl.DateTimeFormat("en-US").format(item.createdAt)}
