@@ -40,12 +40,12 @@ export function UserDropdown({ email, name, userImage }: iAppProps) {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <Link className="flex items-center justify-between" href={"/account/identitate"}>Adrese <FaLocationDot /></Link>
+          <Link className="flex items-center justify-between" href={"/account/address"}>Adrese <FaLocationDot /></Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <Link className="flex items-center justify-between" href={"/account/identitate"}>Comenzi <FaCalendarDays /></Link>
+          <Link className="flex items-center justify-between" href={"/account/orders"}>Comenzi <FaCalendarDays /></Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <Button

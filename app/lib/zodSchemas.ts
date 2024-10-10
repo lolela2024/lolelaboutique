@@ -48,58 +48,45 @@ export const dateLivrare = z.object({
 })
 
 export const ceckoutSchema = z.object({
-  email: z.string( { required_error: "Enter an email" } ).email(),
-  firstName:z.string({ required_error: "Enter a first name" }),
-  lastName:z.string({ required_error: "Enter a last name" }),
-  mobilePhone:z.string({ required_error: "Enter a mobile phone" })
-    .regex(
-      /^[\d+\-() ]+$/,
-      'Phone number must contain only digits, plus, minus, parentheses, and spaces'
-    )
-    .min(7, 'Phone number must be at least 7 characters long')
-    .max(15, 'Phone number cannot exceed 15 characters')
-    .refine(
-      (phone) => {
-        const cleanedPhone = phone.replace(/[\s()-]/g, '');
-        return cleanedPhone.length >= 7 && cleanedPhone.length <= 15;
-      },
-      'Phone number must have at least 7 digits after removing non-numeric characters'
-    ),
+  email:        z.string( { required_error: "Enter an email" } ).email(),
+  firstName:    z.string({ required_error: "Enter a first name" }),
+  lastName:     z.string({ required_error: "Enter a last name" }),
+  mobilePhone:  z.string().optional(),
 
-  numeFirma:z.string().optional(),
-  cif:z.string().optional(),
-  nrRegComert:z.string().optional(),
+  numeFirma:    z.string().optional(),
+  cif:          z.string().optional(),
+  nrRegComert:  z.string().optional(),
 
-  phone:z.string().optional(),
-  strada:z.string({ required_error: "Enter an address"}),
-  numar:z.string({ required_error: "Enter an address"}),
+  phone:  z.string().optional(),
+  strada: z.string({ required_error: "Enter an address"}),
+  numar:  z.string({ required_error: "Enter an address"}),
 
-  bloc:z.string().optional(),
-  scara:z.string().optional(),
-  etaj:z.string().optional(),
-  apartament:z.string().optional(),
-  localitate:z.string({ required_error: "Enter an address"}),
-  judet:z.string({ required_error: "Enter an address"}),
-  codPostal:z.string().optional(),
-  alteDetalii:z.string().optional(),
+  bloc:         z.string().optional(),
+  scara:        z.string().optional(),
+  etaj:         z.string().optional(),
+  apartament:   z.string().optional(),
+  localitate:   z.string({ required_error: "Enter an address"}),
+  judet:        z.string({ required_error: "Enter an address"}),
+  codPostal:    z.string().optional(),
+  alteDetalii:  z.string().optional(),
 
-  shipping:z.string().optional(),
-  payment:z.string().optional(),
+  shipping: z.string().optional(),
+  payment:  z.string().optional(),
   
-  tipPersoana: z.enum(['persoana-fizica', 'persoana-juridica']),
+  tipPersoana:      z.enum(['persoana-fizica', 'persoana-juridica']),
   tipAdresaFactura: z.enum(['same-address','different-address']),
 
-  stradaAdreseFacturare: z.string().optional(),
-  numarAdreseFacturare: z.string().optional(),
-  blocAdreseFacturare: z.string().optional(),
-  scaraAdreseFacturare: z.string().optional(),
-  etajAdreseFacturare: z.string().optional(),
-  apartamentAdreseFacturare: z.string().optional(),
-  localitateAdreseFacturare: z.string().optional(),
-  judetAdreseFacturare: z.string().optional(),
+  stradaAdreseFacturare:      z.string().optional(),
+  numarAdreseFacturare:       z.string().optional(),
+  blocAdreseFacturare:        z.string().optional(),
+  scaraAdreseFacturare:       z.string().optional(),
+  etajAdreseFacturare:        z.string().optional(),
+  apartamentAdreseFacturare:  z.string().optional(),
+  localitateAdreseFacturare:  z.string().optional(),
+  judetAdreseFacturare:       z.string().optional(),
 
 
-  termeniSiConditii:z.string({ required_error: "Required"}),
+  termeniSiConditii:  z.string({ required_error: "Required"}),
 })
 .superRefine((data, ctx) => {
   if(data.tipPersoana === "persoana-juridica" && (data.numeFirma || data.cif || data.nrRegComert)) {
@@ -156,6 +143,7 @@ export const ceckoutSchema = z.object({
     }
   }
 });
+
 
 export const informatiiSchema = z.object({
   firstName:z.string({ required_error: "Enter a name"}),
@@ -238,4 +226,10 @@ export const AddresSchema = z.object({
   judet:      z.string().min(1, "Judetul este obligatoriu."),
   codPostal:  z.string().optional(),
   alteDetalii:z.string().optional(),
+})
+
+export const DateFirmaSchema = z.object({
+  numeFirma:    z.string({ required_error: "Dați un nume de firma" }),
+  cif:          z.string({ required_error: "Se cere CIF" }),
+  nrRegComert:  z.string({ required_error: "Se cere Nr. reg. comertului / An" }),
 })

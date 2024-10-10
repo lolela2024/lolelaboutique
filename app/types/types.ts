@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { Address, PersoanaJuridica, UserRole } from "@prisma/client";
 import { Cart } from "../lib/interfaces";
 
 
@@ -26,4 +26,6 @@ export type CheckoutFormProps = {
       customerId: string | null;    
     }[];
   } | null | undefined;
+  address:Address | null;
+  persoanaJuridica:PersoanaJuridica [] | undefined
 };

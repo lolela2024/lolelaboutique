@@ -139,7 +139,7 @@ export default function ProductFilter({
           </div>
         </div>
 
-        <div className="col-span-12 md:col-span-9 ml-4">
+        <div className="col-span-12 md:col-span-9 md:ml-4">
           <div className="flex items-baseline justify-between">
             <h1 className="font-semibold text-3xl my-5 capitalize">{title}</h1>
             <SortFilter

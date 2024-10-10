@@ -8,7 +8,13 @@ import { cookies } from "next/headers";
 import prisma from "@/app/lib/db";
 import { auth } from "@/auth";
 
+async function getData(userId: string) {
+  const data = await prisma.address.findFirst({
+    where:{userId:userId}
+  })
 
+  return data;
+}
 
 export default async function CeckoutPage() {
   noStore();
@@ -16,22 +22,26 @@ export default async function CeckoutPage() {
   const user = session?.user;
 
   let userBazaDeDate = null;
+  let address = null;
 
   if (user?.email) { 
     const userData = await prisma.user.findFirst({
       where: { email: user.email },
       select:{
+        id:true,
         firstName:true,
         lastName:true,
         email:true,
         profileImage:true,
         address:true,
+        persoanaJuridica:true,
         phone:true || undefined
       }
     });
   
     if (userData) {
       // Redă utilizatorul din baza de date
+      address = await getData(userData.id)
       userBazaDeDate=userData
     } else {
       // Dacă utilizatorul nu a fost găsit în baza de date, gestionează eroarea
@@ -72,6 +82,6 @@ export default async function CeckoutPage() {
   }
 
   return (
-    <StoreCheckoutForm products={cart} user={userBazaDeDate}/>
+    <StoreCheckoutForm products={cart} user={userBazaDeDate} address={address} persoanaJuridica={userBazaDeDate?.persoanaJuridica}/>
   );
 }

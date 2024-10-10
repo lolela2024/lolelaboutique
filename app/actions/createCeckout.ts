@@ -16,6 +16,7 @@ import prisma from '@/app/lib/db';
 import { Resend } from "resend";
 import { render } from '@react-email/render';
 import EmailConfirmareOrder from '../../emails/ConfirmareOrder/index';
+import { z } from "zod"
 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -263,7 +264,7 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
   const totalPrice = calculateTotalPrice(cart);
   const verify = uuidv4();
   const session = await auth();
-  const user = session?.user;
+  const user = session?.user;   
 
   
   if (user?.email) {
@@ -306,7 +307,7 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
       email: submission.value.email,
       firstName: submission.value.firstName,
       lastName: submission.value.lastName,
-      mobilePhone: submission.value.mobilePhone,
+      mobilePhone: submission.value.mobilePhone as string,
     },
     update: {
       firstName: submission.value.firstName,
@@ -433,3 +434,6 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
   const url = await createStripeSession(cart, submission, cartId || '');
   return redirect(url as string);
 }
+
+
+

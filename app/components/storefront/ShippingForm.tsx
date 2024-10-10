@@ -3,11 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
@@ -60,9 +56,11 @@ const județeRomânia = [
 export default function ShippingForm({
   fields,
   user,
+  address,
 }: {
   fields: any;
   user: CheckoutFormProps["user"];
+  address: CheckoutFormProps["address"];
 }) {
   const countyOptions = județeRomânia.map((judet, index) => (
     <SelectItem key={index} value={judet.romanian}>
@@ -77,14 +75,13 @@ export default function ShippingForm({
       </CardHeader>
       <CardContent className="py-4">
         <div className="grid grid-cols-12 items-start">
-         
           <div className="col-span-full md:col-span-12 ">
             <Label>Telefon:</Label>
             <Input
               type="text"
               key={fields.phone.key}
               name={fields.phone.name}
-              defaultValue={fields.phone.initialValue}
+              defaultValue={address?.phone as string}
               className={
                 fields.phone.errors
                   ? "w-full border-red-500 border-2 "
@@ -95,7 +92,6 @@ export default function ShippingForm({
             <p className="text-red-500 text-sm">{fields.phone.errors}</p>
           </div>
 
-          
           <div className="col-span-full md:col-span-12">
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-9">
@@ -104,7 +100,7 @@ export default function ShippingForm({
                   type="text"
                   key={fields.strada.key}
                   name={fields.strada.name}
-                  defaultValue={fields.strada.initialValue}
+                  defaultValue={address?.strada}
                   className={
                     fields.strada.errors
                       ? "w-full border-red-500 border-2 "
@@ -112,9 +108,7 @@ export default function ShippingForm({
                   }
                   placeholder="Strada *"
                 />
-                <p className="text-red-500 text-sm">
-                  {fields.strada.errors}
-                </p>
+                <p className="text-red-500 text-sm">{fields.strada.errors}</p>
               </div>
               <div className="col-span-3">
                 <Label>Nr:</Label>
@@ -122,7 +116,7 @@ export default function ShippingForm({
                   type="text"
                   key={fields.numar.key}
                   name={fields.numar.name}
-                  defaultValue={fields.numar.initialValue}
+                  defaultValue={address?.numar}
                   className={
                     fields.numar.errors
                       ? "w-full border-red-500 border-2 "
@@ -130,9 +124,7 @@ export default function ShippingForm({
                   }
                   placeholder="Nr *"
                 />
-                <p className="text-red-500 text-sm">
-                  {fields.numar.errors}
-                </p>
+                <p className="text-red-500 text-sm">{fields.numar.errors}</p>
               </div>
             </div>
           </div>
@@ -146,7 +138,7 @@ export default function ShippingForm({
                   type="text"
                   key={fields.bloc.key}
                   name={fields.bloc.name}
-                  defaultValue={fields.bloc.initialValue}
+                  defaultValue={address?.bloc as string}
                   className={
                     fields.bloc.errors
                       ? "w-full border-red-500 border-2 "
@@ -154,9 +146,7 @@ export default function ShippingForm({
                   }
                   placeholder="Bloc"
                 />
-                <p className="text-red-500 text-sm">
-                  {fields.bloc.errors}
-                </p>
+                <p className="text-red-500 text-sm">{fields.bloc.errors}</p>
               </div>
               <div className="col-span-3">
                 <Label>Scara:</Label>
@@ -164,7 +154,7 @@ export default function ShippingForm({
                   type="text"
                   key={fields.scara.key}
                   name={fields.scara.name}
-                  defaultValue={fields.scara.initialValue}
+                  defaultValue={address?.scara as string}
                   className={
                     fields.scara.errors
                       ? "w-full border-red-500 border-2 "
@@ -172,9 +162,7 @@ export default function ShippingForm({
                   }
                   placeholder="Scara"
                 />
-                <p className="text-red-500 text-sm">
-                  {fields.scara.errors}
-                </p>
+                <p className="text-red-500 text-sm">{fields.scara.errors}</p>
               </div>
               <div className="col-span-3">
                 <Label>Etaj:</Label>
@@ -182,7 +170,7 @@ export default function ShippingForm({
                   type="text"
                   key={fields.etaj.key}
                   name={fields.etaj.name}
-                  defaultValue={fields.etaj.initialValue}
+                  defaultValue={address?.etaj as string}
                   className={
                     fields.etaj.errors
                       ? "w-full border-red-500 border-2 "
@@ -190,9 +178,7 @@ export default function ShippingForm({
                   }
                   placeholder="Etaj"
                 />
-                <p className="text-red-500 text-sm">
-                  {fields.etaj.errors}
-                </p>
+                <p className="text-red-500 text-sm">{fields.etaj.errors}</p>
               </div>
               <div className="col-span-3">
                 <Label>Ap:</Label>
@@ -200,7 +186,7 @@ export default function ShippingForm({
                   type="text"
                   key={fields.apartament.key}
                   name={fields.apartament.name}
-                  defaultValue={fields.apartament.initialValue}
+                  defaultValue={address?.apartament as string}
                   className={
                     fields.apartament.errors
                       ? "w-full border-red-500 border-2 "
@@ -222,7 +208,7 @@ export default function ShippingForm({
             type="text"
             key={fields.localitate.key}
             name={fields.localitate.name}
-            defaultValue={fields.localitate.initialValue}
+            defaultValue={address?.localitate}
             className={
               fields.localitate.errors
                 ? "w-full border-red-500 border-2 "
@@ -240,7 +226,7 @@ export default function ShippingForm({
             type="text"
             key={fields.judet.key}
             name={fields.judet.name}
-            defaultValue={fields.judet.initialValue}
+            defaultValue={address?.judet}
             className={
               fields.judet.errors
                 ? "w-full border-red-500 border-2 "
@@ -258,7 +244,7 @@ export default function ShippingForm({
             type="text"
             key={fields.codPostal.key}
             name={fields.codPostal.name}
-            defaultValue={fields.codPostal.initialValue}
+            defaultValue={address?.codPostal as string}
             className={
               fields.codPostal.errors
                 ? "w-full border-red-500 border-2 "

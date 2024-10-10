@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 export default function TableRowTrx({ item }: { item: any }) {
   const { push } = useRouter();
 
-  console.log(item)
+  console.log(item);
   return (
     <TableRow
       className="cursor-pointer"
@@ -19,12 +19,12 @@ export default function TableRowTrx({ item }: { item: any }) {
       <TableCell>#{item.orderNumber}</TableCell>
       <TableCell>
         {new Intl.DateTimeFormat("ro-RO", {
-           year: "numeric",
-           month: "long",
-           day: "numeric",
-           hour: "2-digit",
-           minute: "2-digit",
-           second: "2-digit",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
         }).format(new Date(item.createdAt))}
       </TableCell>
       <TableCell>
@@ -32,7 +32,17 @@ export default function TableRowTrx({ item }: { item: any }) {
         {item.User?.lastName || item.Customer?.lastName}
       </TableCell>
       <TableCell>{formatCurrency(item.amount)}</TableCell>
-      <TableCell>{item.status}</TableCell>
+      <TableCell>
+        <span
+          className={cn(
+            item.status === "pending" && "bg-red-200",
+            item.status === "completed" && "bg-green-200",
+            "rounded-lg px-2 py-1"
+          )}
+        >
+          {item.status}
+        </span>
+      </TableCell>
       <TableCell>{item._count.products}</TableCell>
       <TableCell>
         <span

@@ -72,7 +72,6 @@ export default async function CheckoutComenzi({
   const methodaDeLivrare = "Livrare la adresa";
   const timpLivrare = "Livrare in 1-2 zile";
 
-  console.log(data.tipPersoana);
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h1 className="text-2xl mt-4 font-semibold">

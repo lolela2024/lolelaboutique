@@ -13,7 +13,7 @@ export default function CategoriesHeroHolder() {
         />
       </div>
 
-      <div className="absolute top-[35%] bg-white pl-12 py-2 pr-2 rounded-r-lg w-[400px]">
+      <div className="absolute top-[35%] bg-white pl-12 py-2 pr-2 rounded-r-lg w-sm">
         <h1 className="text-2xl font-bold mb-4">Noua colecție de bijuterii cu pietre prețioase</h1>
       </div>
     </div>
