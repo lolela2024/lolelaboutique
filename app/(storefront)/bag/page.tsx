@@ -84,9 +84,9 @@ export default async function BagRoute() {
   }
 
   return (
-    <div>
+    <div className="my-8">
       <h1 className="text-xl font-semibold">COSUL DE CUMPARATURI</h1>
-      <div className="grid lg:grid-cols-3 mt-4 lg:gap-6">
+      <div className="grid lg:grid-cols-3 mt-4 lg:gap-6 space-y-8 lg:space-y-0">
         <div className="col-span-2">
           <Card className="shadow-lg">
             <CardContent className="p-0 px-4 py-4">
@@ -94,7 +94,7 @@ export default async function BagRoute() {
                 const isLastItem = index === cart.items.length - 1;
                 return (
                   <div key={item.id}>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-2 gap-4">
                       <div className="flex items-center gap-4">
                         <div className="aspect-1 border rounded-sm overflow-hidden flex-shrink-0 w-1/4 relative">
                           <Image
@@ -111,8 +111,10 @@ export default async function BagRoute() {
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
+
+                      <div className="grid  grid-cols-3 items-center">
+
+                        <div className="flex justify-end md:items-center">
                           <form
                             action={removeQuantityItem}
                             className="text-end"
@@ -138,9 +140,11 @@ export default async function BagRoute() {
                             <AddQuantityItem />
                           </form>
                         </div>
-                        <div className="text-primary font-semibold">
+
+                        <div className="text-primary font-semibold text-right">
                           {formatCurrency(item.price * item.quantity)}
                         </div>
+
                         <form action={delItem} className="text-end">
                           <input
                             type="hidden"
@@ -158,7 +162,7 @@ export default async function BagRoute() {
             </CardContent>
           </Card>
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2 lg:col-span-1">
           <Card className="shadow-lg">
             <CardHeader className="bg-[#d1ecf1] border-b rounded-t-lg py-4 text-center text-sm font-semibold">
               {total === 1
