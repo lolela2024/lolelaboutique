@@ -9,12 +9,6 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-// datasource db {
-//   provider  = "postgresql"
-//   url       = env("DATABASE_URL")
-//   directUrl = env("DIRECT_URL")
-// }
-
 enum UserRole {
   ADMIN
   SELLER
@@ -50,7 +44,6 @@ model User {
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
   AdresaFacturare       AdresaFacturare[]
-  
 
   @@map("users")
 }
@@ -152,6 +145,8 @@ model Product {
   discountAmount     Int? // Store the discount amount
   discountPercentage Int? // Store the discount percentage
 
+  trackQuantity Boolean @default(false)
+
   description      Json
   status           ProductStatus
   images           String[]
@@ -161,15 +156,18 @@ model Product {
   createdAt   DateTime     @default(now())
   User        User?        @relation(fields: [userId], references: [id])
   userId      String?
-  productTags ProductTag[] @relation("ProductToProductTag") // Relație inversă către ProductTag
-  
-  materialId  Int?
-  material    Material?    @relation(fields: [materialId], references: [id])
+  productTags ProductTag[] @relation("ProductToProductTag")
+
+  materialId Int?
+  material   Material? @relation(fields: [materialId], references: [id])
 
   piatra String?
 
-  productCategoryId Int?
+  inventory   Inventory? @relation(fields: [inventoryId], references: [id]) // 1 to 1 relation
+  inventoryId Int?       @unique
+
   productCategory   ProductCategory? @relation(fields: [productCategoryId], references: [id])
+  productCategoryId Int?
 
   OrderProduct OrderProduct[]
 }
@@ -178,6 +176,32 @@ enum ProductStatus {
   draft
   published
   archived
+}
+
+model Inventory {
+  id Int @id @default(autoincrement())
+
+  sku String @unique // SKU-ul este unic pentru fiecare intrare în inventar
+
+  unavailable Unavailable? // 1 to 1 relation, no need for `fields` or `references` here
+
+  committed Int @default(0)
+  available Int @default(0)
+  onHand    Int @default(0)
+
+  product Product?
+}
+
+model Unavailable {
+  id Int @id @default(autoincrement())
+
+  damaged        Int @default(0)
+  qualityControl Int @default(0)
+  safetyStock    Int @default(0)
+  other          Int @default(0)
+
+  inventory   Inventory? @relation(fields: [inventoryId], references: [id])
+  inventoryId Int?       @unique // Make inventoryId unique to ensure 1-to-1 relation
 }
 
 model Tag {

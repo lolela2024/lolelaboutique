@@ -36,7 +36,7 @@ import { useFormState } from "react-dom";
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { productSchema } from "@/app/lib/zodSchemas";
-import { type $Enums } from "@prisma/client";
+import { Inventory, Unavailable, type $Enums } from "@prisma/client";
 import { deleteImage, editProduct } from "@/app/actions/product";
 import { UploadButton, UploadDropzone } from "@/app/lib/uploadthing";
 import { Submitbutton } from "../SubmitButtons";
@@ -58,6 +58,9 @@ import { cn } from "@/lib/utils";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FaXmark } from "react-icons/fa6";
+import { Separator } from "@/components/ui/separator";
+import StockProductsEdit from "@/app/dashboard/products/_components/StockProductsEdit";
+
 
 const tagsPietre = [
   { label: "Acvamarin", value: "acvamarin" },
@@ -70,6 +73,7 @@ const tagsPietre = [
   { label: "Charoit", value: "charoit" },
   { label: "Citrin", value: "citrin" },
 ] as const;
+
 
 interface iAppProps {
   data: {
@@ -84,9 +88,9 @@ interface iAppProps {
     productCategoryId: number | null;
     isFeatured: boolean;
     materialId: number | null;
-    productTags:[
-      tagId: any
-    ]
+    productTags: [tagId: any];
+    inventory: Inventory | undefined;
+    trackQuantity: boolean;
   };
   categories: {
     name: string;
@@ -103,9 +107,16 @@ interface iAppProps {
     name: string;
     slug: string;
   }[];
+  unavailable: Unavailable | null;
 }
 
-export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) {
+export function EditForm({
+  data,
+  categories,
+  tipMaterial,
+  allTags,
+  unavailable,
+}: iAppProps) {
   const [images, setImages] = useState<string[]>(data.images);
   const [categoryId, setCategoryId] = useState(
     categories.find((cat) => cat.id === data.productCategoryId)?.id
@@ -114,9 +125,12 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
     tipMaterial.find((material) => material.id === data.materialId)?.value
   );
 
+  const [trackQuantity, setTrackQuantity] = useState<boolean>(
+    data.trackQuantity
+  );
+
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string | undefined>();
-
 
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState<string>("");
@@ -133,17 +147,13 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
   };
 
   useEffect(() => {
-    // Extrage tagId din productTags și setează în selectedTags
-    // const tags = data.productTags.map(tag => tag.tagId.toString()); // Conversia la string, dacă este necesar
-    // Extrage tagId din productTags și obține numele tagurilor
-    const tags = data.productTags.map(tag => {
-      const foundTag = allTags.find(t => t.id === tag.tagId);
-      return foundTag ? foundTag.name : 'Unknown'; // Returnează 'Unknown' dacă tagul nu este găsit
+    const tags = data.productTags.map((tag) => {
+      const foundTag = allTags.find((t) => t.id === tag.tagId);
+      return foundTag ? foundTag.name : "Unknown"; // Returnează 'Unknown' dacă tagul nu este găsit
     });
 
     setSelectedTags(tags);
   }, [data.productTags]); // Se va rula de fiecare dată când productTags se schimbă
-
 
   const [content, setContent] = useState(
     JSON.parse(JSON.stringify(data.description))
@@ -187,7 +197,7 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [openTags]); 
+  }, [openTags]);
 
   const [form, fields] = useForm({
     lastResult,
@@ -214,15 +224,9 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
     }
   };
 
-  // // Mapare pentru a obține numele tagurilor pe baza ID-urilor
-  // const getTagNameById = (id: number) => {
-  //   const tag = tags.find(tag => tag.id === id);
-  //   return tag ? tag.name : 'Unknown'; // Returnează 'Unknown' dacă tagul nu este găsit
-  // };
-
   return (
     <form id={form.id} onSubmit={form.onSubmit} action={action}>
-      <input type="hidden" name="productId" value={data.id} />
+      <input type="hidden" name="productId" defaultValue={data.id} />
       <div className="flex items-center gap-4 ">
         <Button
           className="text-gray-800 hover:bg-gray-200"
@@ -234,7 +238,7 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
             <ArrowLeft className="w-5 h-5" />
           </Link>
         </Button>
-        <h1 className="text-xl font-semibold tracking-tight">Add Product</h1>
+        <h1 className="text-xl font-semibold tracking-tight">Edit Product</h1>
       </div>
 
       <div className="mt-5">
@@ -262,7 +266,7 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
                       type="hidden"
                       key={fields.description.key}
                       name={fields.description.name}
-                      value={content}
+                      defaultValue={content}
                     />
                     <Tiptap
                       content={content}
@@ -277,10 +281,10 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
                     <div className="flex flex-col p-4 border border-dashed rounded-lg">
                       <input
                         type="hidden"
-                        value={images}
+                        defaultValue={images}
                         key={fields.images.key}
                         name={fields.images.name}
-                        defaultValue={fields.images.initialValue as any}
+                        // defaultValue={fields.images.initialValue as any}
                       />
                       {images.length > 0 ? (
                         <div className="flex gap-5">
@@ -328,7 +332,7 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
                     <Label>Category</Label>
                     <input
                       type="hidden"
-                      value={categoryId}
+                      // value={categoryId}
                       key={fields.productCategoryId.key}
                       name={fields.productCategoryId.name}
                       defaultValue={
@@ -401,6 +405,61 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
                 </div>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader className="text-sm font-semibold">
+                Inventory
+              </CardHeader>
+              <CardContent className="py-4">
+                <div>
+                  <div className="flex flex-col gap-3">
+                    <Label>SKU (Stock Keeping Unit)</Label>
+                    <Input
+                      className="max-w-sm"
+                      type="text"
+                      name={fields.sku.name}
+                      key={fields.sku.key}
+                      defaultValue={ data.inventory?.sku }
+                      disabled
+                    />
+                    <p className="text-red-500">{fields.salePrice.errors}</p>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="trackQuantity"
+                      checked={trackQuantity}
+                      name={fields.trackQuantity.name}
+                      key={fields.trackQuantity.key}
+                      onCheckedChange={() => setTrackQuantity(!trackQuantity)}
+                    />
+                    <label
+                      htmlFor="trackQuantity"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Track quantity
+                    </label>
+                  </div>
+                </div>
+              </CardContent>
+              <div>
+                <Separator />
+                <CardContent className="py-4">
+                  {trackQuantity ? (
+                    <StockProductsEdit
+                      fields={fields}
+                      unavailableValues={unavailable}
+                      availableValue={data.inventory?.available || 0}
+                    />
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      <span>Shop location</span>
+                      <span>Not tracked</span>
+                    </div>
+                  )}
+                </CardContent>
+              </div>
+            </Card>
           </div>
           <div className="col-span-1 space-y-4">
             <Card>
@@ -446,7 +505,7 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
                   <Label>Piatra</Label>
                   <input
                     type="hidden"
-                    value={value}
+                    defaultValue={value}
                     name={fields.tagPiatra.name}
                     key={fields.tagPiatra.key}
                   />
@@ -536,10 +595,10 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
                 <Label htmlFor="tags">Tags</Label>
                 <input
                   type="hidden"
-                  value={selectedTags}
+                  defaultValue={selectedTags}
                   key={fields.tags.key}
                   name={fields.tags.name}
-                  defaultValue={fields.tags.initialValue as any}
+                  // defaultValue={fields.tags.initialValue as any}
                 />
 
                 <Input
@@ -548,7 +607,9 @@ export function EditForm({ data, categories, tipMaterial, allTags }: iAppProps) 
                   type="text"
                   value={tagInput}
                   onClick={() => setOpenTags(!openTags)}
-                  onChange={(ev) => (setTagInput(ev.target.value),setOpenTags(false))}
+                  onChange={(ev) => (
+                    setTagInput(ev.target.value), setOpenTags(false)
+                  )}
                 />
 
                 <div

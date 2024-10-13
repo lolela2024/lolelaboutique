@@ -7,6 +7,14 @@ import { utapi } from "../server/uploadthing";
 import { auth } from "@/auth";
 import { slugify } from '../../lib/utils';
 
+function generateSKU(prefix: string = "LO", length: number = 5): string {
+  // Generează un număr aleatoriu cu numărul de cifre specificat
+  const randomNumber = Math.floor(Math.random() * Math.pow(10, length)).toString().padStart(length, "0");
+  
+  // Concatenăm prefixul cu numărul aleatoriu pentru a forma SKU-ul
+  return `${prefix}${randomNumber}`;
+}
+
 
 export async function createProduct(prevState: unknown, formData:FormData) {
   const session = await auth()
@@ -31,6 +39,8 @@ export async function createProduct(prevState: unknown, formData:FormData) {
   let discountAmount = 0;
   let discountPercentage = 0;
 
+  console.log(submission.value)
+
   if (submission.value.salePrice) {
     discountAmount = submission.value.price - submission.value.salePrice 
     discountPercentage = Math.round(discountAmount / submission.value.price * 100)
@@ -43,6 +53,10 @@ export async function createProduct(prevState: unknown, formData:FormData) {
   const material = await prisma.material.findFirst({
     where:{value:submission.value.tipBijuterie}
   })
+
+  
+
+  console.log(submission.value.trackQuantity)
 
   // Creare produs nou
   const createdProduct = await prisma.product.create({
@@ -59,6 +73,7 @@ export async function createProduct(prevState: unknown, formData:FormData) {
       isFeatured: submission.value.isFeatured === true ? true : false,
       smallDescription: submission.value.smallDescription,
       materialId: material?.id,
+      trackQuantity:submission.value.trackQuantity ? submission.value.trackQuantity : false
     },
   });
 
@@ -106,9 +121,31 @@ export async function createProduct(prevState: unknown, formData:FormData) {
     });
   }
 
+  if(submission.value.trackQuantity){
+    const createdInventory =  await prisma.inventory.create({
+      data: {
+        available: submission.value.available ? submission.value.available : 0,
+        onHand: submission.value.onHand,
+        sku: submission.value.sku ? submission.value.sku : "",
+        product: { connect:{ id: productId } }
+      }
+    })
+
+    await prisma.unavailable.create({
+      data: {
+        damaged: submission.value.damaged ? submission.value.damaged : 0,
+        qualityControl: submission.value.qualityControl ? submission.value.qualityControl : 0,
+        safetyStock: submission.value.safetyStock ? submission.value.safetyStock : 0,
+        other: submission.value.other ? submission.value.other : 0,
+        inventory: { connect: { id: createdInventory.id } } // Asociere cu inventarul prin id
+      },
+    })
+  }
+  
+
 
   // Redirecționează la dashboard sau altă pagină
-  return redirect("/dashboard/products");
+  //return redirect("/dashboard/products");
 }
 
 export async function editProduct(prevState: any, formData: FormData) {
@@ -163,6 +200,7 @@ export async function editProduct(prevState: any, formData: FormData) {
       status: submission.value.status,
       images: flattenUrls,
       materialId: material?.id,
+      trackQuantity:submission.value.trackQuantity ? submission.value.trackQuantity : false
     },
   });
 
@@ -215,6 +253,92 @@ export async function editProduct(prevState: any, formData: FormData) {
     });
   }
 
+  const existingInventory = await prisma.inventory.findFirst({
+    where: { product: { id: productId } }
+  });
+
+  // Verificăm dacă există inventarul pentru produsul curent
+  if (existingInventory) {
+    const existingUnavailable = await prisma.unavailable.findUnique({
+      where: { inventoryId: existingInventory.id }
+    });
+
+    // Dacă trackQuantity este dezactivat, ștergem inventarul și unavailable
+    if (!submission.value.trackQuantity) {
+      // Șterge inventarul existent
+      await prisma.inventory.delete({
+        where: { id: existingInventory.id }
+      });
+
+      // Dacă există unavailable, ștergem și acesta
+      if (existingUnavailable) {
+        await prisma.unavailable.delete({
+          where: { id: existingUnavailable.id }
+        });
+      }
+    } 
+    // Dacă trackQuantity este activat și există inventar, actualizăm inventarul și unavailable
+    else {
+      await prisma.inventory.update({
+        where: { id: existingInventory.id },
+        data: {
+          available: submission.value.available ? submission.value.available : 0,
+          onHand: submission.value.onHand,
+        }
+      });
+
+      if (existingUnavailable) {
+        // Actualizăm unavailable dacă există deja
+        await prisma.unavailable.update({
+          where: { inventoryId: existingInventory.id },
+          data: {
+            damaged: submission.value.damaged || 0,
+            qualityControl: submission.value.qualityControl || 0,
+            safetyStock: submission.value.safetyStock || 0,
+            other: submission.value.other || 0
+          }
+        });
+      } else {
+        // Creăm unavailable dacă nu există deja
+        await prisma.unavailable.create({
+          data: {
+            inventoryId: existingInventory.id,
+            damaged: submission.value.damaged || 0,
+            qualityControl: submission.value.qualityControl || 0,
+            safetyStock: submission.value.safetyStock || 0,
+            other: submission.value.other || 0
+          }
+        });
+      }
+    }
+  } 
+  // Dacă nu există inventar, creăm inventarul și unavailable
+  else {
+    const sku = generateSKU();
+
+    const newInventory = await prisma.inventory.create({
+      data: {
+        product:{ connect: { id: productId } },
+        available: submission.value.available ? submission.value.available : 0,
+        onHand: submission.value.onHand,
+        sku: sku
+      }
+    });
+
+    // Creăm unavailable pentru noul inventar
+    await prisma.unavailable.create({
+      data: {
+        inventoryId: newInventory.id,
+        damaged: submission.value.damaged || 0,
+        qualityControl: submission.value.qualityControl || 0,
+        safetyStock: submission.value.safetyStock || 0,
+        other: submission.value.other || 0
+      }
+    });
+  }
+  
+
+  
   redirect("/dashboard/products");
 }
 

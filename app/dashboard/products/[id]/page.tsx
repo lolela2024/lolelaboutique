@@ -11,7 +11,8 @@ async function getData(productId: string) {
     include: {
       productCategory: true,
       material: true,
-      productTags: true
+      productTags: true,
+      inventory: true,
     },
   });
 
@@ -27,11 +28,15 @@ async function getData(productId: string) {
     },
   });
 
+  const unavailable = await prisma.unavailable.findFirst({
+    where:{inventoryId: product.inventoryId}
+  })
+
   const tipMaterial = await prisma.material.findMany();
 
   const tags = await prisma.tag.findMany();
 
-  return { product, categories, tipMaterial, tags };
+  return { product, categories, tipMaterial, tags, unavailable };
 }
 
 export default async function EditRoute({
@@ -48,6 +53,7 @@ export default async function EditRoute({
       data={data.product as any}
       categories={data.categories}
       tipMaterial={data.tipMaterial}
+      unavailable={data.unavailable}
     />
   );
 }

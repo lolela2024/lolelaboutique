@@ -30,7 +30,7 @@ export default function TagsProduct({ fields, tags }: iAppProps) {
       setOpenTags(false); // Închidem meniul
     }
   };
-
+console.log(selectedTags)
   useEffect(() => {
     if (openTags) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -117,8 +117,8 @@ export default function TagsProduct({ fields, tags }: iAppProps) {
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id={item.slug}
-                    checked={selectedTags.includes(item.slug)} // Verificăm dacă este selectat
-                    onCheckedChange={() => handleCheckboxChange(item.slug)}
+                    checked={selectedTags.includes(item.name)} // Verificăm dacă este selectat
+                    onCheckedChange={() => handleCheckboxChange(item.name)}
                   />
                   <label
                     htmlFor={item.slug}

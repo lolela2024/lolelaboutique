@@ -22,36 +22,7 @@ import React, { useState } from "react";
 import { FaProductHunt } from "react-icons/fa6";
 import { BiSolidCategory } from "react-icons/bi";
 import { DiMaterializecss } from "react-icons/di";
-
-const links = [
-  {
-    name: "Categories",
-    href: "/dashboard/categories",
-  },
-  {
-    name: "Products",
-    href: "/dashboard/products",
-  },
-];
-
-const components: { title: string; href: string }[] = [
-  {
-    title: "Alert Dialog",
-    href: "/docs/primitives/alert-dialog",
-  },
-  {
-    title: "Hover Card",
-    href: "/docs/primitives/hover-card",
-  },
-  {
-    title: "Progress",
-    href: "/docs/primitives/progress",
-  },
-  {
-    title: "Scroll-area",
-    href: "/docs/primitives/scroll-area",
-  },
-];
+import Inventory from "../../dashboard/products/_components/Inventory";
 
 export function DashboardNavigation() {
   const pathname = usePathname();
@@ -59,9 +30,9 @@ export function DashboardNavigation() {
 
   const [open, setIsOpen] = useState<boolean>(false);
 
-  const handleChange = (link:string) => {
+  const handleChange = (link: string) => {
     setIsOpen(!open);
-    push(link)
+    push(link);
   };
 
   return (
@@ -95,7 +66,7 @@ export function DashboardNavigation() {
                 active={
                   pathname === "/dashboard/products" ||
                   pathname === "/dashboard/categories" ||
-                  pathname === "/dashboard/material" 
+                  pathname === "/dashboard/material"
                 }
               >
                 <button
@@ -115,7 +86,7 @@ export function DashboardNavigation() {
                   }
                 >
                   <button
-                    onClick={()=>handleChange("/dashboard/products")}
+                    onClick={() => handleChange("/dashboard/products")}
                     className="flex items-center gap-2 text-sm"
                   >
                     <FaProductHunt />
@@ -129,7 +100,7 @@ export function DashboardNavigation() {
                 >
                   <button
                     className="flex items-center gap-2 text-sm"
-                    onClick={()=>handleChange("/dashboard/categories")}
+                    onClick={() => handleChange("/dashboard/categories")}
                   >
                     <BiSolidCategory />
                     <span>Categories</span>
@@ -142,7 +113,7 @@ export function DashboardNavigation() {
                 >
                   <button
                     className="flex items-center gap-2 text-sm"
-                    onClick={()=>handleChange("/dashboard/material")}
+                    onClick={() => handleChange("/dashboard/material")}
                   >
                     <DiMaterializecss />
                     <span>Material Product</span>
@@ -151,6 +122,16 @@ export function DashboardNavigation() {
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link href="/dashboard/inventory" legacyBehavior passHref>
+            <NavigationMenuLink
+              active={pathname === "/dashboard/inventory"}
+              className={navigationMenuTriggerStyle()}
+            >
+              Inventory
+            </NavigationMenuLink>
+          </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href="/dashboard/home-page" legacyBehavior passHref>

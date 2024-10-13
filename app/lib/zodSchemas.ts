@@ -14,6 +14,15 @@ export const productSchema = z.object({
   smallDescription: z.string().optional(),
   tagPiatra: z.string().optional(),
   tipBijuterie: z.string().optional(),
+  trackQuantity: z.boolean().optional(),
+  damaged: z.number().optional(),
+  qualityControl: z.number().optional(),
+  safetyStock: z.number().optional(),
+  other: z.number().optional(),
+  available: z.number().optional(),
+  onHand: z.number().optional(),
+  sku: z.string().optional()
+
   
 }).refine(data => !data.salePrice || data.salePrice < data.price, {
   message: "Sale price must be less than the regular price",
