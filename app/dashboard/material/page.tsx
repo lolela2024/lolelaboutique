@@ -30,13 +30,15 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import Link from "next/link";
 
-async function getData() {
+async function getData(page: number, per_page: number) {
   const queryOptions: any = {
     select: {
       id: true,
       name: true,
       value: true,
     },
+    skip: (page - 1) * per_page, // Sar peste produsele anterioare paginii curente
+    take: per_page, // Returnează doar numărul de produse dorit
   };
 
   const data = await prisma.material.findMany(queryOptions);
@@ -50,15 +52,13 @@ export default async function MaterialPage({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   noStore();
-  const data = await getData();
 
-  const page = searchParams["page"] ?? "1";
-  const per_page = searchParams["per_page"] ?? "5";
+  const page = Number(searchParams["page"] ?? "1");
+  const per_page = Number(searchParams["per_page"] ?? "5");
 
-  const start = (Number(page) - 1) * Number(per_page);
-  const end = start + Number(per_page);
+  const data = await getData(page, per_page);
 
-  const entries = data.slice(start, end);
+  const totalEntries = await prisma.material.count();
 
   return (
     <>
@@ -86,7 +86,7 @@ export default async function MaterialPage({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {entries.map((item) => (
+              {data.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>{item.name}</TableCell>
                   <TableCell>{item.value}</TableCell>
@@ -120,9 +120,11 @@ export default async function MaterialPage({
         </CardContent>
         <CardFooter className="justify-end">
           <PaginationControls
-            entries={data.length}
-            hasNextPage={end < data.length}
-            hasPrevPage={start > 0}
+            entries={totalEntries} // Totalul produselor pentru paginare
+            hasNextPage={page * per_page < totalEntries} // Verifică dacă există o pagină următoare
+            hasPrevPage={page > 1} // Verifică dacă există o pagină anterioară
+            currentPage={page} // Pagina curentă pentru a putea evidenția
+            perPage={per_page} // Numărul de produse pe pagină
           />
         </CardFooter>
       </Card>
