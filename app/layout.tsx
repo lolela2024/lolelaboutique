@@ -25,8 +25,14 @@ const montseratSerif = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Lolela Boutique - Bijuterii Handmade din Piatra Semiprețioasă și Oțel Inoxidabil",
+  title: {
+    default:"Lolela Boutique - Bijuterii Handmade din Piatra Semiprețioasă și Oțel Inoxidabil",
+    template:"%s - Lolela Boutique - Bijuterii Handmade din Piatra Semiprețioasă și Oțel Inoxidabil"
+  },
   description: "Descoperă bijuterii unice, handmade, din oțel inoxidabil și pietre semiprețioase, personalizate în funcție de numerologie și astrologie. Lolela Boutique - eleganță și originalitate la fiecare pas.",
+  twitter:{
+    card:"summary_large_image"
+  }
 };
 
 export default async function RootLayout({

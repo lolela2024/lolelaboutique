@@ -13,8 +13,9 @@ import { IoCheckmarkOutline } from "react-icons/io5";
 import ProductDescription from "@/app/components/storefront/ProductDescription";
 import { Metadata } from "next";
 import Head from "next/head";
+import { cache } from "react";
 
-async function getData(slug: string) {
+const getData = cache(async (slug: string) => {
   const data = await prisma.product.findUnique({
     where: {
       slug: slug,
@@ -29,7 +30,7 @@ async function getData(slug: string) {
   }
 
   return data;
-}
+});
 
 export async function generateMetadata({
   params,
@@ -79,7 +80,6 @@ export async function generateMetadata({
       description: descriptionFinal, // Twitter Description
       images: [imageUrl], // Twitter Image
     },
-    
   };
 }
 
@@ -93,7 +93,7 @@ export default async function ProductIdRoute({
 
   const content = data?.description
     ? JSON.parse(JSON.stringify(data.description))
-    : null;  
+    : null;
 
   return (
     <>

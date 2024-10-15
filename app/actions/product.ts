@@ -113,7 +113,8 @@ export async function createProduct(prevState: unknown, formData:FormData) {
       smallDescription: submission.value.smallDescription,
       materialId: material?.id,
       trackQuantity: submission.value.trackQuantity ? submission.value.trackQuantity : false,
-      seoId: createSeo.id
+      seoId: createSeo.id,
+      updatedAt: new Date()
     },
   });
 
@@ -240,7 +241,8 @@ export async function editProduct(prevState: any, formData: FormData) {
       status: submission.value.status,
       images: flattenUrls,
       materialId: material?.id,
-      trackQuantity:submission.value.trackQuantity ? submission.value.trackQuantity : false
+      trackQuantity:submission.value.trackQuantity ? submission.value.trackQuantity : false,
+      updatedAt: new Date()
     },
   });
 
