@@ -32,11 +32,13 @@ import {
 import { Item } from "@radix-ui/react-dropdown-menu";
 import PaginationControls from "@/app/components/PaginationControls";
 
-async function getData() {
+async function getData(page: number, per_page: number) {
   const data = await prisma.productCategory.findMany({
     orderBy: {
       parentCategoryId: "desc",
     },
+    skip: (page - 1) * per_page, // Sar peste produsele anterioare paginii curente
+    take: per_page, // Returnează doar numărul de produse dorit
     include: {
       _count: {
         select: {
@@ -58,8 +60,12 @@ export default async function CategoriesRoot({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   noStore();
-  const data = await getData();
+  const page = Number(searchParams["page"] ?? "1");
+  const per_page = Number(searchParams["per_page"] ?? "5");
 
+  const data = await getData(page, per_page);
+
+  const totalEntries = await prisma.productCategory.count();
   // Create a nested structure
   const categoriesMap = new Map();
   data.forEach((category: any) => {
@@ -79,9 +85,6 @@ export default async function CategoriesRoot({
 
   // Convert map to an array
   const hierarchicalCategories = Array.from(categoriesMap.values());
-
-  const page = searchParams["page"] ?? "1";
-  const per_page = searchParams["per_page"] ?? "5";
 
   const start = (Number(page) - 1) * Number(per_page);
   const end = start + Number(per_page);
@@ -215,9 +218,11 @@ export default async function CategoriesRoot({
         </CardContent>
         <CardFooter className="justify-end">
           <PaginationControls
-            entries={data.length}
-            hasNextPage={end < data.length}
-            hasPrevPage={start > 0}
+            entries={totalEntries} // Totalul produselor pentru paginare
+            hasNextPage={page * per_page < totalEntries} // Verifică dacă există o pagină următoare
+            hasPrevPage={page > 1} // Verifică dacă există o pagină anterioară
+            currentPage={page} // Pagina curentă pentru a putea evidenția
+            perPage={per_page} // Numărul de produse pe pagină
           />
         </CardFooter>
       </Card>

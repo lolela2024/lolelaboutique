@@ -21,7 +21,7 @@ import Link from "next/link";
 import TableRowTrx from "./_components/TableRowTrx";
 import PaginationControls from "@/app/components/PaginationControls";
 
-async function getData(cursor?: string, take: number = 2) {
+async function getData(page: number, per_page: number) {
   const queryOptions: any = {
     select: {
       orderNumber: true,
@@ -49,6 +49,8 @@ async function getData(cursor?: string, take: number = 2) {
     orderBy: {
       createdAt: "desc",
     },
+    skip: (page - 1) * per_page, // Sar peste produsele anterioare paginii curente
+    take: per_page, // Returnează doar numărul de produse dorit
   };
 
   // Facem query-ul cu opțiunile construite
@@ -63,15 +65,13 @@ export default async function OrdersPage({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   noStore();
-  const data = await getData();
 
-  const page = searchParams["page"] ?? "1";
-  const per_page = searchParams["per_page"] ?? "5";
+  const page = Number(searchParams["page"] ?? "1");
+  const per_page = Number(searchParams["per_page"] ?? "5");
 
-  const start = (Number(page) - 1) * Number(per_page);
-  const end = start + Number(per_page);
+  const data = await getData(page, per_page);
 
-  const entries = data.slice(start, end);
+  const totalEntries = await prisma.order.count();
 
   return (
     <Card>
@@ -94,7 +94,7 @@ export default async function OrdersPage({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {entries.map((item) => (
+            {data.map((item) => (
               <TableRowTrx key={item.id} item={item} />
             ))}
           </TableBody>
@@ -102,11 +102,13 @@ export default async function OrdersPage({
       </CardContent>
       <CardFooter className="justify-end">
         <PaginationControls
-          entries={data.length}
-          hasNextPage={end < data.length}
-          hasPrevPage={start > 0}
+          entries={totalEntries} // Totalul produselor pentru paginare
+          hasNextPage={page * per_page < totalEntries} // Verifică dacă există o pagină următoare
+          hasPrevPage={page > 1} // Verifică dacă există o pagină anterioară
+          currentPage={page} // Pagina curentă pentru a putea evidenția
+          perPage={per_page} // Numărul de produse pe pagină
         />
       </CardFooter>
     </Card>
-  );
+  ); 
 }
