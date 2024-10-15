@@ -93,7 +93,7 @@ export default async function ProductIdRoute({
 
   const content = data?.description
     ? JSON.parse(JSON.stringify(data.description))
-    : null;
+    : null;  
 
   return (
     <>
