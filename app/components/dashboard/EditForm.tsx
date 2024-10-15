@@ -36,7 +36,7 @@ import { useFormState } from "react-dom";
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { productSchema } from "@/app/lib/zodSchemas";
-import { Inventory, Unavailable, type $Enums } from "@prisma/client";
+import { Inventory, Seo, Unavailable, type $Enums } from "@prisma/client";
 import { deleteImage, editProduct } from "@/app/actions/product";
 import { UploadButton, UploadDropzone } from "@/app/lib/uploadthing";
 import { Submitbutton } from "../SubmitButtons";
@@ -60,7 +60,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FaXmark } from "react-icons/fa6";
 import { Separator } from "@/components/ui/separator";
 import StockProductsEdit from "@/app/dashboard/products/_components/StockProductsEdit";
-
+import ProductDescription from "../storefront/ProductDescription";
+import { formatCurrency } from '../../lib/formatters';
 
 const tagsPietre = [
   { label: "Acvamarin", value: "acvamarin" },
@@ -73,7 +74,6 @@ const tagsPietre = [
   { label: "Charoit", value: "charoit" },
   { label: "Citrin", value: "citrin" },
 ] as const;
-
 
 interface iAppProps {
   data: {
@@ -91,6 +91,7 @@ interface iAppProps {
     productTags: [tagId: any];
     inventory: Inventory | undefined;
     trackQuantity: boolean;
+    seo: Seo | undefined;
   };
   categories: {
     name: string;
@@ -419,7 +420,7 @@ export function EditForm({
                       type="text"
                       name={fields.sku.name}
                       key={fields.sku.key}
-                      defaultValue={ data.inventory?.sku }
+                      defaultValue={data.inventory?.sku}
                       disabled
                     />
                     <p className="text-red-500">{fields.salePrice.errors}</p>
@@ -459,6 +460,26 @@ export function EditForm({
                   )}
                 </CardContent>
               </div>
+            </Card>
+
+            <Card>
+              <CardHeader className="text-sm font-semibold">
+                Search engine listing
+              </CardHeader>
+              <CardContent>
+                <span>Lolela Boutique</span>
+                <br />
+                <span>{data.seo?.seoLink}</span>
+                <h2 className="py-2 text-blue-500">{data.seo?.seoTitle}</h2>
+                <div
+                  className="ProseMirror whitespace-pre-line py-1 rounded-lg"
+                  style={{ whiteSpace: "pre-line" }}
+                  dangerouslySetInnerHTML={{
+                    __html: JSON.parse(JSON.stringify(data.seo?.seoDescription)),
+                  }}
+                />
+                <span>{formatCurrency(data.price)}</span>
+              </CardContent>
             </Card>
           </div>
           <div className="col-span-1 space-y-4">

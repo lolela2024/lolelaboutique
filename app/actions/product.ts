@@ -5,7 +5,8 @@ import { productSchema } from '../lib/zodSchemas';
 import prisma from "../lib/db";
 import { utapi } from "../server/uploadthing";
 import { auth } from "@/auth";
-import { slugify } from '../../lib/utils';
+// import { slugify } from '../../lib/utils';
+import slugify from 'slugify'; 
 
 function generateSKU(prefix: string = "LO", length: number = 5): string {
   // Generează un număr aleatoriu cu numărul de cifre specificat
@@ -14,6 +15,19 @@ function generateSKU(prefix: string = "LO", length: number = 5): string {
   // Concatenăm prefixul cu numărul aleatoriu pentru a forma SKU-ul
   return `${prefix}${randomNumber}`;
 }
+
+// Funcție pentru a trunca textul la un număr maxim de caractere
+function truncateDescription(text: string, maxLength: number) {
+  if (text.length <= maxLength) {
+    return text; // Dacă textul este mai scurt sau egal cu limita, îl returnăm așa cum e
+  }
+
+  // Truncăm textul și adăugăm "..." la final
+  return text.slice(0, maxLength) + "...";
+}
+
+// În logica de creare a produsului:
+const maxSeoDescriptionLength = 160; // Limită SEO recomandată de Google
 
 
 export async function createProduct(prevState: unknown, formData:FormData) {
@@ -39,14 +53,10 @@ export async function createProduct(prevState: unknown, formData:FormData) {
   let discountAmount = 0;
   let discountPercentage = 0;
 
-  console.log(submission.value)
-
   if (submission.value.salePrice) {
     discountAmount = submission.value.price - submission.value.salePrice 
     discountPercentage = Math.round(discountAmount / submission.value.price * 100)
   }
-
-  
 
   const description = submission.value.description;
 
@@ -54,14 +64,43 @@ export async function createProduct(prevState: unknown, formData:FormData) {
     where:{value:submission.value.tipBijuterie}
   })
 
-  
+  // Generare slug unic
+  let baseSlug = slugify(submission.value.name, { lower: true });
+  let slug = baseSlug;
 
-  console.log(submission.value.trackQuantity)
+  // Verificăm dacă există deja un produs cu acest slug
+  let existingProduct = await prisma.product.findUnique({
+    where: { slug },
+  });
+
+  // Dacă există, adăugăm un sufix numeric pentru a genera un slug unic
+  let counter = 1;
+  while (existingProduct) {
+    slug = `${baseSlug}-${counter}`;
+    existingProduct = await prisma.product.findUnique({
+      where: { slug },
+    });
+    counter++;
+  }
+
+  const truncatedDescription = truncateDescription(
+    JSON.parse(JSON.stringify(description)),
+    maxSeoDescriptionLength
+  );
+
+  const createSeo = await prisma.seo.create({
+    data:{
+      seoTitle: submission.value.name,
+      seoDescription: truncatedDescription,
+      seoLink: `https://lolelaboutique.ro/product/${slug}`
+    }
+  })
 
   // Creare produs nou
   const createdProduct = await prisma.product.create({
     data: {
       name: submission.value.name,
+      slug: slug,
       description: JSON.parse(JSON.stringify(description)),
       status: submission.value.status,
       price: submission.value.salePrice ? submission.value.salePrice : submission.value.price,
@@ -73,7 +112,8 @@ export async function createProduct(prevState: unknown, formData:FormData) {
       isFeatured: submission.value.isFeatured === true ? true : false,
       smallDescription: submission.value.smallDescription,
       materialId: material?.id,
-      trackQuantity:submission.value.trackQuantity ? submission.value.trackQuantity : false
+      trackQuantity: submission.value.trackQuantity ? submission.value.trackQuantity : false,
+      seoId: createSeo.id
     },
   });
 
@@ -145,7 +185,7 @@ export async function createProduct(prevState: unknown, formData:FormData) {
 
 
   // Redirecționează la dashboard sau altă pagină
-  //return redirect("/dashboard/products");
+  return redirect("/dashboard/products");
 }
 
 export async function editProduct(prevState: any, formData: FormData) {

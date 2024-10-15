@@ -202,7 +202,7 @@ export default function InformatiiForm({ user }: InformatiiFormProps) {
               <FormItem>
                 <div className="grid">
                   <Label className="mb-2" htmlFor="parola-noua">
-                    Parola
+                    Parola noua
                   </Label>
                   <FormControl>
                     <Input

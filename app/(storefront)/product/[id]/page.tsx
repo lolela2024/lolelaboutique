@@ -11,11 +11,16 @@ import { formatCurrency } from "../../../lib/formatters";
 import AddToCartForm from "@/app/components/storefront/AddToCartForm";
 import { IoCheckmarkOutline } from "react-icons/io5";
 import ProductDescription from "@/app/components/storefront/ProductDescription";
+import { Metadata } from "next";
+import Head from "next/head";
 
-async function getData(productId: string) {
+async function getData(slug: string) {
   const data = await prisma.product.findUnique({
     where: {
-      id: productId,
+      slug: slug,
+    },
+    include: {
+      seo: true,
     },
   });
 
@@ -24,6 +29,58 @@ async function getData(productId: string) {
   }
 
   return data;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const data = await getData(params.id);
+
+  const url = `https://lolelaboutique.ro/product/${data?.slug}`;
+  const imageUrl =
+    data.images?.length > 0 ? data.images[0] : "/default-image.jpg"; // Fallback pentru imagine
+
+  // Funcție pentru a elimina tag-urile HTML
+  const stripHtmlTags = (html: string) => {
+    return html.replace(/<\/?[^>]+(>|$)/g, ""); // Elimină tag-urile HTML
+  };
+
+  // Extragem descrierea curată
+  const descriptionFinal = data?.seo?.seoDescription
+    ? stripHtmlTags(data.seo.seoDescription)
+    : "Default product description"; // Fallback dacă nu există descriere
+
+  // Returnează metadatele pe baza SEO-ului produsului
+  return {
+    title: data?.seo?.seoTitle || data.name, // Dacă nu există `seoTitle`, fallback la `name`
+    description: descriptionFinal || "Default product description", // Fallback la o descriere implicită
+    alternates: {
+      canonical: url, // Canonical URL pentru SEO
+    },
+    openGraph: {
+      title: data?.seo?.seoTitle || data.name, // OG Title
+      description: descriptionFinal, // OG Description
+      url: url, // Open Graph URL pentru social media
+      images: [
+        {
+          url: imageUrl,
+          width: 800,
+          height: 600,
+          alt: data.name,
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image", // Twitter Card
+      title: data?.seo?.seoTitle || data.name, // Twitter Title
+      description: descriptionFinal, // Twitter Description
+      images: [imageUrl], // Twitter Image
+    },
+    
+  };
 }
 
 export default async function ProductIdRoute({

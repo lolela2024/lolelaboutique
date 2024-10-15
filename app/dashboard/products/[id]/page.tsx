@@ -13,6 +13,7 @@ async function getData(productId: string) {
       material: true,
       productTags: true,
       inventory: true,
+      seo:true
     },
   });
 

@@ -44,7 +44,7 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
         >
           <CardHeader className=" p-0 rounded-none">
             <div className="relative rounded-t-lg">
-              <div onClick={() => push(`/product/${item.id}`)}>
+              <div onClick={() => push(`/product/${item.slug}`)}>
                 <CustomImage
                   src={item.images[0]}
                   alt="Product Image"
@@ -70,7 +70,7 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
 
               <div
                 className={`${visible ? "block" : "hidden"}`}
-                onClick={() => push(`/product/${item.id}`)}
+                onClick={() => push(`/product/${item.slug}`)}
               >
                 <div className="absolute bottom-[0px]  w-full  bg-buttonColor/90 py-1  text-white capitalize text-center">
                   Vizualizare
@@ -82,7 +82,7 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
         <CardContent className="p-0">
           <h1
             className="font-semibold text-sm my-2 cursor-pointer px-2"
-            onClick={() => push(`/product/${item.id}`)}
+            onClick={() => push(`/product/${item.slug}`)}
           >
             {item.name}
           </h1>

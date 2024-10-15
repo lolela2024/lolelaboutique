@@ -139,6 +139,7 @@ model Customer {
 model Product {
   id   String @id @default(uuid())
   name String
+  slug String @unique
 
   price              Int
   originalPrice      Int? // Store the original price before discount
@@ -168,6 +169,9 @@ model Product {
 
   productCategory   ProductCategory? @relation(fields: [productCategoryId], references: [id])
   productCategoryId Int?
+
+  seo   Seo? @relation(fields: [seoId], references: [id])
+  seoId Int? @unique
 
   OrderProduct OrderProduct[]
 }
@@ -389,4 +393,14 @@ model Newsletter {
   id Int @id @default(autoincrement())
 
   email String @unique
+}
+
+model Seo {
+  id Int @id @default(autoincrement())
+
+  seoTitle       String?
+  seoDescription String?
+  seoLink        String?
+
+  product Product? @relation
 }
