@@ -116,7 +116,7 @@ export default async function ProductIdRoute({
           <div className="flex items-end ">
             {data.discountAmount && (
               <p className="line-through text-lg">
-                {formatCurrency(data.discountAmount as number)}
+                {formatCurrency(data.originalPrice as number)}
               </p>
             )}
 

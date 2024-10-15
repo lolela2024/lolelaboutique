@@ -31,7 +31,7 @@ export function ImageSlider({ images }: iAppProps) {
   }
 
   return (
-    <div className="grid gap-6 md:gap-3 items-start mb-8">
+    <div className="grid gap-6 md:gap-3 items-start mb-8 cursor-zoom-in">
       <div className="relative overflow-hidden rounded-lg">
         <CustomImage
           width={600}

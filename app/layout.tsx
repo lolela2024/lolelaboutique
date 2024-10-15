@@ -12,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Providers from "@/components/Providers";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
+import { Analytics } from '@vercel/analytics/react';
 
 const robotoSerif = Roboto_Serif({
   subsets: ["latin"],
@@ -48,6 +49,7 @@ export default async function RootLayout({
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
           <Providers>{children}</Providers>
           <Toaster richColors theme="light" closeButton />
+          <Analytics />
         </body>
       </html>
     </SessionProvider>
