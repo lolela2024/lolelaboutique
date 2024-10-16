@@ -97,7 +97,6 @@ export default function ProductFilter({
     title = filter.tipBijuterieNume
   }
   
-  console.log(filter)
   return (
     <section>
       <CategoriesHeroHolder />
