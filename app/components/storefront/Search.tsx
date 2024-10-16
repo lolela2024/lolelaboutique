@@ -141,7 +141,7 @@ export default function Search() {
           <CardContent className="p-0">
             <div className="px-4 ">
               {products.map((product) => (
-                <Link href={`/product/${product.slug}`}>
+                <Link href={`/product/${product.slug}`} key={product.id}>
                   <div className="flex items-start gap-4">
                     <div>
                       {product.images ? (
