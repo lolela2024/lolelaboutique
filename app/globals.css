@@ -240,3 +240,14 @@ select,
 button {
   font-size: 16px;
 }
+
+.trx-title::after {
+  content: "";
+  background: #da8fc2;
+  height: 50%;
+  width: 100%;
+  position: absolute;
+  bottom: 1px;
+  left: 0;
+  z-index: -1;
+}

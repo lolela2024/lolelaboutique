@@ -140,7 +140,7 @@ export default function ProductFilter({
 
         <div className="col-span-12 md:col-span-9 md:ml-4">
           <div className="flex items-baseline justify-between">
-            <h1 className="font-semibold text-3xl my-5 capitalize">{title}</h1>
+            <h1 className="trx-title relative font-semibold text-3xl my-5 capitalize">{title}</h1>
             <SortFilter
               filter={filter}
               setFilter={setFilter}
@@ -148,7 +148,7 @@ export default function ProductFilter({
             />
           </div>
 
-          <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {loading
               ? LoadingProductCard()
               : products &&

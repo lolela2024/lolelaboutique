@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import {
+  Lora,
   Montserrat,
-  Montserrat_Subrayada,
   Roboto_Serif,
 } from "next/font/google";
 import "./globals.css";
@@ -23,6 +23,11 @@ const montseratSerif = Montserrat({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
 });
+
+const lora = Lora({
+  subsets: ["latin"],
+  weight: ["400","500","600", "700"]
+})
 
 export const metadata: Metadata = {
   title: {
@@ -51,7 +56,7 @@ export default async function RootLayout({
             content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
           />
         </head>
-        <body className={montseratSerif.className}>
+        <body className={lora.className}>
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
           <Providers>{children}</Providers>
           <Toaster richColors theme="light" closeButton />

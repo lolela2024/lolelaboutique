@@ -16,6 +16,29 @@ interface iAppProps {
   wishlist?: Wishlist | null;
 }
 
+const styles = {
+  image: {
+    width: '100%',
+    height: '380px', // Default height
+    objectFit: 'cover',
+  },
+  '@media (min-width: 640px)': {
+    image: {
+      height: '280px', // Height for small screens
+    },
+  },
+  '@media (min-width: 768px)': {
+    image: {
+      height: '300px', // Height for medium screens
+    },
+  },
+  '@media (min-width: 1024px)': {
+    image: {
+      height: '350px', // Height for large screens
+    },
+  },
+};
+
 export function ProductCard({ item,loading, wishlist }: iAppProps) {
   const [visible, setVisible] = useState(false);
   const { push } = useRouter();
@@ -49,20 +72,20 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
                   src={item.images[0]}
                   alt="Product Image"
                   sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
-                  className={`absolute rounded-lg overflow-hidden transition-opacity duration-700 ease-in-out ${
+                  className={`absolute h-[360px] sm:h-[340px] md:h-[300px] lg:h-[280px] object-cover rounded-lg overflow-hidden transition-opacity duration-700 ease-in-out ${
                     visible && item.images[1] ? "opacity-0" : "opacity-100"
                   }`}
-                  style={{ width: '100%', height: '300px', objectFit: 'cover' }} // Dimensiuni fixe și ajustare a imaginii
+                  // style={styles.image} // Dimensiuni fixe și ajustare a imaginii
                 />
                 {item.images[1] && (
                   <CustomImage
                     src={item.images[1]}
                     alt="Product Image"
                     sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
-                    className={`rounded-lg overflow-hidden transition-opacity duration-700 ease-in-out ${
+                    className={`rounded-lg h-[360px] sm:h-[340px] md:h-[300px] lg:h-[280px] object-cover overflow-hidden transition-opacity duration-700 ease-in-out ${
                       visible ? "opacity-100" : "opacity-0"
                     }`}
-                  style={{ width: '100%', height: '300px', objectFit: 'cover' }} // Dimensiuni fixe și ajustare a imaginii
+                  // style={styles.image} // Dimensiuni fixe și ajustare a imaginii
                   />
                 )}
               </div>
