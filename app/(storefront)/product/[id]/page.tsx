@@ -12,7 +12,6 @@ import AddToCartForm from "@/app/components/storefront/AddToCartForm";
 import { IoCheckmarkOutline } from "react-icons/io5";
 import ProductDescription from "@/app/components/storefront/ProductDescription";
 import { Metadata } from "next";
-import Head from "next/head";
 import { cache } from "react";
 
 const getData = cache(async (slug: string) => {
@@ -22,6 +21,7 @@ const getData = cache(async (slug: string) => {
     },
     include: {
       seo: true,
+      inventory: true,
     },
   });
 
@@ -91,10 +91,10 @@ export default async function ProductIdRoute({
   noStore();
   const data = await getData(params.id);
 
+
   const content = data?.description
     ? JSON.parse(JSON.stringify(data.description))
     : null;
-
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start lg:gap-x-24 py-6">
@@ -140,7 +140,7 @@ export default async function ProductIdRoute({
             }}
           /> */}
 
-          <AddToCartForm dataId={data.id} />
+          <AddToCartForm dataId={data.id} inventory={data.inventory} />
 
           <div>
             <p className="flex items-center gap-2">

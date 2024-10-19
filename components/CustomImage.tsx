@@ -10,9 +10,10 @@ type Props = {
   width?:number;
   height?:number;
   sizes?:string;
+  style?:any;
 }
 
-export default function CustomImage({src,alt,priority, width, height, className, sizes}:Props) {
+export default function CustomImage({src,alt,priority, width, height, className, sizes, style}:Props) {
   return (
     <Image 
       className={cn(className,'mx-auto')}
@@ -22,7 +23,7 @@ export default function CustomImage({src,alt,priority, width, height, className,
       sizes={sizes}
       alt={alt}
       priority={!!priority}
-     
+      style={style}
     />
   )
 }

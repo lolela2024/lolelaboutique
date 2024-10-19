@@ -52,17 +52,17 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
                   className={`absolute rounded-lg overflow-hidden transition-opacity duration-700 ease-in-out ${
                     visible && item.images[1] ? "opacity-0" : "opacity-100"
                   }`}
+                  style={{ width: '100%', height: '300px', objectFit: 'cover' }} // Dimensiuni fixe și ajustare a imaginii
                 />
                 {item.images[1] && (
                   <CustomImage
                     src={item.images[1]}
                     alt="Product Image"
-                    width={640}
-                    height={640}
                     sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
                     className={`rounded-lg overflow-hidden transition-opacity duration-700 ease-in-out ${
                       visible ? "opacity-100" : "opacity-0"
                     }`}
+                  style={{ width: '100%', height: '300px', objectFit: 'cover' }} // Dimensiuni fixe și ajustare a imaginii
                   />
                 )}
               </div>

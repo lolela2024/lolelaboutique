@@ -31,14 +31,38 @@ export function ImageSlider({ images }: iAppProps) {
   }
 
   return (
-    <div className="grid gap-6 md:gap-3 items-start mb-8 cursor-zoom-in">
-      <div className="relative overflow-hidden rounded-lg">
+    <div className="grid md:grid-cols-12 gap-6 md:gap-3 items-start mb-8 cursor-zoom-in">
+      <div className="hidden md:block col-span-2">
+        <div className="flex flex-col gap-2">
+          {images.map((image, index) => (
+            <div
+              className={cn(
+                index === mainImageIndex
+                  ? "border-2 border-primary"
+                  : "border border-gray-200",
+                "relative overflow-hidden rounded-lg cursor-pointer"
+              )}
+              key={index}
+              onClick={() => handleImageClick(index)}
+            >
+              <CustomImage
+                src={image}
+                alt="Product Image"
+                width={100}
+                height={100}
+                className=" w-full h-18 md:h-[70px] lg:h-[100px]"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="col-span-10 relative overflow-hidden rounded-lg">
         <CustomImage
-          width={600}
-          height={600}
           src={images[mainImageIndex]}
           alt="Product image"
           sizes="(min-width: 1360px) 560px, (min-width: 1040px) calc(40vw + 24px), (min-width: 780px) calc(50vw - 36px), (min-width: 680px) 600px, 92.22vw"
+          style={{ width: "100%", height: "550px", objectFit: "cover" }} // Dimensiuni fixe și ajustare a imaginii
         />
 
         <div className="absolute inset-0 flex items-center justify-between px-4">
@@ -49,29 +73,6 @@ export function ImageSlider({ images }: iAppProps) {
             <ChevronRight className="w-6 h-6" />
           </Button>
         </div>
-      </div>
-
-      <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
-        {images.map((image, index) => (
-          <div
-            className={cn(
-              index === mainImageIndex
-                ? "border-2 border-primary"
-                : "border border-gray-200",
-              "relative overflow-hidden rounded-lg cursor-pointer"
-            )}
-            key={index}
-            onClick={() => handleImageClick(index)}
-          >
-            <CustomImage
-              src={image}
-              alt="Product Image"
-              width={100}
-              height={100}
-              className=" w-full h-18 md:h-[70px] lg:h-[100px]"
-            />
-          </div>
-        ))}
       </div>
     </div>
   );

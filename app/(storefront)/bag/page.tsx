@@ -61,7 +61,7 @@ export default async function BagRoute() {
     diferenta = gratuit - totalPrice;
   }
 
-  if (!cart || !cartLength) {
+  if (!cart || !cartLength) {  
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center mt-20">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
