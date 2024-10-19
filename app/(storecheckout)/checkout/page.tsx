@@ -61,13 +61,14 @@ export default async function CeckoutPage() {
     return;
   }
 
+  // Colectarea ID-urilor produselor
+  const productIds = cart.items.map((item) => item.id);
+
+
   const totalAmount = cart.items.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
-
-  // Colectarea ID-urilor produselor
-  const productIds = cart.items.map((item) => item.id);
 
   const paymentIntent = await stripe.paymentIntents.create({
     amount: totalAmount * 100,

@@ -16,6 +16,9 @@ import { error } from "console";
 import { MdEmail } from "react-icons/md";
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
 import { Wishlist } from "../lib/interfaces";
+import { Address } from "@prisma/client";
+import { CheckoutFormProps } from "../types/types";
+import { toast } from "sonner";
 
 interface buttonProps {
   title: string;
@@ -165,16 +168,61 @@ export function RemoveQuantityItem() {
   );
 }
 
-export function ChceckoutButton() {
+export function ChceckoutButton({
+  address,
+  user,
+  tipPersoana,
+  firma,
+}: {
+  address?: CheckoutFormProps["address"];
+  user?: any;
+  tipPersoana?: string;
+  firma?: CheckoutFormProps["persoanaJuridica"];
+}) {
   const { pending } = useFormStatus();
+
+  // Dacă utilizatorul există, dar nu are adresă
+  if (user && !address) {
+    return (
+      <Button
+        disabled
+        size="lg"
+        className="w-full mt-5 bg-red-500 hover:bg-red-600"
+      >
+        Adăugați o adresă înainte de a plasa comanda
+      </Button>
+    );
+  }
+
+  // Dacă utilizatorul este persoană juridică dar nu există date despre firmă sau sunt incomplete
+  if (user && tipPersoana === "persoana-juridica" && firma?.length! <= 0) {
+    return (
+      <Button
+        disabled
+        size="lg"
+        className="w-full mt-5 bg-red-500 hover:bg-red-600"
+      >
+        Adăugați informațiile complete ale firmei înainte de a plasa comanda
+      </Button>
+    );
+  }
+
   return (
     <>
       {pending ? (
-        <Button disabled size="lg" className="w-full mt-5 bg-buttonColor hover:bg-buttonColor/90">
+        <Button
+          disabled
+          size="lg"
+          className="w-full mt-5 bg-buttonColor hover:bg-buttonColor/90"
+        >
           <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Va rugam asteptati
         </Button>
       ) : (
-        <Button type="submit" size="lg" className="w-full mt-5 bg-buttonColor hover:bg-buttonColor/90">
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full mt-5 bg-buttonColor hover:bg-buttonColor/90"
+        >
           Complete order
         </Button>
       )}
@@ -182,16 +230,64 @@ export function ChceckoutButton() {
   );
 }
 
-export function ChceckoutButtonRedirect({transport}:{transport:string}) {
+export function ChceckoutButtonRedirect({
+  transport,
+  outOfStockItems,
+  productName,
+  requestedQuantity,
+  availableStock,
+}: {
+  transport: string;
+  outOfStockItems: any;
+  productName?: string[];
+  requestedQuantity?: number;
+  availableStock?: number;
+}) {
   const { push } = useRouter();
+  const { pending } = useFormStatus();
+
+  if (outOfStockItems.length > 0) {
+    return (
+      <Button
+        size="default"
+        className=" w-full mt-5"
+        onClick={() =>
+          toast.warning(`Insufficient stock for ${productName}`, {
+            description: `Te rugăm să elimini produsele indisponibile din coș.`,
+            position: "top-right",
+            // action: {
+            //   label: "Close",
+            //   onClick: () => console.log("Toast closed"),
+            // },
+          })
+        }
+      >
+        Finalizeaza comanda <ChevronRight className="w-5 h-5" />
+      </Button>
+    );
+  }
+
   return (
-    <Button
-      size="default"
-      className=" w-full mt-5"
-      onClick={() => push(`/checkout?transport=${transport}`)}
-    >
-      Finalizeaza comanda <ChevronRight className="w-5 h-5" />
-    </Button>
+    <>
+      {pending ? (
+        <Button
+          disabled
+          size="lg"
+          className="w-full mt-5 bg-buttonColor hover:bg-buttonColor/90"
+        >
+          <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Va rugam asteptati
+        </Button>
+      ) : (
+        <Button
+          size="default"
+          className=" w-full mt-5"
+          disabled={outOfStockItems.length > 0 ? true : false}
+          onClick={() => push(`/checkout?transport=${transport}`)}
+        >
+          Finalizeaza comanda <ChevronRight className="w-5 h-5" />
+        </Button>
+      )}
+    </>
   );
 }
 
@@ -224,16 +320,12 @@ export const NewsletterButton = () => {
   );
 };
 
-export const WishlistButton = ({itemFound}:{itemFound:boolean}) => {
+export const WishlistButton = ({ itemFound }: { itemFound: boolean }) => {
   const { pending } = useFormStatus();
 
-  
   return (
-    <button 
-      type="submit"
-      disabled={pending}
-    >
-      {itemFound ? <FaHeart size={24}/> : <FaRegHeart size={24} />}
+    <button type="submit" disabled={pending}>
+      {itemFound ? <FaHeart size={24} /> : <FaRegHeart size={24} />}
     </button>
-  )
-}
+  );
+};

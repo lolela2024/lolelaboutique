@@ -53,8 +53,10 @@ export type Product = {
 export default function Search() {
   const [search, setSearch] = useQueryState("search", { defaultValue: "" });
   const [loading, setLoading] = useState(false);
-  const [load, setLoad] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [open, setOpen] = useState(false);
+
+  const divRef = useRef<HTMLDivElement | null>(null);
 
   const getSearchParams = useSearchParams();
   const searchParams = getSearchParams.get("search");
@@ -78,6 +80,8 @@ export default function Search() {
     }
 
     try {
+      setLoading(true)
+
       const encodeSearchQuery = encodeURI(searchTerm);
 
       const { data } = await axios.post<Product[]>("/api/search", {
@@ -94,6 +98,7 @@ export default function Search() {
       console.error("Something went wrong!", error);
     } finally {
       setLoading(false);
+      setOpen(true);
     }
   };
 
@@ -111,6 +116,26 @@ export default function Search() {
       clearTimeout(debounceTimeoutRef.current!);
     };
   }, [search]);
+
+  // Funcția care se ocupă de click-ul în afara div-ului
+  useEffect(() => {
+    const handleClickOutside = (event:any) => {
+      // Dacă face click în afara div-ului, închide
+      if (divRef.current && !divRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    // Atașează event listener-ul când componenta se montează
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Dezatașează event listener-ul când componenta se demontează
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [divRef]);
+
+ 
 
   return (
     <div className="relative">
@@ -131,9 +156,10 @@ export default function Search() {
       </button>
 
       {/* Afișăm rezultatele dacă sunt produse găsite */}
-      {/* {loading && <p>Se încarcă...</p>} */}
-      {!loading && products.length > 0 && (
-        <Card className="absolute bg-white shadow-lg rounded-lg w-full mt-2 max-h-[300px] overflow-scroll">
+      {/* {load && <p>Se încarcă...</p>} */}
+
+      {open && products.length > 0 &&  (
+        <Card ref={divRef} className="absolute z-10 bg-white shadow-lg rounded-lg w-full mt-2 max-h-[300px] overflow-scroll">
           <CardHeader className="px-4 py-4">
             <h3 className="font-semibold">Produse:</h3>
           </CardHeader>

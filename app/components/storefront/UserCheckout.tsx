@@ -1,35 +1,31 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
-import React, { useState } from "react";
+import React from "react";
 import LogOut from "../dashboard/LogOut";
 import AccordionAddress from "./AccordionAddress";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CheckoutFormProps } from "@/app/types/types";
-import PersoanaJuridica from "./PersoanaJuridica";
-import ShippingForm from "./ShippingForm";
-import AdresaDeFacturare from "./AdresaDeFacturare";
 import DatePersoanaJuridica from "./checkout/DatePersoanaJuridica";
+import AdaugaAdresa from "./checkout/AdaugaAdresa";
+import AdaugaFirma from "./checkout/AdaugaFirma";
+import { cn } from "@/lib/utils";
 
 export default function UserCheckout({
   user,
   address,
   persoanaJuridica,
   fields,
+  tipPersoana,
+  setTipPersoana,
 }: {
   user: CheckoutFormProps["user"];
   address: CheckoutFormProps["address"];
   persoanaJuridica: CheckoutFormProps["persoanaJuridica"];
   fields: any;
+  tipPersoana: string;
+  setTipPersoana: any;
 }) {
-  const [tipPersoana, setTipPersoana] = useState<string>("persoana-fizica");
-  const [tipAdresaFactura, setTipAdresaFactura] =
-    useState<string>("same-address");
-
   return (
     <Card className="border-none shadow-none">
       <CardContent>
@@ -51,7 +47,8 @@ export default function UserCheckout({
                 <LogOut className="justify-end" />
               </div>
             </AccordionItem>
-            <AccordionItem value="item-2">
+
+            <AccordionItem value="item-2" className="border-none">
               {address !== null ? (
                 <AccordionAddress
                   fields={fields}
@@ -59,13 +56,15 @@ export default function UserCheckout({
                   address={address}
                 />
               ) : (
-                <ShippingForm fields={fields} user={user} address={address} />
+                <AdaugaAdresa />
               )}
             </AccordionItem>
           </Accordion>
         </div>
       </CardContent>
-      <Card className="mb-4">
+      <Card
+        className={cn(tipPersoana === "persoana-juridica" && "rounded-b-none")}
+      >
         <CardContent className="py-4">
           <div className="block md:flex items-center justify-between space-y-4 md:space-y-0">
             <Label className="font-semibold">Tip Persoana</Label>
@@ -100,18 +99,16 @@ export default function UserCheckout({
       {tipPersoana === "persoana-juridica" && (
         <div className="space-y-4">
           {persoanaJuridica && persoanaJuridica?.length > 0 ? (
-            <DatePersoanaJuridica persoanaJuridica={persoanaJuridica}/>
+            <DatePersoanaJuridica
+              persoanaJuridica={persoanaJuridica}
+              tipPersoana={tipPersoana}
+            />
           ) : (
-            <PersoanaJuridica fields={fields} />
+            // <PersoanaJuridica fields={fields} />
+            <AdaugaFirma tipPersoana={tipPersoana} />
           )}
         </div>
       )}
-
-      <AdresaDeFacturare
-        fields={fields}
-        tipAdresaFactura={tipAdresaFactura}
-        setTipAdresaFactura={setTipAdresaFactura}
-      />
     </Card>
   );
 }

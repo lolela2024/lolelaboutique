@@ -35,20 +35,6 @@ function calculateTotalPrice(cart: Cart | null): number {
   return totalPrice;
 }
 
-export const editDateFirma = async (values:z.infer<typeof DateFirmaSchema>) => {
-  const validatedFields = DateFirmaSchema.safeParse(values)
-
-  if(!validatedFields.success) {
-    return { error: "Invalid fields"}
-  }
-
-  const { numeFirma, cif, nrRegComert } = validatedFields.data
-
-  console.log(numeFirma,cif,nrRegComert) 
-
-  return { success: "cs" }
-}
-
 // Functie pentru creare sau actualizare adresaFacturare
 async function handleFacturareAddressUser(userId: string, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -205,6 +191,7 @@ export async function createCheckoutUser(prevState: unknown, formData: FormData)
     return submission.reply();
   }
 
+  console.log(submission.value)
   const orderNumber = await getNextOrderNumber();
   const cookieStore = cookies();
   const cartId = cookieStore.get('cartId')?.value;
@@ -296,7 +283,6 @@ export async function createCheckoutUser(prevState: unknown, formData: FormData)
   if(submission.value.payment === "card"){
     const shippingMethod = submission.value.shipping ? submission.value.shipping : 'standard';
     
-
     await createOrder({
       verify,
       orderNumber,

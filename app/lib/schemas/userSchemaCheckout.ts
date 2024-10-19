@@ -24,29 +24,6 @@ export const ceckoutSchemaUser = z.object({
   termeniSiConditii:  z.string({ required_error: "Required"}),
 })
 .superRefine((data, ctx) => {
-  // if(data.tipPersoana === "persoana-juridica" ) {
-  //   if(!data.numeFirma){
-  //     ctx.addIssue({
-  //       code: 'custom',
-  //       path: ['numeFirma'],
-  //       message: 'Dați un nume de firma',
-  //     });
-  //   }
-  //   if(!data.cif){
-  //     ctx.addIssue({
-  //       code: 'custom',
-  //       path: ['cif'],
-  //       message: 'Se cere CIF',
-  //     });
-  //   }
-  //   if(!data.nrRegComert){
-  //     ctx.addIssue({
-  //       code: 'custom',
-  //       path: ['nrRegComert'],
-  //       message: 'Se cere Nr. reg. comertului / An',
-  //     });
-  //   }
-  // }
   if(data.tipAdresaFactura === "different-address"){
     if(!data.stradaAdreseFacturare){
       ctx.addIssue({

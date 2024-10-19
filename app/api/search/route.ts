@@ -25,7 +25,14 @@ export const POST = async (req: NextRequest) => {
               mode: 'insensitive', // Face căutarea case insensitive
             },
           },
-          
+          {
+            productCategory: {
+              name: {
+                contains: name,
+                mode: 'insensitive'
+              }
+            },
+          },
         ],
       },
       

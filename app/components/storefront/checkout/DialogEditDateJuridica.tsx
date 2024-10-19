@@ -1,5 +1,6 @@
 
-import { editDateFirma } from "@/app/actions/createCheckoutUser";
+
+import { editDateFirma } from "@/app/actions/firma";
 import { DateFirmaSchema } from "@/app/lib/zodSchemas";
 import { CheckoutFormProps } from "@/app/types/types";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -59,6 +61,7 @@ export default function DialogEditDateJuridica({
         
       });
       setOpen(false)
+      
     });
   };
 
@@ -124,9 +127,20 @@ export default function DialogEditDateJuridica({
               />
 
               <DialogFooter>
-                <Button type="submit" disabled={isPending}>
-                  {isPending ? "Salvăm..." : "Salveaza"}
-                </Button>
+              {isPending ? (
+                  <Button disabled variant={"default"}>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please Wait
+                  </Button>
+                ) : (
+                  <Button
+                    disabled={isPending}
+                    variant={"default"}
+                    type="submit"
+                  >
+                    Adauga
+                  </Button>
+                )}
               </DialogFooter>
             </div>
           </form>

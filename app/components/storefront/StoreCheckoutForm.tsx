@@ -147,6 +147,7 @@ function Form({
         setShipping={setShipping}
         transport={transport}
         persoanaJuridica={persoanaJuridica}
+        
       />
     );
   }

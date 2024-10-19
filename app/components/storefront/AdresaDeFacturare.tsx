@@ -4,6 +4,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 export default function AdresaDeFacturare({
   fields,
@@ -32,11 +33,12 @@ export default function AdresaDeFacturare({
             onChange={(event) => handleChange(event, setTipAdresaFactura)}
           >
             <Label
-              className={`flex items-center space-x-2 w-full text-end px-4 py-4 cursor-pointer ${
+              className={cn(
                 tipAdresaFactura === "same-address"
                   ? "bg-primary/20 border rounded-lg"
-                  : "border rounded-lg"
-              }`}
+                  : "border rounded-lg ",
+                "flex items-center space-x-2 w-full text-end px-4 py-4 cursor-pointer"
+              )}
             >
               <RadioGroupItem value="same-address" id="same-address" />
               <div className="flex w-full justify-between items-center">
@@ -46,11 +48,12 @@ export default function AdresaDeFacturare({
               </div>
             </Label>
             <Label
-              className={`flex items-center space-x-2 w-full  text-end px-4 py-4 cursor-pointer ${
+              className={cn(
                 tipAdresaFactura === "different-address"
                   ? "bg-primary/20 border rounded-t-lg"
-                  : "border rounded-lg"
-              }`}
+                  : "border rounded-lg ",
+                "flex items-center space-x-2 w-full  text-end px-4 py-4 cursor-pointer"
+              )}
             >
               <RadioGroupItem
                 value="different-address"
@@ -75,7 +78,9 @@ export default function AdresaDeFacturare({
                           type="text"
                           key={fields.stradaAdreseFacturare.key}
                           name={fields.stradaAdreseFacturare.name}
-                          defaultValue={fields.stradaAdreseFacturare.initialValue}
+                          defaultValue={
+                            fields.stradaAdreseFacturare.initialValue
+                          }
                           className={
                             fields.stradaAdreseFacturare.errors
                               ? "w-full border-red-500 border-2"
@@ -93,7 +98,9 @@ export default function AdresaDeFacturare({
                           type="text"
                           key={fields.numarAdreseFacturare.key}
                           name={fields.numarAdreseFacturare.name}
-                          defaultValue={fields.numarAdreseFacturare.initialValue}
+                          defaultValue={
+                            fields.numarAdreseFacturare.initialValue
+                          }
                           className={
                             fields.numarAdreseFacturare.errors
                               ? "w-full border-red-500 border-2"
@@ -162,7 +169,9 @@ export default function AdresaDeFacturare({
                         type="text"
                         key={fields.apartamentAdreseFacturare.key}
                         name={fields.apartamentAdreseFacturare.name}
-                        defaultValue={fields.apartamentAdreseFacturare.initialValue}
+                        defaultValue={
+                          fields.apartamentAdreseFacturare.initialValue
+                        }
                         className={
                           fields.apartamentAdreseFacturare.errors
                             ? "w-full border-red-500 border-2 "
@@ -171,7 +180,6 @@ export default function AdresaDeFacturare({
                         placeholder="Ap"
                       />
                     </div>
-                   
                   </div>
 
                   <Separator className="mb-3" />
@@ -181,7 +189,9 @@ export default function AdresaDeFacturare({
                       type="text"
                       key={fields.localitateAdreseFacturare.key}
                       name={fields.localitateAdreseFacturare.name}
-                      defaultValue={fields.localitateAdreseFacturare.initialValue}
+                      defaultValue={
+                        fields.localitateAdreseFacturare.initialValue
+                      }
                       className={
                         fields.localitateAdreseFacturare.errors
                           ? "w-full border-red-500 border-2 "

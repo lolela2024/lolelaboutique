@@ -19,6 +19,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { CheckoutFormProps } from "@/app/types/types";
 import { ceckoutSchemaUser } from "@/app/lib/schemas/userSchemaCheckout";
 import { createCheckoutUser } from "@/app/actions/createCheckoutUser";
+import AdresaDeFacturare from "../AdresaDeFacturare";
 
 export default function FormUserCheckout({
   user,
@@ -30,14 +31,16 @@ export default function FormUserCheckout({
 }: {
   user: CheckoutFormProps["user"];
   address: CheckoutFormProps["address"];
-  persoanaJuridica: CheckoutFormProps["persoanaJuridica"]
+  persoanaJuridica: CheckoutFormProps["persoanaJuridica"];
   setShipping: any;
   shipping: any;
   transport: any;
 }) {
   const [lastResult, action] = useFormState(createCheckoutUser, undefined);
   const [termeniSiConditii, setTermeniSiConditii] = useState<boolean>(false);
-
+  const [tipAdresaFactura, setTipAdresaFactura] =
+    useState<string>("same-address");
+  const [tipPersoana, setTipPersoana] = useState<string>("persoana-fizica");
   const [payment, setPayment] = useState<string>("card");
 
   const [form, fields] = useForm({
@@ -64,11 +67,23 @@ export default function FormUserCheckout({
   }
 
   return (
-    <form id={form.id} onSubmit={form.onSubmit} action={action}>
-      <Card className="border-none shadow-none">
-        <CardContent>
-          <UserCheckout user={user} address={address} fields={fields} persoanaJuridica={persoanaJuridica}/>
-
+    <Card className="border-none shadow-none">
+      <CardContent>
+        <UserCheckout
+          user={user}
+          address={address}
+          fields={fields}
+          persoanaJuridica={persoanaJuridica}
+          tipPersoana={tipPersoana}
+          setTipPersoana={setTipPersoana}
+        />
+        <form id={form.id} onSubmit={form.onSubmit} action={action}>
+          <input type="hidden" value={tipPersoana} onChange={(ev)=>setTipPersoana(ev.target.value)} name={fields.tipPersoana.name} key={fields.tipPersoana.key}/>
+          <AdresaDeFacturare
+            fields={fields}
+            tipAdresaFactura={tipAdresaFactura}
+            setTipAdresaFactura={setTipAdresaFactura}
+          />
           {/* Shipping method */}
           <Card className="mt-4 space-y-2">
             <CardHeader className="p-0 bg-primary px-2 text-white py-1 overflow-hidden rounded-t-md font-semibold">
@@ -214,12 +229,14 @@ export default function FormUserCheckout({
               completate in formular.
             </label>
           </div>
-        </CardContent>
-
-        <CardFooter>
-          <ChceckoutButton />
-        </CardFooter>
-      </Card>
-    </form>
+          <ChceckoutButton
+            address={address}
+            user={user}
+            firma={persoanaJuridica}
+            tipPersoana={tipPersoana}
+          />
+        </form>
+      </CardContent>
+    </Card>
   );
 }

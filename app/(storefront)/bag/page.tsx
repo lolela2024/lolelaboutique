@@ -27,12 +27,14 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Alert } from "@/components/ui/alert";
+import { checkCartStock } from "@/app/lib/cart";
 
 const pretLivrare = {
-  dhl: 24.99
-}
+  dhl: 24.99,
+};
 
 export default async function BagRoute() {
+  
   noStore();
   const cookieStore = cookies();
   const cartId = cookieStore.get("cartId")?.value;
@@ -42,7 +44,6 @@ export default async function BagRoute() {
   let diferenta = 0;
 
   const cart: Cart | null = await redis.get(`cart-${cartId}`);
-
   let totalPrice = 0;
 
   cart?.items.forEach((item) => {
@@ -50,7 +51,6 @@ export default async function BagRoute() {
   });
 
   const total = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
-
   const cartLength = cart?.items.length;
 
   if (totalPrice >= gratuit) {
@@ -69,10 +69,10 @@ export default async function BagRoute() {
         </div>
 
         <h2 className="mt-6 text-xl font-semibold">
-          You dont have any products in your Bag
+          You don't have any products in your Bag
         </h2>
         <p className="mb-8 mt-2 text-center text-sm leading-6 text-muted-foreground max-w-sm mx-auto">
-          You currently dont have any products in your shopping bag. Please add
+          You currently don't have any products in your shopping bag. Please add
           some so that you can see them right here.
         </p>
 
@@ -83,6 +83,10 @@ export default async function BagRoute() {
     );
   }
 
+  // Verificăm stocul produselor din coș
+  const outOfStockItems = await checkCartStock(cart.items);
+
+  const productName = outOfStockItems.map((item) => item.productName)
   return (
     <div className="my-8">
       <h1 className="text-xl font-semibold">COSUL DE CUMPARATURI</h1>
@@ -92,6 +96,10 @@ export default async function BagRoute() {
             <CardContent className="p-0 px-4 py-4">
               {cart?.items.map((item, index) => {
                 const isLastItem = index === cart.items.length - 1;
+                const outOfStock = outOfStockItems.find(
+                  (outItem) => outItem.productId === item.id
+                );
+
                 return (
                   <div key={item.id}>
                     <div className="grid md:grid-cols-2 gap-4">
@@ -109,11 +117,22 @@ export default async function BagRoute() {
                           <span className="text-gray-600 text-sm">
                             {formatCurrency(item.price)}
                           </span>
+
+                          {/* Mesaj de eroare pentru stoc insuficient */}
+                          {outOfStock && (
+                            <Alert
+                              variant={"destructive"}
+                              className="mt-2 text-xs p-1"
+                            >
+                              Stoc insuficient: {outOfStock.availableStock}{" "}
+                              disponibil, solicitat:{" "}
+                              {outOfStock.requestedQuantity}
+                            </Alert>
+                          )}
                         </div>
                       </div>
 
-                      <div className="grid  grid-cols-3 items-center">
-
+                      <div className="grid grid-cols-3 items-center">
                         <div className="flex justify-end md:items-center">
                           <form
                             action={removeQuantityItem}
@@ -124,7 +143,6 @@ export default async function BagRoute() {
                               name="productId"
                               value={item.id}
                             />
-
                             <RemoveQuantityItem />
                           </form>
                           <button className="border px-4 py-[4px] text-sm">
@@ -136,7 +154,6 @@ export default async function BagRoute() {
                               name="productId"
                               value={item.id}
                             />
-
                             <AddQuantityItem />
                           </form>
                         </div>
@@ -162,6 +179,7 @@ export default async function BagRoute() {
             </CardContent>
           </Card>
         </div>
+
         <div className="col-span-2 lg:col-span-1">
           <Card className="shadow-lg">
             <CardHeader className="bg-[#d1ecf1] border-b rounded-t-lg py-4 text-center text-sm font-semibold">
@@ -176,7 +194,11 @@ export default async function BagRoute() {
               </div>
               <div className="flex items-center justify-between font-light">
                 <p>Livrare</p>
-                {transport === "plata" ? <p>{formatCurrency(pretLivrare.dhl)}</p> : <p>gratuit</p>}
+                {transport === "plata" ? (
+                  <p>{formatCurrency(pretLivrare.dhl)}</p>
+                ) : (
+                  <p>gratuit</p>
+                )}
               </div>
               <Separator className="my-2" />
               <div className="flex items-center justify-between font-semibold">
@@ -187,6 +209,7 @@ export default async function BagRoute() {
                     : formatCurrency(totalPrice)}
                 </p>
               </div>
+
               {diferenta !== 0 && (
                 <Alert variant={"success"} className="px-2 py-1 text-sm">
                   Cumperi de inca <strong>{formatCurrency(diferenta)}</strong>{" "}
@@ -194,8 +217,12 @@ export default async function BagRoute() {
                 </Alert>
               )}
             </CardContent>
-            <CardFooter className="bg-[#f7f7f7] border-t overflow-hidden rounded-b-lg px-16">
-              <ChceckoutButtonRedirect transport={transport}/>
+            <CardFooter>
+              <ChceckoutButtonRedirect
+                transport={transport}
+                outOfStockItems={outOfStockItems}
+                productName={productName}
+              />
             </CardFooter>
           </Card>
         </div>
