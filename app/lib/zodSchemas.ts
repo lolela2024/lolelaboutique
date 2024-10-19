@@ -1,5 +1,9 @@
 import { z } from "zod";
-const jsonSchema = z.union([z.string(), z.object({}).passthrough(), z.array(z.any())]);
+const jsonSchema = z.union([
+  z.string(), 
+  z.object({}).passthrough(), 
+  z.array(z.any()).refine(arr => arr.length > 0, { message: "Description array cannot be empty" })
+]);
 
 export const productSchema = z.object({
   name: z.string(),

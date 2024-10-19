@@ -26,8 +26,8 @@ const montseratSerif = Montserrat({
 
 export const metadata: Metadata = {
   title: {
-    default:"Lolela Boutique - Bijuterii Handmade din Piatra Semiprețioasă și Oțel Inoxidabil",
-    template:"%s - Lolela Boutique - Bijuterii Handmade din Piatra Semiprețioasă și Oțel Inoxidabil"
+    default:"Lolela Boutique - Bijuterii Handmade din Pietre Semiprețioase și Oțel Inoxidabil",
+    template:"%s - Lolela Boutique - Bijuterii Handmade din Pietre Semiprețioase și Oțel Inoxidabil"
   },
   description: "Descoperă bijuterii unice, handmade, din oțel inoxidabil și pietre semiprețioase, personalizate în funcție de numerologie și astrologie. Lolela Boutique - eleganță și originalitate la fiecare pas.",
   twitter:{
