@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 interface iAppProps {
   dataId: string;
-  inventory: Inventory | null;
+  inventory?: Inventory | null;
 }
 
 export default function AddToCartForm({ dataId, inventory }: iAppProps) {

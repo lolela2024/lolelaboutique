@@ -10,6 +10,7 @@ export default async function WishlistPage() {
   const wishilistId = cookieStore.get("wishlistId")?.value;
 
   const wishlist: Wishlist | null = await redis.get(`wishlist-${wishilistId}`);
+  
 
 
   return (

@@ -22,5 +22,6 @@ export type Wishlist = {
     discountAmount: number;
     discountPercentage: number;
     imageString: string;
+    available?: number;
   }>
 }

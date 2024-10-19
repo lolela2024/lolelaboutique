@@ -41,7 +41,8 @@ export async function addItem(productId: string) {
       originalPrice: true,
       discountAmount: true,
       discountPercentage: true,
-      images: true
+      images: true,
+      inventory: true
     }
   });
 
@@ -56,6 +57,8 @@ export async function addItem(productId: string) {
 
   if (!wishlist || !wishlist.items) {
     // Dacă wishlist-ul nu există, adăugăm produsul
+    
+
     myWishlist.items.push({
       price: selectedProduct.price,
       originalPrice: selectedProduct.originalPrice || 0,
@@ -64,6 +67,7 @@ export async function addItem(productId: string) {
       id: selectedProduct.id,
       imageString: selectedProduct.images[0],
       name: selectedProduct.name,
+      available: selectedProduct.inventory ? selectedProduct.inventory.available : undefined
     });
   } else {
     let itemFound = false;
@@ -90,6 +94,7 @@ export async function addItem(productId: string) {
         originalPrice: selectedProduct.originalPrice || 0,
         discountAmount: selectedProduct.discountAmount || 0,
         discountPercentage: selectedProduct.discountPercentage || 0,
+        available: selectedProduct.inventory ? selectedProduct.inventory.available : undefined
       });
     }
   }
