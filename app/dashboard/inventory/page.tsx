@@ -47,6 +47,7 @@ async function getData(page: number, per_page: number) {
           sku: true,
           available: true,
           onHand: true,
+          committed: true,
           unavailable: {
             select: {
               id: true,
@@ -109,6 +110,7 @@ export default async function InventoryPage({
                 <TableHead>Quality Control</TableHead>
                 <TableHead>Safety Stock</TableHead>
                 <TableHead>Other</TableHead>
+                <TableHead>Committed</TableHead>
                 <TableHead className="text-center">Available</TableHead>
                 <TableHead>On Hand</TableHead>
                 {/* <TableHead className="text-end">Actions</TableHead> */}
@@ -127,6 +129,7 @@ export default async function InventoryPage({
                     {item.inventory?.unavailable?.safetyStock}
                   </TableCell>
                   <TableCell>{item.inventory?.unavailable?.other}</TableCell>
+                  <TableCell>{item.inventory?.committed}</TableCell>
                   <TableCell className="text-center">
                     <span className="bg-gray-200 px-4 py-1 rounded-xl">
                       {item.inventory?.available}

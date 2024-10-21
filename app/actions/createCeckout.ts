@@ -264,43 +264,60 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
   const totalPrice = calculateTotalPrice(cart);
   const verify = uuidv4();
   const session = await auth();
-  const user = session?.user;   
-
+  const user = session?.user; 
   
-  if (user?.email) {
-    const userData = await prisma.user.update({
-      where: { email: user.email },
-      data: { phone: submission.value.phone },
-    });
-    
-    const address = await handleAddress(userData, formData);
+  if (!cart) {
+    throw new Error('Cart not found');
+  }
 
-    // Dacă plata este "ramburs"
-    if (submission.value.payment === "ramburs") {
-      const shippingMethod = submission.value.shipping ? submission.value.shipping : 'standard';
-
-      await createOrder({ 
-        verify, 
-        orderNumber, 
-        shippingMethod: shippingMethod, 
-        payment: submission.value.payment, 
-        amount: totalPrice, 
-        userId: userData.id, 
-        shippingAddressId: address?.id, 
-        cart, 
-        tipPersoana: submission.value.tipPersoana,
-        
+  const updates: Promise<void>[] = [];
+  
+  // Parcurge fiecare item din cart
+  for (const item of cart.items) {
+    const update = (async () => {
+      // Obține detaliile produsului din Prisma
+      const product = await prisma.product.findUnique({
+        where: { id: item.id },
+        include: { inventory: true }
       });
-      await redis.del(`cart-${cartId}`);
-      return redirect(`/checkout/comenzi?verify=${verify}`);
-    }
 
-    // Dacă plata este "card"
-    const url = await createStripeSession(cart, submission, cartId || '');
-    return redirect(url as string);
+      if (!product) {
+        throw new Error(`Product with ID ${item.id} not found`);
+      }
+
+      // Verifică dacă produsul are trackQuantity true
+      if (product.trackQuantity) {
+        const inventoryItem = product.inventory
+
+        if(!inventoryItem){
+          throw new Error("Not inventory item");
+        }
+        // Verifică dacă există suficient stoc
+        if (inventoryItem && inventoryItem.available < item.quantity) {
+          throw new Error(`Not enough stock for ${product.name}. Available: ${inventoryItem.available}, requested: ${item.quantity}`);
+        }
+
+        // Actualizează cantitatea în inventar
+        await prisma.inventory.update({
+          where:{ id: inventoryItem?.id },
+          data:{
+            available: inventoryItem?.available - item.quantity,
+            committed: (inventoryItem.committed || 0) + item.quantity // Actualizăm committed
+          }
+        })
+      }
+    })();
+
+    updates.push(update); // Adaugă promisiunea la array
+  };
+
+  // Așteaptă să finalizezi toate actualizările
+  if (updates.length > 0) {
+    await Promise.all(updates);
   }
 
   // Procesare pentru clienți neînregistrați
+  
   const customer = await prisma.customer.upsert({
     where: { email: submission.value.email },
     create: {
@@ -387,6 +404,7 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
       adresaFacturareId: dateAdresaFacturareId,
       
     });
+
 
     await resend.emails.send({
       from:"LolelaBoutique <lolela.orders@lolelaboutique.ro>",

@@ -25,10 +25,12 @@ export default function StockProductsEdit({
   fields,
   unavailableValues,
   availableValue,
+  commited
 }: {
   fields: any;
   unavailableValues: Unavailable | null;
   availableValue: number;
+  commited: number;
 }) {
   const [unavailable, setUnavailable] = useState({
     damaged: unavailableValues?.damaged || 0,
@@ -44,7 +46,7 @@ export default function StockProductsEdit({
     (acc, val) => acc + val,
     0
   );
-  const onHand = totalUnavailable + available;
+  const onHand = totalUnavailable + available + commited;
 
   const handleUnavailableChange = (
     key: keyof typeof unavailable,
@@ -165,7 +167,7 @@ export default function StockProductsEdit({
           <TableCell className="border-none relative">
             <div className="flex justify-end absolute top-[15px] right-0">
               <Button variant={"ghost"} type="button">
-                <span>0</span>
+                <span>{commited}</span>
                 <ChevronDown size={18} />
               </Button>
             </div>

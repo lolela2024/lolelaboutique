@@ -99,7 +99,7 @@ export default async function ProductIdRoute({
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start lg:gap-x-24 py-6">
         <div className="col-span-2 ">
-          <ImageSlider images={data.images} />
+          <ImageSlider images={data.images} slug={data.slug}/>
           <ProductDescription content={content} />
         </div>
         <div className="col-span-1 sticky top-[175px]">

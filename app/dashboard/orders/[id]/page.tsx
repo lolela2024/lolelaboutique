@@ -11,6 +11,10 @@ import { OrderStatus } from "@prisma/client";
 import HeaderMenu from "../_components/HeaderMenu";
 import MenuStatus from "../_components/MenuStatus";
 import PersoanaJuridica from "../../../components/storefront/PersoanaJuridica";
+import { Button } from "@/components/ui/button";
+import { Item } from "@radix-ui/react-dropdown-menu";
+import { unstable_noStore } from "next/cache";
+import Link from "next/link";
 
 async function getData(id: string) {
   const data = await prisma.order.findUnique({
@@ -42,7 +46,12 @@ export default async function EditOrder({
 }: {
   params: { id: string };
 }) {
+  unstable_noStore();
   const data = await getData(params.id);
+
+  const totalItems = data?.products.reduce((total, product) => {
+    return total + product.quantity;
+  }, 0);
 
   return (
     <>
@@ -67,11 +76,11 @@ export default async function EditOrder({
                       "py-1 px-2 rounded-md"
                     )}
                   >
-                    {data?.fulfilled}
+                    {data?.fulfilled} ({totalItems})
                   </div>
                   <span className="ml-4">#{data?.orderNumber}</span>
                 </div>
-                <MenuFulfilled fulfill={data?.fulfilled} />
+                <MenuFulfilled fulfill={data?.fulfilled} orderId={data?.id} />
               </div>
             </CardHeader>
             <CardContent className="border rounded-sm pt-2">
@@ -129,6 +138,15 @@ export default async function EditOrder({
                   </Fragment>
                 ))}
               </div>
+              <div className="flex items-center justify-end mt-4">
+                {data?.fulfilled === "Unfulfilled" && (
+                  <Link href={`/dashboard/orders/${data.id}/fulfillment_orders`}>
+                    <Button variant={"dashboard"} size={"sm"}>
+                      Fulfill item
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </CardContent>
           </Card>
 
@@ -146,6 +164,7 @@ export default async function EditOrder({
                 >
                   {data?.status}
                 </p>
+                {/* menu order */}
                 {data?.payment === "ramburs" && (
                   <MenuStatus orderId={data?.id} />
                 )}
@@ -238,7 +257,8 @@ export default async function EditOrder({
               {data?.adresaFacturare ? (
                 <div>
                   <p>
-                    {data.Customer?.firstName || data.User?.firstName} {data.Customer?.lastName || data.User?.lastName}
+                    {data.Customer?.firstName || data.User?.firstName}{" "}
+                    {data.Customer?.lastName || data.User?.lastName}
                   </p>
                   {data?.tipPersoana === "persoana-juridica" ? (
                     <p>Company: {data?.dateFacturare?.numeFirma}</p>

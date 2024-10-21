@@ -29,6 +29,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 import PaginationControls from "@/app/components/PaginationControls";
+import { formatCurrency } from '../../lib/formatters';
 
 async function getData(page: number, per_page: number) {
   const data = await prisma.product.findMany({
@@ -99,7 +100,7 @@ export default async function ProductsRoute({
                 </TableCell>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.status === "published" ? "activ" : item.status }</TableCell>
-                <TableCell>${item.price}</TableCell>
+                <TableCell>{formatCurrency(item.price)}</TableCell>
                 <TableCell>
                   {new Intl.DateTimeFormat("en-US").format(item.createdAt)}
                 </TableCell>

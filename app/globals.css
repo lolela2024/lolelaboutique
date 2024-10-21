@@ -243,11 +243,16 @@ button {
 
 .trx-title::after {
   content: "";
-  background: #da8fc2;
+  background: #efb5dd;
   height: 50%;
   width: 100%;
   position: absolute;
   bottom: 1px;
   left: 0;
   z-index: -1;
+}
+
+.trx-button-none input[type="number"]:hover::-webkit-inner-spin-button,
+input[type="number"]:hover::-webkit-outer-spin-button {
+  display: none; /* Asigură-te că nu sunt vizibile la hover */
 }

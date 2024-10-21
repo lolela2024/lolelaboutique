@@ -52,7 +52,7 @@ export default function HeaderIcons({ total, totalSum, user, totalWishlistProduc
       <Link href="/bag" className="flex items-end gap-1 p-1">
         <div className="relative group">
           <HiOutlineShoppingBag className="stroke-1 h-6 w-6 text-gray-700 group-hover:text-gray-900" />
-          <Badge className="absolute text-white bottom-[15px] right-[16px] p-2 rounded-full w-4 h-4 flex items-center justify-center text-xs font-normal bg-primary">
+          <Badge className="absolute text-white bottom-[15px] right-[16px] p-2 rounded-full w-4 h-4 flex items-center justify-center text-xs font-normal bg-[#ed4999]">
             {total}
           </Badge>
         </div>

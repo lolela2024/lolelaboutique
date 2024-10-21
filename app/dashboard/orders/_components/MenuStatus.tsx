@@ -10,7 +10,7 @@ import {
 import { Ellipsis } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { DropdownMenuLabel } from "@/components/ui/dropdown-menu";
-import { OrderStatus, Order } from "@prisma/client";
+import { OrderStatus, Order, Product } from "@prisma/client";
 import { updateOrderStatus } from "@/app/actions/orders";
 
 export default function MenuStatus({
@@ -21,15 +21,13 @@ export default function MenuStatus({
   const [orderStatus, setOrderStatus] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
- 
-
   async function handleSubmit(status: OrderStatus) {
     setOrderStatus(status);
 
     try {
       await updateOrderStatus(orderId as string, status);
-      setIsMenuOpen(false)
-      window.location.reload();
+      setIsMenuOpen(false);
+
       console.log("Order status updated to:", status);
     } catch (error) {
       console.error("Error updating order status:", error);
@@ -37,9 +35,9 @@ export default function MenuStatus({
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size={"sm"} onClick={()=>setIsMenuOpen(!isMenuOpen)}>
+        <Button variant="ghost" size={"sm"} onClick={() => setIsMenuOpen(true)}>
           <Ellipsis />
         </Button>
       </DropdownMenuTrigger>

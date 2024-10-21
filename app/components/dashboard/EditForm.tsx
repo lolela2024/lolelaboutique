@@ -451,6 +451,7 @@ export function EditForm({
                       fields={fields}
                       unavailableValues={unavailable}
                       availableValue={data.inventory?.available || 0}
+                      commited={data.inventory?.committed || 0}
                     />
                   ) : (
                     <div className="flex items-center justify-between">

@@ -120,7 +120,7 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
             <p className="text-primary">{item.price} Lei</p>
           </div>
           {item.originalPrice && item.discountPercentage && (
-            <div className="absolute top-4 bg-primary px-2 text-white font-semibold rounded-r-sm shadow-md">
+            <div className="absolute top-4 bg-[#ed4999] px-2 text-white font-semibold rounded-r-sm shadow-md">
               - {item.discountPercentage}%
             </div>
           )}

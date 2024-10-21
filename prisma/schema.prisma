@@ -270,8 +270,10 @@ model Order {
   userId         String?
   customerId     String?
   fulfilled      Fulfilled   @default(Unfulfilled)
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime?   @updatedAt
+  holdReason     String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 
   // Relații cu User și Customer
   User     User?     @relation(fields: [userId], references: [id])
@@ -293,16 +295,36 @@ model Order {
 enum Fulfilled {
   Fulfilled
   Unfulfilled
+  HoldFulfillment
+  PartialFulfilled
+}
+
+model Fulfillment {
+  id                String   @id @default(uuid())
+  orderProductId    String
+  fulfilledQuantity Int
+  trackingNumber    String?
+  shippingCarrier   String?
+  notifyCustomer    Boolean  @default(false)
+  createdAt         DateTime @default(now())
+
+  // Relations
+  OrderProduct OrderProduct @relation(fields: [orderProductId], references: [id])
 }
 
 model OrderProduct {
   id String @id @default(uuid())
 
-  orderId   String
-  productId String
-  quantity  Int
-  Product   Product @relation(fields: [productId], references: [id])
-  Order     Order   @relation(fields: [orderId], references: [id])
+  orderId           String
+  productId         String
+  quantity          Int // Cantitatea totală comandată
+  fulfilledQuantity Int? // Cantitatea îndeplinită
+  fulfilled         Boolean @default(false) // Indică dacă produsul a fost complet îndeplinit
+
+  Product Product @relation(fields: [productId], references: [id])
+  Order   Order   @relation(fields: [orderId], references: [id])
+
+  Fulfillments Fulfillment[]
 }
 
 enum OrderStatus {

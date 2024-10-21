@@ -7,9 +7,7 @@ import { PrismaClient } from '@prisma/client';
 const prismaClientSingleton = () => {
   const neon = new Pool({connectionString:process.env.POSTGRES_PRISMA_URL})
   const adapter = new PrismaNeon(neon);
-  const prisma = new PrismaClient({
-    adapter
-  });
+  const prisma = new PrismaClient();
   
   return prisma
 };
