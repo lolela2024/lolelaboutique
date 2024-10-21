@@ -151,7 +151,7 @@ export default function Search() {
           <Loader2 className=" mr-4 h-5 w-5 animate-spin" />
         </div>
       )}
-      <button className="absolute top-0 right-0 bg-buttonColor text-white p-[10px] rounded-full">
+      <button className="absolute top-0 right-0 bg-buttonColor text-white p-[10px] rounded-full" aria-label="Search">
         <SearchIcon className="stroke-1 w-5 h-5" />
       </button>
 

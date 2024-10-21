@@ -324,7 +324,7 @@ export const WishlistButton = ({ itemFound }: { itemFound: boolean }) => {
   const { pending } = useFormStatus();
 
   return (
-    <button type="submit" disabled={pending}>
+    <button type="submit" disabled={pending} aria-label="Add to Wishlist">
       {itemFound ? <FaHeart size={24} /> : <FaRegHeart size={24} />}
     </button>
   );

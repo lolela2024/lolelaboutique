@@ -51,10 +51,10 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="ro">
         <head>
-          <meta
+          {/* <meta
             name="viewport"
             content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-          />
+          /> */}
         </head>
         <body className={lora.className}>
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />

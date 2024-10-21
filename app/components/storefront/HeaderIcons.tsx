@@ -31,6 +31,7 @@ export default function HeaderIcons({ total, totalSum, user, totalWishlistProduc
         <div>
           <Link
             href={"/auth/login"}
+            aria-label="user"
             className="text-gray-700 p-1 group-hover:text-gray-900"
           >
             <User className="stroke-1 w-7 h-7 " />

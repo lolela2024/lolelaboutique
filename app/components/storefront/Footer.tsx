@@ -39,11 +39,11 @@ export function Footer() {
                 <br />
                 <h4>URMARITI-NE</h4>
                 <ul className="flex items-center gap-2">
-                  <Link href={"/"} className="text-[#06a9f4]">
+                  <Link href={"/"} className="text-[#06a9f4]" aria-label="facebook">
                     <FaFacebook size={36} />
                   </Link>
                   <Link href={"/"}>
-                    <FaInstagramSquare size={36} />
+                    <FaInstagramSquare size={36} aria-label="instagram"/>
                   </Link>
                 </ul>
               </aside>
