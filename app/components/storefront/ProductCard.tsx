@@ -72,17 +72,28 @@ export function ProductCard({ item,loading, wishlist }: iAppProps) {
                   src={item.images[0]}
                   alt="Product Image"
                   sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
-                  className={`absolute h-[360px] sm:h-[340px] md:h-[300px] lg:h-[280px] object-cover rounded-lg overflow-hidden transition-opacity duration-700 ease-in-out ${
+                  className={`absolute h-[360px] sm:h-[340px] md:h-[300px] lg:h-[280px] object-cover rounded-t-lg overflow-hidden transition-opacity duration-700 ease-in-out ${
                     visible && item.images[1] ? "opacity-0" : "opacity-100"
                   }`}
                   // style={styles.image} // Dimensiuni fixe și ajustare a imaginii
                 />
+                {!item.images[1] && (
+                    <CustomImage
+                    src={item.images[0]}
+                    alt="Product Image"
+                    sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
+                    className={`rounded-t-lg h-[360px] sm:h-[340px] md:h-[300px] lg:h-[280px] object-cover overflow-hidden transition-opacity duration-700 ease-in-out ${
+                      visible ? "opacity-100" : "opacity-0"
+                    }`}
+                  // style={styles.image} // Dimensiuni fixe și ajustare a imaginii
+                  />
+                )}
                 {item.images[1] && (
                   <CustomImage
                     src={item.images[1]}
                     alt="Product Image"
                     sizes="(min-width: 1360px) 289px, (min-width: 1040px) calc(20vw + 21px), (min-width: 780px) calc(33.33vw - 29px), calc(96.52vw - 22px)"
-                    className={`rounded-lg h-[360px] sm:h-[340px] md:h-[300px] lg:h-[280px] object-cover overflow-hidden transition-opacity duration-700 ease-in-out ${
+                    className={`rounded-t-lg h-[360px] sm:h-[340px] md:h-[300px] lg:h-[280px] object-cover overflow-hidden transition-opacity duration-700 ease-in-out ${
                       visible ? "opacity-100" : "opacity-0"
                     }`}
                   // style={styles.image} // Dimensiuni fixe și ajustare a imaginii

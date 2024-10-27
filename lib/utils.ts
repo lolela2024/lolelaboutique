@@ -32,29 +32,6 @@ type Product = {
   
 };
 
-// Definirea tipului pentru produsele grupate
-interface GroupedProduct {
-  productName: string;
-  productImage: string; // Asigură-te că tipul este corect
-  productPrice: number; // Asigură-te că tipul este corect
-  fulfilledQuantity: number;
-  totalQuantity: number;
-}
-
-interface GroupedProductDetails {
-  orderNumber: number;
-  products: Product[]; // Asumând că ai definit deja un tip Product
-  productName?:string;
-}
-
-interface UnfulfilledProductsGroupDetails {
-  orderNumber: number;
-  orderId:string;
-  productName?: string;
-  remainingQuantity: number;
-  products: Product[];
-}
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

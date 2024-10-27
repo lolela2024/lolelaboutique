@@ -22,6 +22,11 @@ const getData = cache(async (slug: string) => {
     include: {
       seo: true,
       inventory: true,
+      productTags: {
+        include:{
+          tag:true
+        }
+      }
     },
   });
 
@@ -53,10 +58,15 @@ export async function generateMetadata({
     ? stripHtmlTags(data.seo.seoDescription)
     : "Default product description"; // Fallback dacă nu există descriere
 
+  const keywords = data.productTags.map((tag) => tag.tag).map((tag)=> tag.name)
+
+  const tags = keywords.join(",");
+
   // Returnează metadatele pe baza SEO-ului produsului
   return {
     title: data?.seo?.seoTitle || data.name, // Dacă nu există `seoTitle`, fallback la `name`
     description: descriptionFinal || "Default product description", // Fallback la o descriere implicită
+    keywords: tags || "",
     alternates: {
       canonical: url, // Canonical URL pentru SEO
     },

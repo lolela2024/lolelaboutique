@@ -1,3 +1,4 @@
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -32,12 +33,14 @@ export function ProductCard({
           {images.map((item, index) => (
             <CarouselItem key={index}>
               <div className="relative h-[230px] rounded-lg  overflow-hidden">
+              
                 <Image
                   alt="Product image"
                   src={item}
                   fill
                   className="object-cover w-full h-full rounded-lg  overflow-hidden"
                 />
+               
               </div>
             </CarouselItem>
           ))}
