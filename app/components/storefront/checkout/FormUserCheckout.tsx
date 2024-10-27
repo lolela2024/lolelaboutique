@@ -168,7 +168,7 @@ export default function FormUserCheckout({
                         </span>
                       </p>
                       <p>
-                        <Image className="w-10 h-10" src="/dollar.png" alt="dollar" />
+                        <Image className="w-10 h-10" src="/dollar.png" alt="dollar" width={40} height={40}/>
                       </p>
                     </div>
                   </Label>
@@ -193,6 +193,8 @@ export default function FormUserCheckout({
                           className="w-[120px] "
                           src="/visa-mastercard.png"
                           alt="visa-mastercard"
+                          width={80}
+                          height={80}
                         />
                       </p>
                     </div>

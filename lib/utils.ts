@@ -186,8 +186,6 @@ export async function getOrderFulfillmentDetails2(orderId: string) {
 };
 
 
-
-
 export function checkOrderStatus2(orders:Order[]) {
   return orders.map(order => {
     // Verificăm dacă comanda are produse
