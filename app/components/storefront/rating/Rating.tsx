@@ -37,7 +37,7 @@ const Rating = ({
   };
 
   const constructRating = (currentRating: number) => {
-    console.log('currentRating', currentRating);
+    
     const updatedArray = ratingArray.map((ratingItem: JSX.Element, idx: number) => {
       return (
         <Star

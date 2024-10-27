@@ -2,6 +2,10 @@ import { type ReactNode } from "react";
 import { Navbar } from "../components/storefront/Navbar";
 import { Footer } from "../components/storefront/Footer";
 
+export const metadata = {
+  metadataBase: new URL("https://lolelaboutique.ro"),
+  // alte setări de metadate
+}
 
 export default function StoreFrontLayout({
   children,
