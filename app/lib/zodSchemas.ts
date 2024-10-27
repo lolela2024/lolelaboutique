@@ -6,7 +6,7 @@ const jsonSchema = z.union([
 ]);
 
 export const productSchema = z.object({
-  name: z.string(),
+  name: z.string(), 
   description: jsonSchema,
   status: z.enum(["draft", "published", "archived"]),
   price: z.number().min(1),

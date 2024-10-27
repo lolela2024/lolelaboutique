@@ -1,20 +1,31 @@
 import prisma from "@/app/lib/db";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import React, { Fragment } from "react";
-import { cn } from "../../../../lib/utils";
 import MenuFulfilled from "../_components/MenuFulfilled";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { formatCurrency } from "../../../lib/formatters";
 import MenuCustomer from "../_components/MenuCustomer";
-import { OrderStatus } from "@prisma/client";
+import { OrderStatus, Fulfilled } from "@prisma/client";
 import HeaderMenu from "../_components/HeaderMenu";
 import MenuStatus from "../_components/MenuStatus";
-import PersoanaJuridica from "../../../components/storefront/PersoanaJuridica";
 import { Button } from "@/components/ui/button";
-import { Item } from "@radix-ui/react-dropdown-menu";
 import { unstable_noStore } from "next/cache";
 import Link from "next/link";
+import {
+  checkFulfillmentStatus,
+  cn,
+  getOrderFulfillmentDetails2,
+} from "@/lib/utils";
+import AllFulfilled from "../_components/AllFulfilled";
+import PartiallyFulfilled from "../_components/PartiallyFulfilled";
+import Unfulfilled from "../_components/Unfulfilled";
+import { fulfilled } from "../../../actions/fulfilled";
+import { Product } from "../../../components/storefront/ProductFilter";
+import CardProducts from "../_components/CardProducts";
+import CardFulfilledProducts from "../_components/CardProducts";
+import Payment from "../_components/Payment";
+import DateLivrare from "../_components/DateLivrare";
 
 async function getData(id: string) {
   const data = await prisma.order.findUnique({
@@ -33,6 +44,7 @@ async function getData(id: string) {
       products: {
         include: {
           Product: true,
+          Fulfillments: true,
         },
       },
     },
@@ -40,6 +52,16 @@ async function getData(id: string) {
 
   return data;
 }
+
+type FulfilledProduct = {
+  productName: string;
+  fulfilledQuantity: number;
+  totalQuantity: number;
+};
+
+type GroupedFulfilledProducts = {
+  [key: string]: FulfilledProduct[];
+};
 
 export default async function EditOrder({
   params,
@@ -53,6 +75,10 @@ export default async function EditOrder({
     return total + product.quantity;
   }, 0);
 
+  const showOrderDetails2 = await getOrderFulfillmentDetails2(params.id);
+  const groupedFulfilledProducts = showOrderDetails2.groupedByFulfillmentId;
+  const groupedUnfulfilledProducts = showOrderDetails2.unfulfilledProducts;
+  
   return (
     <>
       <HeaderMenu
@@ -61,222 +87,119 @@ export default async function EditOrder({
         fulfilled={data?.fulfilled}
         createdAt={data?.createdAt}
       />
-
       <div className="grid grid-cols-3 gap-6">
         <div className="col-span-2 space-y-6">
-          <Card className="px-4 pb-4">
-            <CardHeader className="p-0 py-4 text-sm font-light">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div
-                    className={cn(
-                      data?.fulfilled === "Unfulfilled"
-                        ? "bg-yellow-300"
-                        : "bg-green-300",
-                      "py-1 px-2 rounded-md"
-                    )}
-                  >
-                    {data?.fulfilled} ({totalItems})
-                  </div>
-                  <span className="ml-4">#{data?.orderNumber}</span>
-                </div>
-                <MenuFulfilled fulfill={data?.fulfilled} orderId={data?.id} />
-              </div>
-            </CardHeader>
-            <CardContent className="border rounded-sm pt-2">
-              {data?.fulfilled === "Fulfilled" && (
-                <div className="mb-4">
-                  <p className="text-gray-600">Fulfilled</p>
-                  <p>
-                    {data.updatedAt
-                      ? data.updatedAt.toLocaleDateString("ro-RO", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                        })
-                      : "Data indisponibilă"}
-                  </p>
-                </div>
-              )}
+          {Object.keys(groupedFulfilledProducts).length > 0 &&
+            Object.keys(groupedFulfilledProducts).map((fulfillmentId) => {
+              // Calculăm totalul de fulfilledQuantity și quantity pentru fiecare dată
+              const totalFulfilled = groupedFulfilledProducts[
+                fulfillmentId
+              ].products.reduce(
+                (acc, product) => acc + (product.fulfilledQuantity || 0),
+                0
+              );
 
-              <div>
-                <p className="text-gray-600">Delivery method</p>
-                <p>Standard</p>
-              </div>
-              <Separator className="mt-4" />
-              <div>
-                {data?.products.map((product) => (
-                  <Fragment key={product.id}>
-                    <div className="mt-4 flex gap-4">
-                      <div className="aspect-1 border rounded-sm overflow-hidden flex-shrink-0 w-1/12 relative">
-                        <Image
-                          src={product.Product.images[0]}
-                          fill
-                          alt={product.Product.name}
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="flex flex-1 w-full gap-4">
-                        <p className="w-1/2 font-semibold">
-                          {product.Product.name}
-                        </p>
-                        <div className="w-1/4 text-center">
-                          {formatCurrency(product.Product.price)} x{" "}
-                          {product.quantity}
+              return (
+                <Card className="px-4 pb-4" key={fulfillmentId}>
+                  <CardHeader className="p-0 py-4 text-sm font-light">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className={"bg-green-300 py-1 px-2 rounded-md"}>
+                          Fulfilled ({totalFulfilled})
                         </div>
-                        <div className="w-1/4 text-right">
-                          {formatCurrency(
-                            product.Product.price * product.quantity
-                          )}
-                        </div>
+                        <span className="ml-4">#{fulfillmentId}</span>
                       </div>
+                      <MenuFulfilled
+                        fulfillmentId={fulfillmentId}
+                        totalFulfilled={totalFulfilled}
+                        order={data}
+
+                      />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="border rounded-sm pt-2">
+                    <div className="mb-4 text-sm">
+                      <p className="text-gray-600 p-0">Fulfilled</p>
+                      <p className="p-0">
+                        {groupedFulfilledProducts[fulfillmentId].date}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-600 p-0">Delivery method</p>
+                      <p className="p-0">Standard</p>
                     </div>
                     <Separator className="mt-4" />
-                  </Fragment>
-                ))}
-              </div>
-              <div className="flex items-center justify-end mt-4">
-                {data?.fulfilled === "Unfulfilled" && (
-                  <Link href={`/dashboard/orders/${data.id}/fulfillment_orders`}>
-                    <Button variant={"dashboard"} size={"sm"}>
-                      Fulfill item
-                    </Button>
-                  </Link>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="px-4 pb-4">
-            <CardHeader className="p-0 px-4 py-4 ">
-              <div className="flex  items-start justify-between">
-                <p
-                  className={cn(
-                    data?.status === OrderStatus.pending && "bg-red-200",
-                    data?.status === OrderStatus.completed && "bg-green-200",
-                    data?.status === OrderStatus.refunded && "bg-gray-200",
-                    data?.status === OrderStatus.cancelled && "bg-yellow-200",
-                    "px-2 py-1 rounded-lg capitalize text-sm"
-                  )}
-                >
-                  {data?.status}
-                </p>
-                {/* menu order */}
-                {data?.payment === "ramburs" && (
-                  <MenuStatus orderId={data?.id} />
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="border rounded-sm pt-2 space-y-2">
-              <h3>Metoda de plata: {data?.payment}</h3>
-              <div className="grid grid-cols-3 text-sm pt-4">
-                <div className="col-span-1">Subtotal</div>
-                <div className="col-span-2">
-                  <div className="flex justify-between">
                     <div>
-                      {data?._count.products}{" "}
-                      {data?._count.products === 1 ? "item" : "items"}
+                      {groupedFulfilledProducts[fulfillmentId].products.map(
+                        (product, index) => (
+                          <CardProducts key={index} product={product} />
+                        )
+                      )}
                     </div>
-                    <div>{formatCurrency(data?.amount as number)}</div>
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 text-sm">
-                <div className="col-span-1">Shipping</div>
-                <div className="col-span-2">
-                  <div className="flex justify-between">
-                    {data?.shippingMethod !== "free" && <div>Standard</div>}
-                    <div>
-                      {data?.shippingMethod === "dhl" && formatCurrency(24.99)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-between text-sm font-semibold">
-                <p>Total</p>
-                <p>{data?.amount ? formatCurrency(data?.amount + 24.99) : 0}</p>
-              </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
 
-              {data?.status === OrderStatus.completed && (
-                <>
-                  <Separator />
-                  <div className="flex justify-between text-sm font-semibold">
-                    <p>Paid</p>
-                    <p>
-                      {data?.amount ? formatCurrency(data?.amount + 24.99) : 0}
-                    </p>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
+          {Object.keys(groupedUnfulfilledProducts).length > 0 &&  groupedUnfulfilledProducts.Unfulfilled.products.length >0 &&
+            Object.keys(groupedUnfulfilledProducts).map((unfulfilled) => {
+              // Calculăm totalul de fulfilledQuantity și quantity pentru fiecare dată
+              const totalUnfulfilled =
+                groupedUnfulfilledProducts.Unfulfilled.products.reduce(
+                  (acc, product) => acc + (product.unfulfilledQuantity || 0),
+                  0
+                );
+
+              return (
+                <Card className="px-4 pb-4" key={unfulfilled}>
+                  <CardHeader className="p-0 py-4 text-sm font-light">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className={"bg-yellow-300 py-1 px-2 rounded-md"}>
+                          {unfulfilled} ({totalUnfulfilled})
+                        </div>
+                      </div>
+                      {/* <MenuFulfilled
+                        fulfill={data?.fulfilled}
+                        orderId={data?.id}
+                      /> */}
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="border rounded-sm pt-2">
+                    <div>
+                      <p className="text-gray-600 p-0">Delivery method</p>
+                      <p className="p-0">Standard</p>
+                    </div>
+                    <Separator className="mt-4" />
+                    <div>
+                      {groupedUnfulfilledProducts.Unfulfilled.products.map(
+                        (product, index) => (
+                          <CardProducts key={index} product={product} />
+                        )
+                      )}
+                    </div>
+                    <div className="flex items-center justify-end mt-4">
+                      
+                        <Link
+                          href={`/dashboard/orders/${data?.id}/fulfillment_orders`}
+                        >
+                          <Button variant={"dashboard"} size={"sm"}>
+                            Fulfill item
+                          </Button>
+                        </Link>
+                    
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+
+          <Payment data={data} />
         </div>
 
         <div className="col-span-1">
-          <Card>
-            <CardHeader className="p-0 px-4 pt-4">
-              <div className="flex items-center justify-between">
-                <h4 className="text-base">Customer</h4>
-                <MenuCustomer />
-              </div>
-            </CardHeader>
-            <CardContent className="p-0 px-4 pb-4 text-sm text-gray-700">
-              <p>
-                {data?.Customer?.firstName || data?.User?.firstName}{" "}
-                {data?.Customer?.lastName || data?.User?.lastName}{" "}
-              </p>
-              <h4 className="my-4 text-black text-base">Contact information</h4>
-              <p>{data?.Customer?.email || data?.User?.email}</p>
-              <p>
-                {data?.Customer?.mobilePhone || data?.User?.phone
-                  ? data.Customer?.mobilePhone || data.User?.phone
-                  : "No phone number"}
-              </p>
-              <h4 className="my-4 text-black text-base">Shipping address</h4>
-              <p>
-                {data?.Customer?.firstName || data?.User?.firstName}{" "}
-                {data?.Customer?.lastName || data?.User?.lastName}
-              </p>
-              <p>
-                {data?.shippingAddress?.strada} {data?.shippingAddress?.numar}
-              </p>
-
-              {/* {data?.shippingAddress?.company ? (
-                <p>Company: {data?.shippingAddress?.company}</p>
-              ) : null} */}
-              <p>
-                {data?.shippingAddress?.codPostal}{" "}
-                {data?.shippingAddress?.localitate}
-              </p>
-              <p>{data?.shippingAddress?.judet}</p>
-              <p>{"Romania"}</p>
-              <h4 className="my-4 text-black text-base">Billing address</h4>
-              {data?.adresaFacturare ? (
-                <div>
-                  <p>
-                    {data.Customer?.firstName || data.User?.firstName}{" "}
-                    {data.Customer?.lastName || data.User?.lastName}
-                  </p>
-                  {data?.tipPersoana === "persoana-juridica" ? (
-                    <p>Company: {data?.dateFacturare?.numeFirma}</p>
-                  ) : null}
-                  <p>
-                    {data.adresaFacturare.strada} {data.adresaFacturare.numar}
-                  </p>
-                  <p>
-                    {data.adresaFacturare.codPostal}{" "}
-                    {data.adresaFacturare.localitate}
-                  </p>
-                  <p>{data.adresaFacturare.judet}</p>
-                </div>
-              ) : (
-                "Same as shipping address"
-              )}
-            </CardContent>
-          </Card>
+          <DateLivrare data={data} />
         </div>
       </div>
     </>

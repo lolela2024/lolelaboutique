@@ -32,22 +32,45 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { fulfilled } from "../../../actions/fulfilled";
+import { Submitbutton } from "@/app/components/SubmitButtons";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function FulfilledForm({
   data,
+  fulfilledOrder,
   quantityTotal,
+  orderId,
 }: {
+  fulfilledOrder: string;
   data: any | null;
   quantityTotal: number;
+  orderId: string;
 }) {
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
 
-   // Inițializează quantities cu valorile inițiale din data.products
-   useEffect(() => {
-    if (data?.products) {
+  const router = useRouter();
+
+  const remainingQuantities = data.products.reduce(
+    (acc: { [key: string]: number }, product: any) => {
+      const totalFulfilledQuantity = product.Fulfillments.reduce(
+        (sum: number, fulfillment: any) =>
+          sum + (fulfillment.fulfilledQuantity || 0),
+        0
+      );
+      acc[product.id] = product.quantity - totalFulfilledQuantity; // Calculăm cantitatea rămasă
+      return acc;
+    },
+    {}
+  );
+
+  // Inițializează quantities cu valorile inițiale din data.products
+
+  useEffect(() => {
+    if (data?.products && fulfilledOrder === "Unfulfilled") {
       const initialQuantities = data.products.reduce(
         (acc: { [key: string]: number }, product: any) => {
           acc[product.id] = product.quantity;
@@ -56,14 +79,30 @@ export default function FulfilledForm({
         {}
       );
       setQuantities(initialQuantities);
+    } else if (data?.products && fulfilledOrder === "PartialFulfilled") {
+      const remainingQuantities = data.products.reduce(
+        (acc: { [key: string]: number }, product: any) => {
+          const totalFulfilledQuantity = product.Fulfillments.reduce(
+            (sum: number, fulfillment: any) =>
+              sum + (fulfillment.fulfilledQuantity || 0),
+            0
+          );
+          acc[product.id] = product.quantity - totalFulfilledQuantity; // Calculăm cantitatea rămasă
+          return acc;
+        },
+        {}
+      );
+      setQuantities(remainingQuantities);
     }
-  }, [data?.products]); // Rulează la fiecare actualizare a lui data.products
+  }, [data?.products, fulfilled, fulfilledOrder]);
 
   const form = useForm<z.infer<typeof fulfilledSchema>>({
     resolver: zodResolver(fulfilledSchema),
     defaultValues: {
       trackingNumber: "",
       shippingCarrier: "",
+      notifyCustomerOfShipment: false,
+      orderId: orderId,
     },
   });
 
@@ -79,9 +118,14 @@ export default function FulfilledForm({
     setSuccess("");
 
     startTransition(() => {
-      fulfilled(values).then((data) => {
-        setError(data.error);
-        setSuccess(data.success);
+      fulfilled(values, quantities).then((data) => {
+        setError(data?.error);
+        setSuccess(data?.success);
+        
+        if (data?.success) {
+          // Redirecționează către pagina comenzii după ce procesul de fulfillment a avut succes
+          router.push(`/dashboard/orders/${values.orderId}`);
+        }
       });
     });
   }
@@ -91,12 +135,24 @@ export default function FulfilledForm({
     0
   );
 
-  console.log(quantities)
 
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
+          <FormField
+            control={form.control}
+            name="orderId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tracking number</FormLabel>
+                <FormControl>
+                  <Input {...field} type="hidden" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2 space-y-6">
               <Card>
@@ -106,9 +162,10 @@ export default function FulfilledForm({
                       <div className="flex items-center">
                         <div
                           className={cn(
-                            data?.fulfilled === "Unfulfilled"
-                              ? "bg-yellow-300"
-                              : "bg-green-300",
+                            data?.fulfilled === "Unfulfilled" &&
+                              "bg-yellow-300",
+                            data?.fulfilled === "PartialFulfilled" &&
+                              "bg-[#ffd6a5]",
                             "py-1 px-2 rounded-md"
                           )}
                         >
@@ -143,7 +200,13 @@ export default function FulfilledForm({
                                   <p>{product.Product.name}</p>
                                 </div>
                                 <ButtonAddRemoveItem
-                                  productQuantity={product.quantity}
+                                  productQuantity={
+                                    fulfilledOrder === "Unfulfilled"
+                                      ? product.quantity
+                                      : fulfilledOrder === "PartialFulfilled"
+                                      ? remainingQuantities[product.id]
+                                      : null
+                                  }
                                   setQuantity={(newQuantity: any) =>
                                     handleSetQuantity(product.id, newQuantity)
                                   }
@@ -292,12 +355,16 @@ export default function FulfilledForm({
                 </CardContent>
                 <CardFooter>
                   <Button
-                    className="w-full "
+                    className={"w-full"}
+                    disabled={isPending}
                     variant={"dashboard"}
-                    type="submit"
                     size={"sm"}
+                    type="submit"
                   >
-                    Fulfill items
+                    {isPending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    {isPending ? "Please Wait" : "Fulfill item"}
                   </Button>
                 </CardFooter>
               </Card>

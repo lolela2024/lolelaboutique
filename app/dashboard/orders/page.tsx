@@ -10,16 +10,14 @@ import {
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { unstable_noStore as noStore } from "next/cache";
-import { formatCurrency } from "../../lib/formatters";
-import Link from "next/link";
 import TableRowTrx from "./_components/TableRowTrx";
 import PaginationControls from "@/app/components/PaginationControls";
+import { checkOrderStatus, Order } from "@/lib/utils";
 
 async function getData(page: number, per_page: number) {
   const queryOptions: any = {
@@ -31,6 +29,22 @@ async function getData(page: number, per_page: number) {
       status: true,
       fulfilled: true,
       id: true,
+      products: {
+        select: {
+          // Selectează câmpurile dorite pentru fiecare produs
+          id: true,
+          fulfilledQuantity: true,
+          quantity: true,
+          Product: {
+            // Dacă vrei informații despre produs
+            select: {
+              name: true, // Asigură-te că ai câmpurile corecte aici
+              price: true,
+              // Adaugă alte câmpuri relevante pentru produs
+            },
+          },
+        },
+      },
       User: {
         select: {
           firstName: true,
@@ -69,38 +83,48 @@ export default async function OrdersPage({
   const page = Number(searchParams["page"] ?? "1");
   const per_page = Number(searchParams["per_page"] ?? "5");
 
-  const data = await getData(page, per_page);
+  const data: Order[] = await getData(page, per_page);
 
   const totalEntries = await prisma.order.count();
 
+  // const fulfillmentStatuses = checkOrderStatus(data);
+
+  const fulfillmentStatuses = await checkOrderStatus(data);
+
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader className="px-7">
         <CardTitle>Orders</CardTitle>
         <CardDescription>Recent orders from your store!</CardDescription>
       </CardHeader>
-      <CardContent>
-        <Table className="overflow-x-scroll">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Order</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Payment status</TableHead>
-              <TableHead>Items</TableHead>
-              <TableHead>Fulfillment status</TableHead>
-              <TableHead>Delivery status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.map((item) => (
-              <TableRowTrx key={item.id} item={item} />
-            ))}
-          </TableBody>
-        </Table>
+      <CardContent className="overflow-x-auto">
+        <div className="min-w-[900px]">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Order</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Payment status</TableHead>
+                <TableHead>Items</TableHead>
+                <TableHead>Fulfillment status</TableHead>
+                <TableHead>Delivery status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.map((item) => (
+                <TableRowTrx
+                  key={item.id}
+                  item={item}
+                  fulfillmentStatuses={fulfillmentStatuses}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
-      <CardFooter className="justify-end">
+      <CardFooter className="justify-end ">
         <PaginationControls
           entries={totalEntries} // Totalul produselor pentru paginare
           hasNextPage={page * per_page < totalEntries} // Verifică dacă există o pagină următoare
@@ -110,5 +134,5 @@ export default async function OrdersPage({
         />
       </CardFooter>
     </Card>
-  ); 
+  );
 }

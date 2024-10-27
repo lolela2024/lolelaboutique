@@ -302,6 +302,7 @@ enum Fulfilled {
 model Fulfillment {
   id                String   @id @default(uuid())
   orderProductId    String
+  newFulfillmentId  String   @default("F2")
   fulfilledQuantity Int
   trackingNumber    String?
   shippingCarrier   String?
@@ -319,7 +320,8 @@ model OrderProduct {
   productId         String
   quantity          Int // Cantitatea totală comandată
   fulfilledQuantity Int? // Cantitatea îndeplinită
-  fulfilled         Boolean @default(false) // Indică dacă produsul a fost complet îndeplinit
+  fulfilledAt       DateTime?
+  fulfilled         Boolean   @default(false) // Indică dacă produsul a fost complet îndeplinit
 
   Product Product @relation(fields: [productId], references: [id])
   Order   Order   @relation(fields: [orderId], references: [id])

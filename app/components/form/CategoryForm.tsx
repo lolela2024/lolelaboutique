@@ -65,7 +65,7 @@ export default function CategoryForm({ data }: CategoryFormProps) {
       let generatedSlug = slugify(fields.name.value);
       setSlug(generatedSlug);
     }
-  }, [fields.name.value]);
+  }, [fields.name.value, fields.name]);
 
   useEffect(() => {
     if (slug) {
@@ -206,19 +206,19 @@ export default function CategoryForm({ data }: CategoryFormProps) {
           </Card>
         </div>
         <div className="col-span-1">
-        <Card>
-              <CardContent className="py-4">
-                <div className="flex flex-col gap-3">
-                  <Label>Featured Category</Label>
-                  <Switch
-                    key={fields.isFeatured.key}
-                    name={fields.isFeatured.name}
-                    defaultValue={fields.isFeatured.initialValue}
-                  />
-                  <p className="text-red-500">{fields.isFeatured.errors}</p>
-                </div>
-              </CardContent>
-            </Card>
+          <Card>
+            <CardContent className="py-4">
+              <div className="flex flex-col gap-3">
+                <Label>Featured Category</Label>
+                <Switch
+                  key={fields.isFeatured.key}
+                  name={fields.isFeatured.name}
+                  defaultValue={fields.isFeatured.initialValue}
+                />
+                <p className="text-red-500">{fields.isFeatured.errors}</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
       <div className="float-right mt-4">

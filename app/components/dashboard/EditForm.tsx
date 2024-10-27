@@ -61,7 +61,7 @@ import { FaXmark } from "react-icons/fa6";
 import { Separator } from "@/components/ui/separator";
 import StockProductsEdit from "@/app/dashboard/products/_components/StockProductsEdit";
 import ProductDescription from "../storefront/ProductDescription";
-import { formatCurrency } from '../../lib/formatters';
+import { formatCurrency } from "../../lib/formatters";
 
 const tagsPietre = [
   { label: "Acvamarin", value: "acvamarin" },
@@ -154,7 +154,7 @@ export function EditForm({
     });
 
     setSelectedTags(tags);
-  }, [data.productTags]); // Se va rula de fiecare dată când productTags se schimbă
+  }, [data.productTags, allTags]); // Se va rula de fiecare dată când productTags se schimbă
 
   const [content, setContent] = useState(
     JSON.parse(JSON.stringify(data.description))
@@ -476,7 +476,9 @@ export function EditForm({
                   className="ProseMirror whitespace-pre-line py-1 rounded-lg"
                   style={{ whiteSpace: "pre-line" }}
                   dangerouslySetInnerHTML={{
-                    __html: JSON.parse(JSON.stringify(data.seo?.seoDescription)),
+                    __html: JSON.parse(
+                      JSON.stringify(data.seo?.seoDescription)
+                    ),
                   }}
                 />
                 <span>{formatCurrency(data.price)}</span>

@@ -20,6 +20,7 @@ import { CheckoutFormProps } from "@/app/types/types";
 import { ceckoutSchemaUser } from "@/app/lib/schemas/userSchemaCheckout";
 import { createCheckoutUser } from "@/app/actions/createCheckoutUser";
 import AdresaDeFacturare from "../AdresaDeFacturare";
+import Image from "next/image";
 
 export default function FormUserCheckout({
   user,
@@ -167,7 +168,7 @@ export default function FormUserCheckout({
                         </span>
                       </p>
                       <p>
-                        <img className="w-10 h-10" src="/dollar.png" />
+                        <Image className="w-10 h-10" src="/dollar.png" alt="dollar" />
                       </p>
                     </div>
                   </Label>
@@ -188,9 +189,10 @@ export default function FormUserCheckout({
                         </span>
                       </p>
                       <p>
-                        <img
+                        <Image
                           className="w-[120px] "
                           src="/visa-mastercard.png"
+                          alt="visa-mastercard"
                         />
                       </p>
                     </div>

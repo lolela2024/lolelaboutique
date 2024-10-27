@@ -23,6 +23,7 @@ import { ceckoutSchema } from "@/app/lib/zodSchemas";
 import { parseWithZod } from "@conform-to/zod";
 import { useForm } from "@conform-to/react";
 import { CheckoutFormProps } from "@/app/types/types";
+import Image from "next/image";
 
 export default function FormCustomerCheckout({
   transport,
@@ -222,7 +223,7 @@ export default function FormCustomerCheckout({
                         </span>
                       </p>
                       <p>
-                        <img className="w-10 h-10" src="/dollar.png" />
+                        <Image className="w-10 h-10" src="/dollar.png" alt="dollar" />
                       </p>
                     </div>
                   </Label>
@@ -243,9 +244,10 @@ export default function FormCustomerCheckout({
                         </span>
                       </p>
                       <p>
-                        <img
+                        <Image
                           className="w-[120px] "
                           src="/visa-mastercard.png"
+                          alt="visa-mastercard"
                         />
                       </p>
                     </div>

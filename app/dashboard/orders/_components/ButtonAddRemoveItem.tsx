@@ -54,12 +54,14 @@ export default function ButtonAddRemoveItem({
           <button
             className="pt-1 pl-1 pr-1 bg-gray-200 hover:bg-gray-400"
             onClick={increaseQuantity}
+            type="button"
           >
             <FaChevronUp size={12} />
           </button>
           <button
             className="pl-1 pr-1 pb-1 bg-gray-200 hover:bg-gray-400"
             onClick={decreaseQuantity}
+            type="button"
           >
             <FaChevronDown size={12} />
           </button>

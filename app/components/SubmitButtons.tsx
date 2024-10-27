@@ -19,37 +19,55 @@ import { Wishlist } from "../lib/interfaces";
 import { Address } from "@prisma/client";
 import { CheckoutFormProps } from "../types/types";
 import { toast } from "sonner";
+import { cn } from "../../lib/utils";
 
 interface buttonProps {
   title: string;
+  className?: string;
   image?: string;
   error?: any;
   variant?:
     | "default"
     | "destructive"
+    | "dashboard"
     | "outline"
     | "secondary"
     | "ghost"
     | "link"
     | null
     | undefined;
+  size?: "sm" | "lg";
 }
 
-export function Submitbutton({ title, image, variant, error }: buttonProps) {
+export function Submitbutton({
+  title,
+  image,
+  variant,
+  error,
+  size,
+  className,
+}: buttonProps) {
   const { pending } = useFormStatus();
 
   return (
     <>
       {pending ? (
-        <Button disabled variant={variant}>
+        <Button
+          className={cn(className)}
+          disabled
+          variant={variant}
+          size={size}
+        >
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Please Wait
         </Button>
       ) : (
         <Button
           disabled={error || image === ""}
+          size={size}
           variant={variant}
           type="submit"
+          className={cn(className)}
         >
           {title}
         </Button>
