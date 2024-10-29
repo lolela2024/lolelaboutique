@@ -30,6 +30,7 @@ const lora = Lora({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://lolelaboutique.ro"),
   title: {
     default:"Lolela Boutique - Bijuterii Handmade din Pietre Semiprețioase și Oțel Inoxidabil",
     template:"%s - Lolela Boutique - Bijuterii Handmade din Pietre Semiprețioase și Oțel Inoxidabil"

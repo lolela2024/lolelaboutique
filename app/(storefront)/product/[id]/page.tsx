@@ -64,6 +64,7 @@ export async function generateMetadata({
 
   // Returnează metadatele pe baza SEO-ului produsului
   return {
+    metadataBase: new URL("https://lolelaboutique.ro"),
     title: data?.seo?.seoTitle || data.name, // Dacă nu există `seoTitle`, fallback la `name`
     description: descriptionFinal || "Default product description", // Fallback la o descriere implicită
     keywords: tags || "",
