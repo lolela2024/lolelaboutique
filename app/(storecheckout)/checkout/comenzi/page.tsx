@@ -70,7 +70,7 @@ export default async function CheckoutComenzi({
   const formattedTime = data.createdAt.toLocaleDateString("ro-RO");
 
   const methodaDeLivrare = "Livrare la adresa";
-  const timpLivrare = "Livrare in 1-2 zile";
+  const timpLivrare = "Livrare in 2-4 zile";
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

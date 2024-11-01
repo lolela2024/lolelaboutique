@@ -1,6 +1,5 @@
 import React from 'react'
 import NewAddressForm from '../../_components/NewAddressForm'
-import { auth } from '@/auth';
 
 export default async function CreateAddressPage() {
   

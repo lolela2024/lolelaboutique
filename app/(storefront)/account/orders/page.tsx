@@ -6,11 +6,27 @@ import prisma from "@/app/lib/db";
 import { unstable_noStore } from "next/cache";
 
 async function getData(userId: string) {
-  const data = await prisma.order.findMany({
+  const order = await prisma.order.findMany({
     where: { userId: userId },
+    select: {
+      shippingAddress: true,
+      createdAt:true,
+      status:true,
+      id:true,
+      orderNumber:true,
+      amount:true,
+      fulfilled: true
+    },
+    orderBy:{createdAt:"desc"}
   });
 
-  return data;
+  const adresaDeLivrare = await prisma.address.findFirst({
+    where:{userId}
+  })
+
+
+
+  return {order, adresaDeLivrare};
 }
 
 export default async function OrdersPage() {
@@ -28,11 +44,11 @@ export default async function OrdersPage() {
       <p className="font-medium">
         Aici vezi comenzile facute de tine de la crearea contului.
       </p>
-      {data.length>0 ? (
-         <IstoricComenzi />
+      {data.order.length>0 ? (
+         <IstoricComenzi order={data.order} adresaDeLivrare={data.adresaDeLivrare}/>
       ) : (
         <div className="py-4">
-          <h1 className="font-semibold">No orders found!</h1>
+          <h1 className="font-semibold">Pana acum nu ai facut nici o comanda.</h1>
         </div>
       )}
      

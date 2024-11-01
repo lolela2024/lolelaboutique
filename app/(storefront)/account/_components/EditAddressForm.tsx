@@ -1,6 +1,13 @@
 "use client";
 
 import { AddresSchema } from "@/app/lib/zodSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Address } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import React, { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { editAddress } from "../_actions/address";
 import {
   Form,
   FormControl,
@@ -8,35 +15,40 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState, useTransition } from "react";
-import { z } from "zod";
-import { addAddress } from "../_actions/address";
-import { useForm } from "react-hook-form";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { FormError } from "@/app/components/FormError";
 import { FormSuccess } from "@/app/components/FormSuccess";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { redirect, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
-export default function NewAddressForm() {
+export default function EditAddressForm({ data }: { data: Address | null }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
 
-  const router = useRouter();   
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof AddresSchema>>({
     resolver: zodResolver(AddresSchema),
-    defaultValues: {},
+    defaultValues: {
+      phone: data?.phone || "",
+      strada: data?.strada,
+      numar: data?.numar,
+      bloc: data?.bloc || "",
+      scara: data?.scara || "",
+      etaj: data?.etaj || "",
+      apartament: data?.apartament || "",
+      localitate: data?.localitate,
+      judet: data?.judet,
+      codPostal: data?.codPostal || "",
+    },
   });
 
   const onSubmit = (values: z.infer<typeof AddresSchema>) => {
@@ -44,25 +56,24 @@ export default function NewAddressForm() {
     setSuccess("");
 
     startTransition(() => {
-      addAddress(values).then((data) => {
+      editAddress(values,data?.id as number).then((data) => {
         setError(data.error);
         setSuccess(data.success);
-
+        
         router.push("/account");
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
       });
     });
   };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
-          <CardHeader>  
+          <CardHeader>
             <FormError message={error} />
             <FormSuccess message={success} />
           </CardHeader>
+
           <CardContent className="space-y-4">
             <FormField
               control={form.control}

@@ -17,7 +17,7 @@ export default function DateLivrare({data}:{data:any}) {
           {data?.Customer?.lastName || data?.User?.lastName}{" "}
         </p>
         <h4 className="my-4 text-black text-base">Contact information</h4>
-        <p>{data?.Customer?.email || data?.User?.email}</p>
+        <p className="text-blue-600">{data?.Customer?.email || data?.User?.email}</p>
         <p>
           {data?.Customer?.mobilePhone || data?.User?.phone
             ? data.Customer?.mobilePhone || data.User?.phone

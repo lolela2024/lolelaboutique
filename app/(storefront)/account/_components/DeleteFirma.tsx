@@ -1,14 +1,14 @@
-"use client";
+"use client"
 
 import { Button } from "@/components/ui/button";
-import React, { FormEvent, useState, useTransition } from "react";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { deleteAddress } from "../_actions/address";
-import { toast } from "sonner";
-import { LuAlertTriangle } from "react-icons/lu";
 import { redirect } from "next/navigation";
+import React, { FormEvent, useState, useTransition } from "react";
+import { LuAlertTriangle } from "react-icons/lu";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { toast } from "sonner";
+import { deleteFirma } from "../_actions/company";
 
-export default function DeleteAddress({ addressId }: { addressId: number }) {
+export default function DeleteFirma({ firmaId }: { firmaId: number }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
@@ -19,11 +19,11 @@ export default function DeleteAddress({ addressId }: { addressId: number }) {
     setSuccess("");
 
     startTransition(() => {
-      deleteAddress(addressId).then((data) => {
+      deleteFirma(firmaId).then((data) => {
         setError(data.error);
         setSuccess(data.success);
         if(data.success){
-          toast("Adresa a fost stearsa cu succes", {
+          toast("Firma a fost stearsa cu succes", {
         
             position:"top-right",
            
@@ -40,7 +40,7 @@ export default function DeleteAddress({ addressId }: { addressId: number }) {
             icon: <LuAlertTriangle />
           });
         }
-        window.location.reload();
+
       });
       
 

@@ -171,7 +171,7 @@ th {
   border: 1px solid #ccc;
   box-sizing: border-box;
   min-width: 1em;
-  padding: 6px 8px;
+  padding: 6px 6px;
   position: relative;
   vertical-align: top;
 }

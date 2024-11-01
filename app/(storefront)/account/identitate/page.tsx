@@ -5,6 +5,7 @@ import prisma from "@/app/lib/db";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import FooterAccount from "../_components/FooterAccount";
+import { unstable_noStore } from "next/cache";
 
 async function getData(email: string) {
   const data = await prisma.user.findUnique({
@@ -15,6 +16,7 @@ async function getData(email: string) {
 }
 
 export default async function IdentitatePage() {
+  unstable_noStore();
   const session = await auth();
   const user = session?.user;
 

@@ -4,6 +4,7 @@ import prisma from "@/app/lib/db"
 import { AddresSchema } from "@/app/lib/zodSchemas"
 import { auth } from "@/auth"
 import { error } from "console"
+import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import * as z from "zod"
 
@@ -45,6 +46,48 @@ export async function addAddress (values:z.infer<typeof AddresSchema>) {
   } catch (error) {
     return { error: "Something went wrong!" }
   }
+}
+
+export async function editAddress (values:z.infer<typeof AddresSchema>,id:number) {
+  const session = await auth()
+  const user = session?.user
+
+  if(!user?.id) {
+   throw new Error("Unauthorized")
+  }
+
+  const validatedFields = AddresSchema.safeParse(values)
+
+  if(!validatedFields.success) {
+    return { error: "Invalid fields"}
+  }
+
+  const { phone, strada, numar, apartament, bloc, judet, localitate, codPostal, etaj, scara } = validatedFields.data;
+
+  try {
+
+    await prisma.address.update({
+      where:{id},
+      data:{
+        phone,
+        strada,
+        numar,
+        apartament,
+        bloc,
+        judet,
+        localitate,
+        codPostal,
+        etaj,
+        scara
+      }
+    })
+
+    revalidatePath("/account")
+    return { success: "Adresa a fost editata cu succes" }
+  } catch (error) {
+    return {error: "Something went wrong!"}
+  }
+
 }
 
 export async function deleteAddress(addressId:number) {

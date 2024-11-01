@@ -157,6 +157,12 @@ export const ceckoutSchema = z.object({
   }
 });
 
+export const CompanySchema = z.object({
+  numeFirma: z.string({ required_error: "Dați un nume de firma"}),
+  cif: z.string({ required_error: "Se cere CIF"}),
+  nrRegComert: z.string({ required_error: "Se cere Nr. reg. comertului / An"})
+})
+
 
 export const informatiiSchema = z.object({
   firstName:z.string({ required_error: "Enter a name"}),
