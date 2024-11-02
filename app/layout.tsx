@@ -13,6 +13,7 @@ import Providers from "@/components/Providers";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const robotoSerif = Roboto_Serif({
   subsets: ["latin"],
@@ -62,6 +63,7 @@ export default async function RootLayout({
           <Providers>{children}</Providers>
           <Toaster richColors theme="light" closeButton />
           <Analytics />
+          <SpeedInsights />
         </body>
       </html>
     </SessionProvider>
