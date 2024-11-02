@@ -233,6 +233,7 @@ export default function FormUserCheckout({
               completate in formular.
             </label>
           </div>
+          
           <ChceckoutButton
             address={address}
             user={user}

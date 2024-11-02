@@ -1,20 +1,12 @@
+"use client"
+
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { $Enums, Order } from "@prisma/client";
+import { $Enums } from "@prisma/client";
 import React from "react";
 import { FaAnglesRight } from "react-icons/fa6";
 import { formatCurrency } from "../../../lib/formatters";
-import { fulfilled } from "../../../actions/fulfilled";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface iAppProps {
   order: {
@@ -42,36 +34,36 @@ interface iAppProps {
 }
 
 export default function IstoricComenzi({ order, adresaDeLivrare }: iAppProps) {
+  const router = useRouter();
   let id = 0;
 
   return (
-    <Table>
-     
-      <TableHeader className="">
-        <TableRow className="text-xs ">
-          <TableHead className="w-[60px] px-2 py-0 bg-gray-100 ">ID</TableHead>
-          <TableHead className="px-2 py-0 bg-gray-100">Data comanda</TableHead>
-          <TableHead className="px-2 py-0 bg-gray-100 w-[200px]">
+    <table>
+      <thead className="text-xs font-light">
+        <tr>
+          <td className="w-[40px] px-2 py-1 bg-gray-100 ">ID</td>
+          <td className="px-2 py-1 bg-gray-100">Data comanda</td>
+          <td className="hidden lg:table-cell px-2 py-1 bg-gray-100 w-[200px]">
             Locatie livrare
-          </TableHead>
-          <TableHead className="text-center px-2 py-0 bg-gray-100">
+          </td>
+          <td className="text-center px-2 py-1 bg-gray-100 w-[80px]">
             Total (Lei)
-          </TableHead>
-          <TableHead className="px-2 py-0 text-center w-[100px] bg-gray-100">
+          </td>
+          <td className="hidden lg:table-cell px-2 py-1 text-center w-[100px] bg-gray-100">
             Nr Factura
-          </TableHead>
-          <TableHead className="px-2 py-0 bg-gray-100">Emisa in</TableHead>
-          <TableHead className="px-2 py-0 text-center bg-gray-100">
-            Status Comanda
-          </TableHead>
-          <TableHead className="px-2 py-0 w-[80px] bg-gray-100"></TableHead>
-        </TableRow>
-      </TableHeader>
+          </td>
+          <td className="hidden lg:table-cell w-[80px] px-2 py-1 bg-gray-100">
+            Emisa in
+          </td>
+          <td className="px-2 py-1 text-center bg-gray-100">Status Comanda</td>
+          <td className="px-2 py-1 w-[65px] bg-gray-100"></td>
+        </tr>
+      </thead>
 
-      <TableBody>
+      <tbody className="text-xs">
         {order.map((order) => {
           return (
-            <TableRow
+            <tr
               key={order.id}
               className={cn(
                 order.fulfilled === "Unfulfilled" && "bg-red-100",
@@ -80,9 +72,9 @@ export default function IstoricComenzi({ order, adresaDeLivrare }: iAppProps) {
                 "hover:bg-opacity-5"
               )}
             >
-              <TableCell className="font-medium">{++id}</TableCell>
-              <TableCell className="px-2">
-                <span className="text-sm">
+              <td className="text-center">{++id}</td>
+              <td className="px-2">
+                <span className="">
                   {new Intl.DateTimeFormat("ro-RO", {
                     month: "short",
                     day: "numeric",
@@ -91,8 +83,8 @@ export default function IstoricComenzi({ order, adresaDeLivrare }: iAppProps) {
                     minute: "2-digit",
                   }).format(new Date(order.createdAt))}
                 </span>
-              </TableCell>
-              <TableCell className="w-full ">
+              </td>
+              <td className="hidden lg:table-cell w-[200px]">
                 <div className="w-full">
                   <span>
                     str. {adresaDeLivrare?.strada} {adresaDeLivrare?.numar},
@@ -114,26 +106,31 @@ export default function IstoricComenzi({ order, adresaDeLivrare }: iAppProps) {
                     {adresaDeLivrare?.localitate}
                   </span>
                 </div>
-              </TableCell>
-              <TableCell className="text-right">
-                {formatCurrency(order.amount)}
-              </TableCell>
-              <TableCell className="text-right">#{order.orderNumber}</TableCell>
-              <TableCell className="text-right"></TableCell>
-              <TableCell className="text-center">
+              </td>
+              <td className="text-center">{formatCurrency(order.amount)}</td>
+              <td className="hidden lg:table-cell text-center">
+                #{order.orderNumber}
+              </td>
+              <td className="hidden lg:table-cell"></td>
+              <td className="text-center">
                 {order.fulfilled === "Fulfilled" && "Finalizata"}
                 {order.fulfilled === "Unfulfilled" && "Neîmplinit"}
                 {order.fulfilled === "PartialFulfilled" && "Implinit parțial"}
-              </TableCell>
-              <TableCell className="p-0 text-center ">
-                <Button variant={"link"} size={"sm"} className="gap-1">
+              </td>
+              <td className="p-0 text-center ">
+                <Button
+                  variant={"link"}
+                  size={"sm"}
+                  className="gap-1 text-xs px-2 py-1"
+                  onClick={()=>router.push(`/account/orders/${order.id}`)}
+                >
                   Detalii <FaAnglesRight size={10} />
                 </Button>
-              </TableCell>
-            </TableRow>
+              </td>
+            </tr>
           );
         })}
-      </TableBody>
-    </Table>
+      </tbody>
+    </table>
   );
 }

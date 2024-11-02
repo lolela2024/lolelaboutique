@@ -191,7 +191,6 @@ export async function createCheckoutUser(prevState: unknown, formData: FormData)
     return submission.reply();
   }
 
-  console.log(submission.value)
   const orderNumber = await getNextOrderNumber();
   const cookieStore = cookies();
   const cartId = cookieStore.get('cartId')?.value;
@@ -209,7 +208,6 @@ export async function createCheckoutUser(prevState: unknown, formData: FormData)
 
   let dateFacturare = null;
   let dateAdresaFacturare = null;
-
 
   // Extrage datele necesare pentru adresa clientului
   const addressData = await prisma.address.findFirst({
@@ -301,4 +299,24 @@ export async function createCheckoutUser(prevState: unknown, formData: FormData)
 
   const url = await createStripeSession(cart, submission, userEmail, cartId || '');
   return redirect(url as string);
+}
+
+export async function createCheckoutUser2(values:z.infer<typeof ceckoutSchemaUser>) {
+  const validatedFields = ceckoutSchemaUser.safeParse(values)
+
+  if(!validatedFields.success) {
+    return { error: "Invalid fields"}
+  }
+
+  const {numeFirma, tipAdresaFactura} = validatedFields.data
+  try {
+    console.log(
+      tipAdresaFactura
+    )
+    return { success: "Checkout successful" };
+  } catch (error) {
+    console.error("Error checkout:", error);
+    return { error: "An error occurred" };
+  }
+
 }

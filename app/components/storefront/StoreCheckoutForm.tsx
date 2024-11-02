@@ -7,6 +7,7 @@ import { CheckoutFormProps } from "@/app/types/types";
 import { useSearchParams } from "next/navigation";
 import FormUserCheckout from "./checkout/FormUserCheckout";
 import FormCustomerCheckout from "./checkout/FormCustomerCheckout";
+import FormUserCheckout2 from "./checkout/FormUserCheckout2";
 
 export default function StoreCheckoutForm({
   products,
@@ -116,6 +117,7 @@ export default function StoreCheckoutForm({
             </div>
           </section>
         </div>
+
       </div>
     </div>
   );
