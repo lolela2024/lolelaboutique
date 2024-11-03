@@ -196,7 +196,7 @@ export const RegisterSchema = z.object({
     message: "Lastname is required"
   })
 })
-
+  
 export const NewPasswordSchema = z.object({
   password:z.string().min(6,{
     message:"Minimum 6 characters required"
