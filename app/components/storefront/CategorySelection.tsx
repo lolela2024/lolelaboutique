@@ -4,14 +4,16 @@ import all from "@/public/all.jpeg";
 import men from "@/public/men.jpeg";
 import women from "@/public/women.jpeg";
 import prisma from "@/app/lib/db";
+import { cache } from "react";
 
-async function getData() {
+
+const getData = cache(async () => {
   const data = await prisma.productCategory.findMany({
     where: { isFeatured: true },
   });
 
   return data;
-}
+})
 
 export async function CategoriesSelection() {
   const data = await getData();

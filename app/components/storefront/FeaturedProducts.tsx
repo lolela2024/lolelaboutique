@@ -1,18 +1,18 @@
 import prisma from "@/app/lib/db";
 import { LoadingProductCard, ProductCard } from "./ProductCard";
-import { Suspense } from "react";
-import { unstable_noStore as noStore, revalidatePath } from "next/cache";
+import { cache, Suspense } from "react";
+import { unstable_noStore as noStore } from "next/cache";
 import { cookies } from "next/headers";
 import { Wishlist } from "@/app/lib/interfaces";
 import { redis } from "@/app/lib/redis";
 
-async function getData() {
+const getData = cache(async () => {
   const data = await prisma.product.findMany({
     where: {
       status: "published",
       isFeatured: true,
     },
-    
+
     orderBy: {
       createdAt: "desc",
     },
@@ -20,16 +20,15 @@ async function getData() {
   });
 
   return data;
-}
+});
 
 export function FeaturedProducts() {
-
-
   return (
     <div className="mb-8">
       <div className="flex">
-      <h2 className="trx-title relative z-1 text-2xl font-medium tracking-tight uppercase">Produse Recomandate</h2>
-
+        <h2 className="trx-title relative z-1 text-2xl font-medium tracking-tight uppercase">
+          Produse Recomandate
+        </h2>
       </div>
       <Suspense fallback={<LoadingRows />}>
         <LoadFeaturedproducts />
@@ -47,11 +46,10 @@ async function LoadFeaturedproducts() {
 
   const wishlist: Wishlist | null = await redis.get(`wishlist-${wishlistId}`);
 
-
   return (
     <div className="mt-5 grid sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4 gap-5">
       {data.map((item) => (
-        <ProductCard loading key={item.id} item={item} wishlist={wishlist}/>
+        <ProductCard loading key={item.id} item={item} wishlist={wishlist} />
       ))}
     </div>
   );

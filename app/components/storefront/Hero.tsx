@@ -1,11 +1,11 @@
 import prisma from "@/app/lib/db";
 import Image from "next/image";
+import { cache } from "react";
 
-async function getData() {
+const getData = cache(async () => {
   const data = await prisma.bannerTop.findMany();
-
   return data;
-}
+});
 
 export async function Hero() {
   const data = await getData();
