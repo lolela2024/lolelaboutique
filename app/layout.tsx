@@ -39,6 +39,7 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
+    // test commit
     <SessionProvider session={session}>
       <html lang="ro">
         <body className={lora.className}>
