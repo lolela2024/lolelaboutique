@@ -1,0 +1,50 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+    
+jobs:
+  build:
+
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        node-version: [20.10.0]
+    env:
+      GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
+      GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
+      UPLOADTHING_SECRET: ${{secrets.UPLOADTHING_SECRET}}
+      UPLOADTHING_APP_ID: ${{secrets.UPLOADTHING_APP_ID}}
+      DATABASE_URL: ${{secrets.DATABASE_URL}}
+      DIRECT_URL: ${{secrets.DIRECT_URL}}
+      ADMIN_EMAIL: ${{secrets.ADMIN_EMAIL}}
+      REDIS_URL: ${{secrets.REDIS_URL}}
+      REDIS_TOKEN: ${{secrets.REDIS_TOKEN}}
+      STRIPE_SECRET_KEY: ${{secrets.STRIPE_SECRET_KEY}}
+      NEXT_PUBLIC_STRIPE_PUBLIC_KEY: ${{secrets.NEXT_PUBLIC_STRIPE_PUBLIC_KEY}}
+      STRIPE_SECRET_WEBHOOK: ${{secrets.STRIPE_SECRET_WEBHOOK}}
+      NEXT_PUBLIC_SERVER_URL: ${{secrets.NEXT_PUBLIC_SERVER_URL}}
+      NEXT_PUBLIC_BASE_URL: ${{secrets.NEXT_PUBLIC_BASE_URL}}
+      AUTH_SECRET: ${{secrets.AUTH_SECRET}}
+      POSTGRES_URL: ${{secrets.POSTGRES_URL}}
+      POSTGRES_PRISMA_URL: ${{secrets.POSTGRES_PRISMA_URL}}
+      POSTGRES_URL_NO_SSL: ${{secrets.POSTGRES_URL_NO_SSL}}
+      POSTGRES_URL_NON_POOLING: ${{secrets.POSTGRES_URL_NON_POOLING}}
+      POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+      POSTGRES_HOST: ${{secrets.POSTGRES_HOST}}
+      POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+      POSTGRES_DATABASE: ${{secrets.POSTGRES_DATABASE}}
+      RESEND_API_KEY: ${{secrets.RESEND_API_KEY}}
+      VERCEL_URL: ${{secrets.VERCEL_URL}}
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
