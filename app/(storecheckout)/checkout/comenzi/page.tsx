@@ -1,9 +1,14 @@
+
 import prisma from "@/app/lib/db";
 import { notFound } from "next/navigation";
 import React from "react";
 import { unstable_noStore as noStore } from "next/cache";
 import { Form } from "../_components/Form";
 import { auth } from "@/auth";
+import EmailConfirmareOrder from "@/emails/ConfirmareOrder";
+import { Resend } from "resend";
+import { cookies } from "next/headers";
+import { getOrSetEmailSent } from "@/app/actions/createCeckout";
 
 async function getData(verify: string) {
   const data = await prisma.order.findFirst({
@@ -18,7 +23,7 @@ async function getData(verify: string) {
       adresaFacturare: true,
       tipPersoana: true,
       dateFacturare: true,
-      User:true
+      User: true,
     },
   });
 
@@ -32,13 +37,18 @@ async function getData(verify: string) {
 export default async function CheckoutComenzi({
   searchParams,
 }: {
-  searchParams: { verify: string };
+  searchParams: { verify: string; status: string };
 }) {
   noStore();
   const session = await auth();
   const user = session?.user;
 
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+
   let userBazaDeDate = undefined;
+
 
   if (user?.email) {
     const userData = await prisma.user.findFirst({
@@ -142,19 +152,21 @@ export default async function CheckoutComenzi({
             )}
 
           {data.tipPersoana === "persoana-fizica" && (
-              <>
-                <p>{data.User?.firstName || data.Customer?.firstName} {data.User?.lastName || data.Customer?.lastName}</p>
-                <p>
-                  {data.shippingAddress?.strada} {data.shippingAddress?.numar}{" "}
-                </p>
-                <p>
-                  {data.shippingAddress?.localitate},{" "}
-                  {data.shippingAddress?.judet}{" "}
-                  {data.shippingAddress?.codPostal}
-                </p>
-                {/* <p>{user ? userBazaDeDate?.phone : data.Customer?.phone}</p> */}
-              </>
-            )}
+            <>
+              <p>
+                {data.User?.firstName || data.Customer?.firstName}{" "}
+                {data.User?.lastName || data.Customer?.lastName}
+              </p>
+              <p>
+                {data.shippingAddress?.strada} {data.shippingAddress?.numar}{" "}
+              </p>
+              <p>
+                {data.shippingAddress?.localitate},{" "}
+                {data.shippingAddress?.judet} {data.shippingAddress?.codPostal}
+              </p>
+              {/* <p>{user ? userBazaDeDate?.phone : data.Customer?.phone}</p> */}
+            </>
+          )}
         </div>
         <div className="flex-grow font-light">
           <p className="font-semibold">Date livrare</p>
@@ -162,7 +174,9 @@ export default async function CheckoutComenzi({
             {user ? userBazaDeDate?.firstName : data.Customer?.firstName}{" "}
             {user ? userBazaDeDate?.lastName : data.Customer?.lastName}
           </p>
-          <p>{data.shippingAddress?.strada}{" "}{data.shippingAddress?.numar}</p>
+          <p>
+            {data.shippingAddress?.strada} {data.shippingAddress?.numar}
+          </p>
           <p>
             {data.shippingAddress?.localitate}, {data.shippingAddress?.judet},{" "}
             {data.shippingAddress?.codPostal}

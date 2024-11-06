@@ -17,6 +17,7 @@ import { Resend } from "resend";
 import { render } from '@react-email/render';
 import EmailConfirmareOrder from '../../emails/ConfirmareOrder/index';
 import { z } from "zod"
+import { verify } from "crypto"
 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -427,8 +428,9 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
         }
       )
     });
+    
     await redis.del(`cart-${cartId}`);
-    return redirect(`/checkout/comenzi?verify=${verify}`);
+    return redirect(`/checkout/comenzi?verify=${verify}&&status=success`);
   }
 
   if(submission.value.payment === "card") {
@@ -453,5 +455,29 @@ export async function createCheckout(prevState: unknown, formData: FormData) {
   return redirect(url as string);
 }
 
+export async function getOrSetEmailSent(searchParamsVerify:string) {
+
+  const cookieStore = cookies();
+  let emailSentCookie = cookieStore.get(`email-sent-${searchParamsVerify}`)?.value;
+
+  if (!emailSentCookie) {
+    // Setăm cookie-ul cu noul `cartId` pentru 7 zile
+    cookieStore.set(`email-sent-${searchParamsVerify}`, "true", { path: '/', maxAge: 7 * 24 * 60 * 60 });
+  }
+
+  return emailSentCookie;
+  //   // Verifică dacă există un cookie ce marchează emailul trimis
+  // // const emailSentCookie = cookieStore.get(`email-sent-${searchParamsVerify}`);
+
+  // if(!emailSentCookie){
+  //   // Setează un cookie pentru a marca că emailul a fost trimis
+  //   // cookieStore.set(`email-sent-${searchParamsVerify}`, 'true', {
+  //   //   path: '/',
+  //   //   maxAge: 60 * 60 * 24, // Setează cookie-ul să expire după o zi
+  //   // });
+  //   cookieStore.set(`email-sent-${searchParamsVerify}`,'true', { path: '/', maxAge: 7 * 24 * 60 * 60 });
+  // }
+
+}
 
 

@@ -275,7 +275,7 @@ export async function createCheckoutUser(prevState: unknown, formData: FormData)
     });
 
     await redis.del(`cart-${cartId}`);
-    return redirect(`/checkout/comenzi?verify=${verify}`);
+    return redirect(`/checkout/comenzi?verify=${verify}status=success`);
   }
 
   if(submission.value.payment === "card"){
